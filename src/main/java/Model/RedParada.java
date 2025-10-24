@@ -143,7 +143,7 @@ public class RedParada {
             for (Ruta ruta : rutas.get(lugar)) {
                 int i = indice.get(lugar);
                 int j = indice.get(ruta.getDestino().getNombre());
-                distancia[i][j] = ruta.getPeso();
+                distancia[i][j] = (int) ruta.getPeso();
             }
         }
         for (int k = 0; k < n; k++) {
@@ -198,4 +198,26 @@ public class RedParada {
     }
 
 
+    public void agregarRuta(Ruta ruta) {
+        String origen = ruta.getOrigen().getNombre();
+        rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(ruta);
+    }
+
+    public Parada buscarParadaPorNombre(String origen) {
+        for(Parada aux : lugar.values()){
+            if(aux.getNombre().equals(origen)){
+                return aux;
+            }
+        }
+        return null;
+    }
+
+    public boolean existeRutaEntreParadas(String origen, String destino) {
+        for(Ruta ruta : rutas.get(origen)){
+            if(ruta.getDestino().getNombre().equals(destino) && ruta.getOrigen().getNombre().equals(origen)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

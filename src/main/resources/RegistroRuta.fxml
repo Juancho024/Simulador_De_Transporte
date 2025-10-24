@@ -33,25 +33,25 @@
             <Font name="Segoe UI" size="16.0" />
          </font>
       </Label>
-      <Spinner fx:id="spnDistancia" layoutX="288.0" layoutY="154.0" prefHeight="25.0" prefWidth="322.0" AnchorPane.rightAnchor="10.0" />
+      <Spinner fx:id="spnDistancia" editable="true" layoutX="288.0" layoutY="154.0" prefHeight="25.0" prefWidth="322.0" AnchorPane.rightAnchor="10.0" />
       <Label fx:id="lbId111" layoutX="161.0" layoutY="201.0" prefHeight="19.0" prefWidth="204.0" text="Tiempo del Recorrido (min): " textAlignment="CENTER">
          <font>
             <Font name="Segoe UI" size="16.0" />
          </font>
       </Label>
-      <Spinner layoutX="365.0" layoutY="198.0" prefHeight="25.0" prefWidth="247.0" AnchorPane.leftAnchor="365.0" AnchorPane.rightAnchor="10.0" />
+      <Spinner fx:id="spnTiempo" editable="true" layoutX="365.0" layoutY="198.0" prefHeight="25.0" prefWidth="247.0" AnchorPane.leftAnchor="365.0" AnchorPane.rightAnchor="10.0" />
       <Label fx:id="lbId1111" layoutX="161.0" layoutY="246.0" prefHeight="19.0" prefWidth="57.0" text="Costo:" textAlignment="CENTER">
          <font>
             <Font name="Segoe UI" size="16.0" />
          </font>
       </Label>
-      <Spinner fx:id="spnCosto" layoutX="218.0" layoutY="243.0" prefHeight="25.0" prefWidth="135.0" AnchorPane.bottomAnchor="132.0" AnchorPane.topAnchor="243.0" />
+      <Spinner fx:id="spnCosto" editable="true" layoutX="218.0" layoutY="243.0" prefHeight="25.0" prefWidth="135.0" AnchorPane.bottomAnchor="132.0" AnchorPane.topAnchor="243.0" />
       <Label fx:id="lbId11111" layoutX="363.0" layoutY="246.0" prefHeight="19.0" prefWidth="176.0" text="Numero de Transbordo: " textAlignment="CENTER">
          <font>
             <Font name="Segoe UI" size="16.0" />
          </font>
       </Label>
-      <Spinner fx:id="spnTransbordo" layoutX="508.0" layoutY="243.0" prefHeight="25.0" prefWidth="69.0" AnchorPane.rightAnchor="11.0" />
+      <Spinner fx:id="spnTransbordo" editable="true" layoutX="508.0" layoutY="243.0" prefHeight="25.0" prefWidth="69.0" AnchorPane.rightAnchor="11.0" />
       <Button fx:id="btnRegistrar" layoutX="217.0" layoutY="319.0" mnemonicParsing="false" onAction="#registrarRuta" prefHeight="29.0" prefWidth="118.0" style="-fx-background-color: green;" text="Registrar" textFill="#fff7f7">
          <font>
             <Font name="Segoe UI Bold" size="16.0" />

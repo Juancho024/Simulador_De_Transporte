@@ -42,6 +42,7 @@ public class Principal {
     @FXML
     void initialize() {
         btnRegistros.setOnAction(e -> {
+            menuRegistros.setPrefWidth(btnRegistros.getWidth());
             menuRegistros.show(btnRegistros, Side.BOTTOM, 0, 0);
         });
     }

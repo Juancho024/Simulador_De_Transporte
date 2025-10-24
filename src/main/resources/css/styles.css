@@ -1,0 +1,12 @@
+/* Este CSS hace que el ContextMenu use todo el ancho asignado */
+
+#menuRegistros .context-menu {
+    /* Elimina el padding horizontal que suele estrechar el menú */
+    -fx-padding: 0 0 0 0;
+}
+
+#menuRegistros .menu-item {
+    /* Asegura que los ítems del menú utilicen todo el espacio disponible */
+    -fx-padding: 0.5em 0.833em 0.5em 0.833em; /* Ajusta el padding vertical si es necesario */
+    -fx-pref-width: -1; /* Permite que el ítem se estire */
+}

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="690.0" prefWidth="1360.0" style="-fx-background-color: #34495e;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Principal">
+<AnchorPane prefHeight="690.0" prefWidth="1360.0" style="-fx-background-color: #34495e;" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Principal">
    <children>
       <HBox layoutX="696.0" layoutY="33.0" spacing="60.0" AnchorPane.leftAnchor="696.0" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="20.0">
          <children>
@@ -16,10 +16,10 @@
                   <Font name="Segoe UI Bold" size="16.0" />
                </font>
                <contextMenu>
-                  <ContextMenu fx:id="menuRegistros">
+                  <ContextMenu fx:id="menuRegistros" width="113.0">
                     <items>
-                      <MenuItem fx:id="itemParada" mnemonicParsing="false" onAction="#crearParada" text="Crear Parada"></MenuItem>
-                        <MenuItem fx:id="itemRuta" mnemonicParsing="false" onAction="#crearRuta" text="Crear Ruta"></MenuItem>
+                      <MenuItem fx:id="itemParada" mnemonicParsing="false" onAction="#crearParada" text="Crear Parada" />
+                        <MenuItem fx:id="itemRuta" mnemonicParsing="false" onAction="#crearRuta" text="Crear Ruta" />
                     </items>
                   </ContextMenu>
                </contextMenu>

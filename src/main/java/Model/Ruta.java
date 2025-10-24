@@ -3,8 +3,8 @@ package Model;
 public class Ruta {
     private Parada origen;
     private Parada destino;
-    private int peso;
-    private int tiempoRecorrido;
+    private float peso;
+    private float tiempoRecorrido;
     private float costo;
     private float numTransbordos;
     private String posibleEvento;
@@ -15,7 +15,7 @@ public class Ruta {
         this.peso = peso;
     }
 
-    public Ruta(Parada origen, Parada destino, int peso, int tiempoRecorrido, float costo, float numTransbordos, String posibleEvento) {
+    public Ruta(Parada origen, Parada destino, float peso, float tiempoRecorrido, float costo, float numTransbordos, String posibleEvento) {
         this.origen = origen;
         this.destino = destino;
         this.peso = peso;
@@ -69,19 +69,19 @@ public class Ruta {
         this.destino = destino;
     }
 
-    public int getPeso() {
+    public float getPeso() {
         return peso;
     }
 
-    public void setPeso(int peso) {
+    public void setPeso(float peso) {
         this.peso = peso;
     }
 
-    public int getTiempoRecorrido() {
+    public float getTiempoRecorrido() {
         return tiempoRecorrido;
     }
 
-    public void setTiempoRecorrido(int tiempoRecorrido) {
+    public void setTiempoRecorrido(float tiempoRecorrido) {
         this.tiempoRecorrido = tiempoRecorrido;
     }
 
