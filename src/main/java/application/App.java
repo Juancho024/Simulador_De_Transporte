@@ -5,6 +5,7 @@ import Model.RedParada;
 import Utilities.paths;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
@@ -21,7 +22,11 @@ public class App extends Application {
 
         Principal controller = loader.getController();
         controller.setRedParada(new RedParada());
-        Scene scene = new Scene(pane);
+
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        Scene scene = new Scene(pane, 1360, 690);
+
+        stage.setTitle("Simulador de Transporte de Ruta");
 
         stage.setScene(scene);
         stage.show();
