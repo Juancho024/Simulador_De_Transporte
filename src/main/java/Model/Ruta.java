@@ -3,22 +3,22 @@ package Model;
 public class Ruta {
     private Parada origen;
     private Parada destino;
-    private float peso;
+    private float distancia;
     private float tiempoRecorrido;
     private float costo;
     private float numTransbordos;
     private String posibleEvento;
 
-    public Ruta(Parada origen, Parada destino, int peso) {
-        this.origen = origen;
-        this.destino = destino;
-        this.peso = peso;
-    }
+//    public Ruta(Parada origen, Parada destino, int distancia) {
+//        this.origen = origen;
+//        this.destino = destino;
+//        this.distancia = distancia;
+//    }
 
-    public Ruta(Parada origen, Parada destino, float peso, float tiempoRecorrido, float costo, float numTransbordos, String posibleEvento) {
+    public Ruta(Parada origen, Parada destino, float distancia, float tiempoRecorrido, float costo, float numTransbordos, String posibleEvento) {
         this.origen = origen;
         this.destino = destino;
-        this.peso = peso;
+        this.distancia = distancia;
         this.tiempoRecorrido = tiempoRecorrido;
         this.costo = costo;
         this.numTransbordos = numTransbordos;
@@ -39,7 +39,7 @@ public class Ruta {
         }
         if(posibleEvento.equals("Obras viales")) {
             tiempoRecorrido *= 2;
-            peso *= 1.5;
+            distancia *= 1.5;
         }
         if(posibleEvento.equals("Normales")) {
             tiempoRecorrido /= 2;
@@ -69,12 +69,12 @@ public class Ruta {
         this.destino = destino;
     }
 
-    public float getPeso() {
-        return peso;
+    public float getDistancia() {
+        return distancia;
     }
 
-    public void setPeso(float peso) {
-        this.peso = peso;
+    public void setDistancia(float distancia) {
+        this.distancia = distancia;
     }
 
     public float getTiempoRecorrido() {

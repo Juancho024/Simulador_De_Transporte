@@ -14,8 +14,6 @@ import java.util.ResourceBundle;
 
 
 public class RegistroRuta implements Initializable {
-    private RedParada redParada;
-    private Parada parada;
     @FXML
     private Button btnCancelar;
 
@@ -75,8 +73,8 @@ public class RegistroRuta implements Initializable {
         int transbordo = spnTransbordo.getValue();
         double tiempo = spnTiempo.getValue();
 
-        Parada auxOrigen = redParada.buscarParadaPorNombre(origen);
-        Parada auxDestino = redParada.buscarParadaPorNombre(destino);
+        Parada auxOrigen = RedParada.getInstance().buscarParadaPorNombre(origen);
+        Parada auxDestino = RedParada.getInstance().buscarParadaPorNombre(destino);
 
         if(auxOrigen == null || auxDestino == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -94,7 +92,7 @@ public class RegistroRuta implements Initializable {
             alert.showAndWait();
             return;
         }
-        if(redParada.existeRutaEntreParadas(origen, destino)) {
+        if(RedParada.getInstance().existeRutaIgual(new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (float) transbordo, "Normales"))) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Ruta existente");
@@ -111,7 +109,8 @@ public class RegistroRuta implements Initializable {
             return;
         }
         try{
-            Ruta ruta = new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (float) transbordo, "Normales");
+                Ruta ruta = new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (float) transbordo, "Normales");
+                RedParada.getInstance().agregarRuta(ruta);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Éxito");
                 alert.setHeaderText("Ruta registrada");
@@ -158,10 +157,14 @@ public class RegistroRuta implements Initializable {
         cargarParadas();
     }
 
-    private void cargarParadas() {
-        if(parada != null) {
-            cbxOrigen.setItems(FXCollections.observableArrayList(parada.getNombre()));
-            cbxDestino.setItems(FXCollections.observableArrayList(parada.getNombre()));
+    public void cargarParadas() {
+        RedParada redParada = RedParada.getInstance();
+        if (redParada != null && !redParada.getLugar().isEmpty()) {
+            cbxOrigen.setItems(FXCollections.observableArrayList(redParada.getLugar().keySet()));
+            cbxDestino.setItems(FXCollections.observableArrayList(redParada.getLugar().keySet()));
+        } else {
+            cbxOrigen.setItems(FXCollections.observableArrayList());
+            cbxDestino.setItems(FXCollections.observableArrayList());
         }
     }
 }

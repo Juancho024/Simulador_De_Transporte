@@ -10,3 +10,62 @@
     -fx-padding: 0.5em 0.833em 0.5em 0.833em; /* Ajusta el padding vertical si es necesario */
     -fx-pref-width: -1; /* Permite que el ítem se estire */
 }
+
+/* pastel_tables.css */
+
+/* 1. Estilo para la Cabecera (Títulos de Columna) */
+.table-view .column-header,
+.table-view .column-header-background,
+.table-view .filler {
+    /* Color Menta Suave */
+    -fx-background-color: #687068;
+    -fx-border-width: 0;
+}
+
+.table-view .column-header-background .table-column {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+/* Estilo para el texto de la cabecera */
+.table-view .column-header .label {
+    /* Texto Gris Oscuro */
+    -fx-text-fill: #333333;
+    -fx-font-weight: bold;
+    -fx-border-width: 0;
+}
+
+/* 2. Estilo para el Cuerpo de las Filas */
+
+/* Fondo de filas impares (blanco roto) */
+.table-row-cell:odd {
+    -fx-border-width: 0;
+    -fx-background-color: #F0F0F0;
+}
+
+/* Fondo de filas pares (lavanda claro) */
+.table-row-cell:even {
+    -fx-border-width: 0;
+    -fx-background-color: #E8E8FF;
+}
+
+/* Color de texto para el contenido de la celda */
+.table-cell {
+    -fx-border-width: 0;
+    -fx-text-fill: #333333;
+}
+
+/* 3. Estilo para la Fila Seleccionada (Menta Brillante) */
+.table-row-cell:selected {
+    -fx-border-width: 0;
+    -fx-text-fill: white;
+}
+
+/* 4. Estilo de Contenedor General (Opcional, si quieres bordes redondeados y un marco) */
+.my-custom-table { /* Usa este Style Class en Scene Builder */
+    -fx-background-color: transparent; /* Permite que el fondo de la app se vea */
+    -fx-background-radius: 0;
+    -fx-border-color: #687068;
+    -fx-border-radius: 0;
+    -fx-border-width: 0;
+}

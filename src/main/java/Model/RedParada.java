@@ -3,16 +3,92 @@ package Model;
 import java.util.*;
 
 public class RedParada {
+
     private HashMap<String, LinkedList<Ruta>> rutas;
     private HashMap<String, Parada> lugar;
+    private static RedParada instance = null;
 
     public RedParada() {
+
         this.rutas = new HashMap<>();
         this.lugar = new HashMap<>();
     }
 
+    public HashMap<String, LinkedList<Ruta>> getRutas() {
+        return rutas;
+    }
+
+    public void setRutas(HashMap<String, LinkedList<Ruta>> rutas) {
+        this.rutas = rutas;
+    }
+
+    public HashMap<String, Parada> getLugar() {
+        return lugar;
+    }
+
+    public void setLugar(HashMap<String, Parada> lugar) {
+        this.lugar = lugar;
+    }
+    public static RedParada getInstance() {
+        if(instance == null) {
+            instance = new RedParada();
+        }
+        return instance;
+    }
+
+    public void agregarRuta(Ruta ruta) {
+        String origen = ruta.getOrigen().getNombre();
+        rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(ruta);
+    }
+
+    public Parada buscarParadaPorNombre(String origen) {
+        for(Parada aux : lugar.values()){
+            if(aux.getNombre().equals(origen)){
+                return aux;
+            }
+        }
+        return null;
+    }
+
+    public boolean existeRutaIgual(Ruta nuevaRuta) {
+        String origen = nuevaRuta.getOrigen().getNombre();
+        String destino = nuevaRuta.getDestino().getNombre();
+
+        // Revisar rutas desde el origen
+        LinkedList<Ruta> listaOrigen = rutas.get(origen);
+        if (listaOrigen != null) {
+            for (Ruta ruta : listaOrigen) {
+                if ((ruta.getDestino().getNombre().equals(destino) && ruta.getOrigen().getNombre().equals(origen)) ||
+                        (ruta.getDestino().getNombre().equals(origen) && ruta.getOrigen().getNombre().equals(destino))) {
+                    return true;
+                }
+            }
+        }
+
+        // Revisar rutas desde el destino inverso
+        LinkedList<Ruta> listaDestino = rutas.get(destino);
+        if (listaDestino != null) {
+            for (Ruta ruta : listaDestino) {
+                if ((ruta.getDestino().getNombre().equals(destino) && ruta.getOrigen().getNombre().equals(origen)) ||
+                        (ruta.getDestino().getNombre().equals(origen) && ruta.getOrigen().getNombre().equals(destino))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void agregarParada(Parada nuevaParada) {
+        String nombre = nuevaParada.getNombre();
+        lugar.put(nombre, nuevaParada);
+        rutas.putIfAbsent(nombre, new LinkedList<>());
+    }
+
+
+    /////////////////////////////////////////////////Funciones Prueba//////////////////////////////////////
     public void agregarNodo(String nombre, int posicionx, int posiciony) { //Agregar parada
-        Parada aux = new Parada(nombre, posicionx, posiciony);
+        Parada aux = new Parada(nombre, "",posicionx, posiciony);
         lugar.put(nombre, aux);
         rutas.putIfAbsent(nombre, new LinkedList<>());
     }
@@ -22,7 +98,7 @@ public class RedParada {
         Parada paradaDestino = lugar.get(destino);
 
         if (paradaOrigen != null && paradaDestino != null) {
-            Ruta arista = new Ruta(paradaOrigen, paradaDestino, peso);
+            Ruta arista = new Ruta(paradaOrigen, paradaDestino, peso, 0.0f, 0.0f, 0.0f,"");
             rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(arista);
         } else {
             System.out.println("Uno de los lugares no existe.");
@@ -36,7 +112,7 @@ public class RedParada {
             System.out.print("Lugar " + aux + " tiene rutas al ");
             for (int i = 0; i < listRutas.size(); i++) {
                 Ruta arista = listRutas.get(i);
-                System.out.print(arista.getDestino().getNombre() + " hay " + arista.getPeso() + "km");
+                System.out.print(arista.getDestino().getNombre() + " hay " + arista.getDistancia() + "km");
                 if (i != listRutas.size() - 1) {
                     System.out.print(", al ");
                 }
@@ -86,7 +162,7 @@ public class RedParada {
                     String vecino = arista.getDestino().getNombre();
 
                     float nuevoPeso = pesoTotal.get(nombreActual)
-                            + arista.getPeso()
+                            + arista.getDistancia()
                             + 1.0f * arista.getCosto()
                             + 2.0f * arista.getTiempoRecorrido()
                             + 1.0f * arista.getNumTransbordos();
@@ -143,7 +219,7 @@ public class RedParada {
             for (Ruta ruta : rutas.get(lugar)) {
                 int i = indice.get(lugar);
                 int j = indice.get(ruta.getDestino().getNombre());
-                distancia[i][j] = (int) ruta.getPeso();
+                distancia[i][j] = (int) ruta.getDistancia();
             }
         }
         for (int k = 0; k < n; k++) {
@@ -195,29 +271,5 @@ public class RedParada {
 
     private void ArbolExpansionMinima() {
         // Implementación del algoritmo de Árbol de Expansión Mínima
-    }
-
-
-    public void agregarRuta(Ruta ruta) {
-        String origen = ruta.getOrigen().getNombre();
-        rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(ruta);
-    }
-
-    public Parada buscarParadaPorNombre(String origen) {
-        for(Parada aux : lugar.values()){
-            if(aux.getNombre().equals(origen)){
-                return aux;
-            }
-        }
-        return null;
-    }
-
-    public boolean existeRutaEntreParadas(String origen, String destino) {
-        for(Ruta ruta : rutas.get(origen)){
-            if(ruta.getDestino().getNombre().equals(destino) && ruta.getOrigen().getNombre().equals(origen)){
-                return true;
-            }
-        }
-        return false;
     }
 }

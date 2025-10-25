@@ -20,9 +20,6 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.PRINCIPAL));
         AnchorPane pane = (AnchorPane) loader.load(); //Cualquier cosa
 
-        Principal controller = loader.getController();
-        controller.setRedParada(new RedParada());
-
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         Scene scene = new Scene(pane, 1360, 690);
 
