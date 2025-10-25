@@ -34,6 +34,14 @@
                <font>
                   <Font name="Segoe UI Bold" size="16.0" />
                </font>
+               <contextMenu>
+                  <ContextMenu fx:id="MenuListados">
+                    <items>
+                      <MenuItem fx:id="itemListadoParada" mnemonicParsing="false" onAction="#listarParada" text="Listado de Paradas" />
+                        <MenuItem fx:id="itemListadoRuta" mnemonicParsing="false" onAction="#listarRutas" text="Listado de Rutas" />
+                    </items>
+                  </ContextMenu>
+               </contextMenu>
             </Button>
             <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="113.0" text="Button" />
             <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="113.0" text="Button" HBox.hgrow="ALWAYS" />

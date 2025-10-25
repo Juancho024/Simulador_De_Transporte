@@ -8,45 +8,45 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="622.0" style="-fx-background-color: lightgray;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.RegistroRuta">
+<AnchorPane prefHeight="400.0" prefWidth="622.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.RegistroRuta">
    <children>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#022186cf" height="400.0" layoutX="-7.0" stroke="TRANSPARENT" strokeType="INSIDE" width="129.0" />
-      <Label fx:id="lbPrincipal" layoutX="290.0" layoutY="32.0" text="Gestionar Ruta" textAlignment="CENTER" AnchorPane.bottomAnchor="339.0" AnchorPane.leftAnchor="290.0" AnchorPane.rightAnchor="142.0" AnchorPane.topAnchor="32.0">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#2b333fcf" height="400.0" layoutX="-7.0" stroke="TRANSPARENT" strokeType="INSIDE" width="129.0" />
+      <Label fx:id="lbPrincipal" layoutX="290.0" layoutY="32.0" text="Gestionar Ruta" textAlignment="CENTER" textFill="WHITE" AnchorPane.bottomAnchor="339.0" AnchorPane.leftAnchor="290.0" AnchorPane.rightAnchor="142.0" AnchorPane.topAnchor="32.0">
          <font>
             <Font name="Segoe UI Bold" size="24.0" />
          </font>
       </Label>
-      <Label fx:id="lbId" layoutX="161.0" layoutY="79.0" prefHeight="18.0" prefWidth="57.0" text="Origen:" textAlignment="CENTER" AnchorPane.bottomAnchor="302.0" AnchorPane.topAnchor="79.0">
+      <Label fx:id="lbId" layoutX="161.0" layoutY="79.0" prefHeight="18.0" prefWidth="57.0" text="Origen:" textAlignment="CENTER" textFill="WHITE" AnchorPane.bottomAnchor="302.0" AnchorPane.topAnchor="79.0">
          <font>
             <Font name="Segoe UI" size="16.0" />
          </font>
       </Label>
       <ComboBox fx:id="cbxOrigen" layoutX="243.0" layoutY="76.0" prefHeight="25.0" prefWidth="366.0" promptText="Punto de Origen" AnchorPane.leftAnchor="243.0" AnchorPane.rightAnchor="13.0" />
-      <Label fx:id="lbId1" layoutX="161.0" layoutY="118.0" prefHeight="19.0" prefWidth="63.0" text="Destino:" textAlignment="CENTER">
+      <Label fx:id="lbId1" layoutX="161.0" layoutY="118.0" prefHeight="19.0" prefWidth="63.0" text="Destino:" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Segoe UI" size="16.0" />
          </font>
       </Label>
       <ComboBox fx:id="cbxDestino" layoutX="243.0" layoutY="115.0" prefHeight="25.0" prefWidth="366.0" promptText="Punto de Destino" />
-      <Label fx:id="lbId11" layoutX="161.0" layoutY="157.0" prefHeight="19.0" prefWidth="111.0" text="Distancia (KM):" textAlignment="CENTER">
+      <Label fx:id="lbId11" layoutX="161.0" layoutY="157.0" prefHeight="19.0" prefWidth="111.0" text="Distancia (KM):" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Segoe UI" size="16.0" />
          </font>
       </Label>
       <Spinner fx:id="spnDistancia" editable="true" layoutX="288.0" layoutY="154.0" prefHeight="25.0" prefWidth="322.0" AnchorPane.rightAnchor="10.0" />
-      <Label fx:id="lbId111" layoutX="161.0" layoutY="201.0" prefHeight="19.0" prefWidth="204.0" text="Tiempo del Recorrido (min): " textAlignment="CENTER">
+      <Label fx:id="lbId111" layoutX="161.0" layoutY="201.0" prefHeight="19.0" prefWidth="204.0" text="Tiempo del Recorrido (min): " textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Segoe UI" size="16.0" />
          </font>
       </Label>
       <Spinner fx:id="spnTiempo" editable="true" layoutX="365.0" layoutY="198.0" prefHeight="25.0" prefWidth="247.0" AnchorPane.leftAnchor="365.0" AnchorPane.rightAnchor="10.0" />
-      <Label fx:id="lbId1111" layoutX="161.0" layoutY="246.0" prefHeight="19.0" prefWidth="57.0" text="Costo:" textAlignment="CENTER">
+      <Label fx:id="lbId1111" layoutX="161.0" layoutY="246.0" prefHeight="19.0" prefWidth="57.0" text="Costo:" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Segoe UI" size="16.0" />
          </font>
       </Label>
       <Spinner fx:id="spnCosto" editable="true" layoutX="218.0" layoutY="243.0" prefHeight="25.0" prefWidth="135.0" AnchorPane.bottomAnchor="132.0" AnchorPane.topAnchor="243.0" />
-      <Label fx:id="lbId11111" layoutX="363.0" layoutY="246.0" prefHeight="19.0" prefWidth="176.0" text="Numero de Transbordo: " textAlignment="CENTER">
+      <Label fx:id="lbId11111" layoutX="363.0" layoutY="246.0" prefHeight="19.0" prefWidth="176.0" text="Numero de Transbordo: " textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Segoe UI" size="16.0" />
          </font>

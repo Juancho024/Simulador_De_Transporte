@@ -11,32 +11,32 @@
 <?import javafx.scene.text.Font?>
 
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: lightgray;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.RegistroParada">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.RegistroParada">
    <children>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#022186cf" height="410.0" layoutX="-2.0" stroke="TRANSPARENT" strokeType="INSIDE" width="134.0" />
-      <Label fx:id="lbPrincipal" layoutX="266.0" layoutY="40.0" text="Gestionar Parada">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#2b333fcf" height="410.0" layoutX="-2.0" stroke="TRANSPARENT" strokeType="INSIDE" width="134.0" />
+      <Label fx:id="lbPrincipal" layoutX="266.0" layoutY="40.0" text="Gestionar Parada" textFill="WHITE">
          <font>
             <Font name="Segoe UI Bold" size="24.0" />
          </font>
       </Label>
       <ImageView fitHeight="105.0" fitWidth="152.0" layoutX="287.0" layoutY="69.0" pickOnBounds="true" preserveRatio="true" />
       <Button fx:id="btnIcono" layoutX="314.0" layoutY="180.0" mnemonicParsing="false" onAction="#agregarIcono" prefHeight="25.0" prefWidth="99.0" text="Agregar Icono" />
-      <Label fx:id="lbTelefono" layoutX="146.0" layoutY="220.0" text="Tipo de Transporte:" textAlignment="CENTER">
+      <Label fx:id="lbTelefono" layoutX="146.0" layoutY="220.0" text="Tipo de Transporte:" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Segoe UI" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="lbTelefono1" layoutX="146.0" layoutY="260.0" text="Nombre: " textAlignment="CENTER">
+      <Label fx:id="lbTelefono1" layoutX="146.0" layoutY="260.0" text="Nombre: " textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Segoe UI" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="lbTelefono11" layoutX="146.0" layoutY="296.0" text="Latitud: " textAlignment="CENTER">
+      <Label fx:id="lbTelefono11" layoutX="146.0" layoutY="296.0" text="Latitud: " textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Segoe UI" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="lbTelefono111" layoutX="364.0" layoutY="296.0" text="Longitud:" textAlignment="CENTER">
+      <Label fx:id="lbTelefono111" layoutX="364.0" layoutY="296.0" text="Longitud:" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Segoe UI" size="14.0" />
          </font>

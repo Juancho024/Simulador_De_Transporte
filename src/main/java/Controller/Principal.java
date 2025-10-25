@@ -68,6 +68,16 @@ public class Principal {
     @FXML
     private TableColumn<Parada, String> colTipoTransporte;
 
+    @FXML
+    private MenuItem itemListadoParada;
+
+    @FXML
+    private MenuItem itemListadoRuta;
+
+    @FXML
+    private ContextMenu MenuListados;
+
+
     public Principal() {
         //debe ir asi
     }
@@ -76,6 +86,9 @@ public class Principal {
     void initialize() {
         btnRegistros.setOnAction(e -> {
             menuRegistros.show(btnRegistros, Side.BOTTOM, 0, 0);
+        });
+        btnListados.setOnAction(Event -> {
+            MenuListados.show(btnListados, Side.BOTTOM, 0, 0);
         });
         colOrigen.setCellValueFactory(cellData -> {
             Ruta ruta = cellData.getValue();
@@ -144,5 +157,39 @@ public class Principal {
         TableRuta.getItems().setAll(todasLasRutas);
         TableRuta.refresh();
     }
+    @FXML
+    void listarParada(ActionEvent event) {
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.LISTADO_PARADA));
+            AnchorPane root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Listado de Paradas");
+            Stage ownerStage = (Stage) btnListados.getScene().getWindow();
+            stage.initOwner(ownerStage);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    @FXML
+    void listarRutas(ActionEvent event) {
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.LISTADO_RUTA));
+            AnchorPane root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Listado de Rutas");
+            Stage ownerStage = (Stage) btnListados.getScene().getWindow();
+            stage.initOwner(ownerStage);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
