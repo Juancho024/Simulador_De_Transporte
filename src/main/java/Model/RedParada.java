@@ -8,8 +8,51 @@ public class RedParada {
     private HashMap<String, Parada> lugar;
     private static RedParada instance = null;
 
-    public RedParada() {
+    // --- Clase interna para DisjointSet (Union-Find) usada en Kruskal ---
+    /**
+     * Clase auxiliar para la estructura de datos Disjoint Set (Union-Find).
+     * Esencial para detectar ciclos eficientemente en el algoritmo de Kruskal.
+     */
+    class DisjointSet {
+        private HashMap<String, String> parent;
 
+        public DisjointSet(Set<String> nodos) {
+            parent = new HashMap<>();
+            // Inicialmente, cada nodo es su propio padre
+            for (String nodo : nodos) {
+                parent.put(nodo, nodo);
+            }
+        }
+
+        /**
+         * Encuentra el representante (raíz) del conjunto al que pertenece 'i'.
+         * Utiliza compresión de caminos para optimizar futuras búsquedas.
+         */
+        public String find(String i) {
+            if (parent.get(i).equals(i))
+                return i;
+            // Compresión de caminos
+            String root = find(parent.get(i));
+            parent.put(i, root);
+            return root;
+        }
+
+        /**
+         * Une los conjuntos a los que pertenecen 'x' e 'y'.
+         */
+        public void union(String x, String y) {
+            String rootX = find(x);
+            String rootY = find(y);
+            if (!rootX.equals(rootY)) {
+                // Une un árbol al otro
+                parent.put(rootX, rootY);
+            }
+        }
+    }
+    // --- Fin de la clase interna DisjointSet ---
+
+
+    public RedParada() {
         this.rutas = new HashMap<>();
         this.lugar = new HashMap<>();
     }
@@ -29,8 +72,9 @@ public class RedParada {
     public void setLugar(HashMap<String, Parada> lugar) {
         this.lugar = lugar;
     }
+
     public static RedParada getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new RedParada();
         }
         return instance;
@@ -42,8 +86,8 @@ public class RedParada {
     }
 
     public Parada buscarParadaPorNombre(String origen) {
-        for(Parada aux : lugar.values()){
-            if(aux.getNombre().equals(origen)){
+        for (Parada aux : lugar.values()) {
+            if (aux.getNombre().equals(origen)) {
                 return aux;
             }
         }
@@ -87,8 +131,8 @@ public class RedParada {
 
 
     /////////////////////////////////////////////////Funciones Prueba//////////////////////////////////////
-    public void agregarNodo(String nombre, int posicionx, int posiciony) { //Agregar parada
-        Parada aux = new Parada(nombre, "",posicionx, posiciony);
+    public void agregarNodo(String nombre, int posiciony, int posicionx) { //Agregar parada
+        Parada aux = new Parada(nombre, "", posiciony, posicionx);
         lugar.put(nombre, aux);
         rutas.putIfAbsent(nombre, new LinkedList<>());
     }
@@ -98,7 +142,7 @@ public class RedParada {
         Parada paradaDestino = lugar.get(destino);
 
         if (paradaOrigen != null && paradaDestino != null) {
-            Ruta arista = new Ruta(paradaOrigen, paradaDestino, peso, 0.0f, 0.0f, 0.0f,"");
+            Ruta arista = new Ruta(paradaOrigen, paradaDestino, peso, 0.0f, 0.0f, 0.0f, "");
             rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(arista);
         } else {
             System.out.println("Uno de los lugares no existe.");
@@ -106,15 +150,18 @@ public class RedParada {
     }
 
     public void mostrarGrafo() {
-        System.out.print("RedParada: \n");
+        System.out.print("RedParada (Grafo Dirigido): \n");
         for (String aux : rutas.keySet()) {
             LinkedList<Ruta> listRutas = rutas.get(aux);
             System.out.print("Lugar " + aux + " tiene rutas al ");
+            if (listRutas.isEmpty()) {
+                System.out.print("ningún lugar.");
+            }
             for (int i = 0; i < listRutas.size(); i++) {
                 Ruta arista = listRutas.get(i);
-                System.out.print(arista.getDestino().getNombre() + " hay " + arista.getDistancia() + "km");
+                System.out.print(arista.getDestino().getNombre() + " (" + arista.getDistancia() + "km)");
                 if (i != listRutas.size() - 1) {
-                    System.out.print(", al ");
+                    System.out.print(", ");
                 }
             }
             System.out.println();
@@ -123,17 +170,50 @@ public class RedParada {
 
     public static void main(String[] args) {
         RedParada redParada = new RedParada();
+
+        // Agregar nodos (paradas)
         redParada.agregarNodo("A", 10, 15);
         redParada.agregarNodo("B", 10, 15);
         redParada.agregarNodo("C", 10, 15);
+        redParada.agregarNodo("D", 10, 15);
+        redParada.agregarNodo("E", 10, 15);
 
+        // Agregar aristas (rutas) - Bidireccionales para un buen test de MST
         redParada.agregarArista("A", "B", 10);
-        redParada.agregarArista("B", "C", 5);
+        redParada.agregarArista("B", "A", 10);
+
         redParada.agregarArista("A", "C", 30);
+        redParada.agregarArista("C", "A", 30);
+
+        redParada.agregarArista("B", "C", 5);
+        redParada.agregarArista("C", "B", 5);
+
+        redParada.agregarArista("B", "D", 20);
+        redParada.agregarArista("D", "B", 20);
+
+        redParada.agregarArista("C", "D", 8);
+        redParada.agregarArista("D", "C", 8);
+
+        redParada.agregarArista("D", "E", 2);
+        redParada.agregarArista("E", "D", 2);
+
+        redParada.agregarArista("C", "E", 15);
+        redParada.agregarArista("E", "C", 15);
+
+
+        // --- Pruebas de Algoritmos ---
 
         redParada.mostrarGrafo();
-        redParada.dijkstra("A", "C");
+        System.out.println("\n----------------------------------------");
+
+        redParada.dijkstra("A", "D");
+        System.out.println("\n----------------------------------------");
+
         redParada.floydWarshall();
+        System.out.println("\n----------------------------------------");
+
+        // Llamar a los nuevos algoritmos de MST
+        redParada.mostrarArbolExpansionMinima();
     }
 
     private void dijkstra(String inicio, String fin) {
@@ -157,6 +237,8 @@ public class RedParada {
 
                 if (visitados.contains(nombreActual)) continue;
                 visitados.add(nombreActual);
+
+                if (nombreActual.equals(fin)) break; // Optimización: parar al encontrar el destino
 
                 for (Ruta arista : rutas.get(nombreActual)) {
                     String vecino = arista.getDestino().getNombre();
@@ -187,13 +269,12 @@ public class RedParada {
                 actual = previo.get(actual);
             }
 
-            System.out.println("Ruta más eficiente: " + ruta);
-            System.out.println("Peso total: " + pesoTotal.get(fin));
+            System.out.println("Dijkstra - Ruta más eficiente de " + inicio + " a " + fin + ": " + ruta);
+            System.out.println("Dijkstra - Peso total: " + pesoTotal.get(fin));
         } else {
             System.out.println("Uno de los lugares no existe.");
         }
     }
-
 
 
     private void floydWarshall() {
@@ -205,7 +286,7 @@ public class RedParada {
             indice.put(nombres.get(i), i);
         }
         int distancia[][] = new int[n][n];
-        final int numMax = Integer.MAX_VALUE / 2;
+        final int numMax = Integer.MAX_VALUE / 2; // Evitar overflow
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -231,7 +312,7 @@ public class RedParada {
                 }
             }
         }
-        System.out.println("\nMatriz de distancias mínimas:");
+        System.out.println("Floyd-Warshall - Matriz de distancias mínimas:");
         System.out.print("     ");
         for (String nombre : nombres) {
             System.out.printf("%5s", nombre);
@@ -254,6 +335,8 @@ public class RedParada {
         // Implementación para generar eventos aleatorios en el grafo
         Random random = new Random();
         List<String> claves = new ArrayList<>(this.rutas.keySet());
+        if(claves.isEmpty()) return;
+
         String claveAleatoria = claves.get(random.nextInt(claves.size()));
         LinkedList<Ruta> aristas = this.rutas.get(claveAleatoria);
         if (aristas != null && !aristas.isEmpty()) {
@@ -267,9 +350,173 @@ public class RedParada {
 
     private void bellmanFord(String inicio) {
         // Implementación del algoritmo de Bellman-Ford
+        System.out.println("Algoritmo Bellman-Ford no implementado.");
     }
 
-    private void ArbolExpansionMinima() {
-        // Implementación del algoritmo de Árbol de Expansión Mínima
+    // --- IMPLEMENTACIÓN DE ÁRBOL DE EXPANSIÓN MÍNIMA (MST) ---
+
+    public void mostrarArbolExpansionMinima() {
+        if (lugar.isEmpty()) {
+            System.out.println("No hay paradas en la red para calcular el MST.");
+            return;
+        }
+        kruskal();
+        System.out.println(); // Separador
+        prim();
+    }
+
+    /**
+     * Recopila todas las aristas (Ruta) de la red en una sola lista.
+     * Necesario para el algoritmo de Kruskal.
+     */
+    private List<Ruta> getAllRutas() {
+        List<Ruta> allRutas = new LinkedList<>();
+        for (LinkedList<Ruta> listaRutas : rutas.values()) {
+            allRutas.addAll(listaRutas);
+        }
+        return allRutas;
+    }
+
+    /**
+     * Implementación del algoritmo de Kruskal para encontrar el MST.
+     */
+    private void kruskal() {
+        System.out.println("Algoritmo de Kruskal (Árbol de Expansión Mínima):");
+
+        List<Ruta> mstRutas = new LinkedList<>();
+        double costoTotal = 0;
+
+        // 1. Obtener todas las aristas y ordenarlas por distancia (peso)
+        List<Ruta> allRutas = getAllRutas();
+        allRutas.sort(Comparator.comparingDouble(Ruta::getDistancia));
+
+        // 2. Inicializar DisjointSet con todas las paradas (nodos)
+        DisjointSet ds = new DisjointSet(lugar.keySet());
+
+        // 3. Iterar por las aristas ordenadas
+        for (Ruta ruta : allRutas) {
+            String origen = ruta.getOrigen().getNombre();
+            String destino = ruta.getDestino().getNombre();
+
+            // 4. Si origen y destino no están en el mismo conjunto, unirlos
+            if (!ds.find(origen).equals(ds.find(destino))) {
+                mstRutas.add(ruta);
+                costoTotal += ruta.getDistancia();
+                ds.union(origen, destino);
+            }
+        }
+
+        // 5. Mostrar resultados
+        System.out.println("  Rutas en el MST:");
+        for (Ruta ruta : mstRutas) {
+            System.out.printf("    - %s <-> %s (Distancia: %.1f km)\n",
+                    ruta.getOrigen().getNombre(),
+                    ruta.getDestino().getNombre(),
+                    ruta.getDistancia());
+        }
+        System.out.printf("  Distancia total del MST (Kruskal): %.1f km\n", costoTotal);
+    }
+
+    /**
+     * Construye y retorna una representación de grafo no dirigido.
+     * Necesario para el algoritmo de Prim.
+     */
+    private HashMap<String, LinkedList<Ruta>> getGrafoNoDirigido() {
+        HashMap<String, LinkedList<Ruta>> grafoNoDirigido = new HashMap<>();
+
+        // Inicializar el mapa con todas las paradas
+        for (String paradaNombre : lugar.keySet()) {
+            grafoNoDirigido.put(paradaNombre, new LinkedList<>());
+        }
+
+        // Agregar ambas direcciones para cada ruta
+        for (LinkedList<Ruta> listaRutas : rutas.values()) {
+            for (Ruta ruta : listaRutas) {
+                Parada origen = ruta.getOrigen();
+                Parada destino = ruta.getDestino();
+
+                // Agregar arista original A -> B
+                grafoNoDirigido.get(origen.getNombre()).add(ruta);
+
+                // Crear y agregar arista inversa B -> A
+                // (Se copian los valores, pero se invierten origen y destino)
+                Ruta rutaInversa = new Ruta(destino, origen,
+                        ruta.getDistancia(),
+                        ruta.getCosto(),
+                        ruta.getTiempoRecorrido(),
+                        ruta.getNumTransbordos(),
+                        ruta.getPosibleEvento());
+                grafoNoDirigido.get(destino.getNombre()).add(rutaInversa);
+            }
+        }
+        return grafoNoDirigido;
+    }
+
+    /**
+     * Implementación del algoritmo de Prim para encontrar el MST.
+     */
+    private void prim() {
+        System.out.println("Algoritmo de Prim (Árbol de Expansión Mínima):");
+
+        List<Ruta> mstRutas = new LinkedList<>();
+        double costoTotal = 0;
+
+        // Nodos que ya están en el MST
+        HashSet<String> inMST = new HashSet<>();
+
+        // Cola de prioridad para almacenar las aristas (Ruta) por distancia
+        PriorityQueue<Ruta> pq = new PriorityQueue<>(Comparator.comparingDouble(Ruta::getDistancia));
+
+        // 1. Obtener el grafo no dirigido
+        HashMap<String, LinkedList<Ruta>> grafoNoDirigido = getGrafoNoDirigido();
+
+        // 2. Elegir un nodo de inicio (cualquiera)
+        String startNode = lugar.keySet().iterator().next();
+        inMST.add(startNode);
+
+        // 3. Agregar todas las aristas del nodo de inicio a la cola
+        pq.addAll(grafoNoDirigido.get(startNode));
+
+        // 4. Bucle principal de Prim
+        while (!pq.isEmpty() && mstRutas.size() < lugar.size() - 1) {
+            // 5. Extraer la arista con menor peso
+            Ruta minRuta = pq.poll();
+
+            Parada origen = minRuta.getOrigen();
+            Parada destino = minRuta.getDestino();
+
+            // 6. Verificar si la arista conecta un nodo nuevo
+            String nodoNoEnMST = null;
+            if (inMST.contains(origen.getNombre()) && !inMST.contains(destino.getNombre())) {
+                nodoNoEnMST = destino.getNombre();
+            } else if (!inMST.contains(origen.getNombre()) && inMST.contains(destino.getNombre())) {
+                nodoNoEnMST = origen.getNombre();
+            }
+
+            // 7. Si es una arista válida (conecta un nodo nuevo)
+            if (nodoNoEnMST != null) {
+                mstRutas.add(minRuta);
+                costoTotal += minRuta.getDistancia();
+                inMST.add(nodoNoEnMST);
+
+                // 8. Agregar todas las aristas del nuevo nodo a la cola
+                for (Ruta rutaVecina : grafoNoDirigido.get(nodoNoEnMST)) {
+                    // Solo agregar si el otro extremo no está ya en el MST
+                    if (!inMST.contains(rutaVecina.getDestino().getNombre())) {
+                        pq.add(rutaVecina);
+                    }
+                }
+            }
+        }
+
+        // 9. Mostrar resultados
+        System.out.println("  Rutas en el MST:");
+        for (Ruta ruta : mstRutas) {
+            System.out.printf("    - %s <-> %s (Distancia: %.1f km)\n",
+                    ruta.getOrigen().getNombre(),
+                    ruta.getDestino().getNombre(),
+                    ruta.getDistancia());
+        }
+        System.out.printf("  Distancia total del MST (Prim): %.1f km\n", costoTotal);
     }
 }
