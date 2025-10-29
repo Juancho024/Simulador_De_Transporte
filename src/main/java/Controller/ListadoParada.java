@@ -112,7 +112,20 @@ public class ListadoParada implements Initializable {
 
     @FXML
     void buscarParada(ActionEvent event) {
+        String criterio = txtBuscarParada.getText().toLowerCase();
+        List<Parada> paradasFiltradas = new LinkedList<>();
 
+        for (Parada parada : RedParada.getInstance().getLugar().values()) {
+            if (parada.getNombre().toLowerCase().contains(criterio) ||
+                parada.getTipoTransporte().toLowerCase().contains(criterio) ||
+                String.valueOf(parada.getPosiciony()).contains(criterio) ||
+                String.valueOf(parada.getPosicionx()).contains(criterio)) {
+                paradasFiltradas.add(parada);
+            }
+        }
+
+        tableParada.getItems().setAll(paradasFiltradas);
+        tableParada.refresh();
     }
 
     @FXML
