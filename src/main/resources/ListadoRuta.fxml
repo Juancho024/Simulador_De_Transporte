@@ -15,9 +15,77 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="670.0" prefWidth="1300.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ListadoRuta">
+<AnchorPane prefHeight="670.0" prefWidth="1300.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ListadoRuta">
     <children>
-        <Pane layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
+      <Pane fx:id="PaneModificar" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
+         <children>
+            <Line endX="336.0" layoutX="107.0" layoutY="459.0" startX="-107.0">
+               <stroke>
+                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.239215686917305" green="0.2823529541492462" blue="0.33725491166114807" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </RadialGradient>
+               </stroke>
+            </Line>
+            <Button fx:id="btnCancelarMod" layoutX="266.0" layoutY="479.0" mnemonicParsing="false" onAction="#cancelarModificacion" prefHeight="29.0" prefWidth="118.0" style="-fx-background-color: red;" text="Cancelar" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="16.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnRealizarMod" layoutX="77.0" layoutY="479.0" mnemonicParsing="false" onAction="#realizarModificacion" prefHeight="29.0" prefWidth="118.0" style="-fx-background-color: green;" text="Actualizar" textFill="#fff7f7">
+               <font>
+                  <Font name="Segoe UI Bold" size="16.0" />
+               </font>
+            </Button>
+            <Label layoutX="29.0" layoutY="157.0" prefHeight="23.0" prefWidth="177.0" text="Destino:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="30.0" layoutY="226.0" prefHeight="23.0" prefWidth="177.0" text="Origen:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="29.0" layoutY="297.0" prefHeight="23.0" prefWidth="189.0" text="Distancia:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="218.0" layoutY="297.0" prefHeight="23.0" prefWidth="118.0" text="Costo:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="30.0" layoutY="369.0" prefHeight="23.0" prefWidth="140.0" text="Tiempo:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="218.0" layoutY="371.0" prefHeight="23.0" prefWidth="170.0" text="Transbordos:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtDestinoMod" layoutX="29.0" layoutY="190.0" prefHeight="29.0" prefWidth="358.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <TextField fx:id="txtOrigenMod" layoutX="29.0" layoutY="260.0" prefHeight="29.0" prefWidth="358.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <TextField fx:id="txtDistanciaMod" layoutX="29.0" layoutY="326.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <TextField fx:id="txtCostoMod" layoutX="218.0" layoutY="326.0" prefHeight="29.0" prefWidth="170.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <TextField fx:id="txtTiempoMod" layoutX="30.0" layoutY="401.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <TextField fx:id="txtTransbordoMod" layoutX="219.0" layoutY="402.0" prefHeight="29.0" prefWidth="170.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+         </children>
+      </Pane>
+        <Pane fx:id="PanePrincipal" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
             <children>
                 <Line endX="336.0" layoutX="107.0" layoutY="459.0" startX="-107.0">
                     <stroke>
@@ -47,6 +115,42 @@
                   <Font name="Segoe UI Bold" size="16.0" />
                </font>
             </Button>
+            <Label layoutX="29.0" layoutY="157.0" prefHeight="23.0" prefWidth="177.0" text="Destino:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="30.0" layoutY="226.0" prefHeight="23.0" prefWidth="177.0" text="Origen:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="29.0" layoutY="297.0" prefHeight="23.0" prefWidth="189.0" text="Distancia:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="218.0" layoutY="297.0" prefHeight="23.0" prefWidth="118.0" text="Costo:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="30.0" layoutY="369.0" prefHeight="23.0" prefWidth="140.0" text="Tiempo:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="218.0" layoutY="371.0" prefHeight="23.0" prefWidth="170.0" text="Transbordos:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbDestino" layoutX="29.0" layoutY="186.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Label fx:id="lbOrigen" layoutX="27.0" layoutY="254.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Label fx:id="lbDistancia" layoutX="27.0" layoutY="326.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Label fx:id="lbCosto" layoutX="222.0" layoutY="326.0" prefHeight="29.0" prefWidth="170.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Label fx:id="lbTiempo" layoutX="27.0" layoutY="402.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Label fx:id="lbTransbordo" layoutX="222.0" layoutY="402.0" prefHeight="29.0" prefWidth="170.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             </children>
         </Pane>
         <Label fx:id="lbPrincipal" alignment="CENTER" layoutX="901.0" layoutY="59.0" text="Detalles de la Ruta" textAlignment="CENTER" textFill="WHITE">
@@ -56,7 +160,7 @@
         </Label>
         <HBox layoutX="34.0" layoutY="80.0" spacing="30.0">
             <children>
-                <TextField focusTraversable="false" prefHeight="34.0" prefWidth="265.0" promptText="Buscar Ruta" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5; -fx-background-radius: 15; -fx-border-radius: 15;">
+                <TextField fx:id="txtBuscarRuta" focusTraversable="false" onAction="#buscarRuta" prefHeight="34.0" prefWidth="265.0" promptText="Buscar Ruta" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5; -fx-background-radius: 15; -fx-border-radius: 15;">
                     <font>
                         <Font name="Segoe UI Bold" size="14.0" />
                     </font>
@@ -81,22 +185,22 @@
                         </Label>
                     </children>
                 </HBox>
-                <Button fx:id="btnRegistrar" mnemonicParsing="false" onAction="#registrarRUta" prefHeight="34.0" prefWidth="229.0" style="-fx-background-color: #28A745;" text="Registrar una Nueva Ruta" textFill="#fff7f7">
+                <Button fx:id="btnRegistrar" mnemonicParsing="false" onAction="#registrarRuta" prefHeight="34.0" prefWidth="229.0" style="-fx-background-color: #28A745;" text="Registrar una Nueva Ruta" textFill="#fff7f7">
                     <font>
                         <Font name="Segoe UI Bold" size="16.0" />
                     </font>
                 </Button>
             </children>
         </HBox>
-      <TableView fx:id="tableRuta" layoutX="32.0" layoutY="150.0" prefHeight="488.0" prefWidth="781.0" style="-fx-background-color: #2B333F; -fx-border-color: #3D4856; -fx-base: #2B333F#2B333F;">
+      <TableView fx:id="tableRuta" layoutX="34.0" layoutY="143.0" prefHeight="505.0" prefWidth="771.0">
         <columns>
-          <TableColumn fx:id="colDestino" prefWidth="169.0" style="-fx-background-color: #3D4856;" text="Destino" />
-          <TableColumn fx:id="colOrigen" prefWidth="174.0" style="-fx-background-color: #3D4856;" text="Origen" />
-            <TableColumn fx:id="colDistancia" style="-fx-background-color: #3D4856;" text="Distancia" />
-            <TableColumn fx:id="colCosto" prefWidth="78.0" style="-fx-background-color: #3D4856;" text="Costo" />
-            <TableColumn fx:id="colTiempo" minWidth="0.0" prefWidth="67.0" style="-fx-background-color: #3D4856;" text="Tiempo" />
-            <TableColumn fx:id="colTransbordo" prefWidth="159.0" style="-fx-background-color: #3D4856;" text="Número de Transbordos" />
-            <TableColumn fx:id="colTransbordo1" prefWidth="52.0" style="-fx-background-color: #3D4856;" text="Estado" />
+          <TableColumn fx:id="colDestino" prefWidth="174.0" text="Destino" />
+            <TableColumn fx:id="colOrigen" prefWidth="158.0" text="Origen" />
+            <TableColumn fx:id="colDistancia" prefWidth="108.0" text="Distancia" />
+            <TableColumn fx:id="colCosto" prefWidth="87.0" style="-fx-text-fill: #2B333F;" text="Costo" />
+            <TableColumn fx:id="colTiempo" prefWidth="84.0" text="Tiempo" />
+            <TableColumn fx:id="colTransbordo" prefWidth="159.0" text="Numero de Transbordos" />
+            <TableColumn fx:id="colEstado" prefWidth="130.0" text="Estado" />
         </columns>
       </TableView>
     </children>

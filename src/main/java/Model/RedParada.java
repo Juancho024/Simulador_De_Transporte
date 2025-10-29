@@ -8,69 +8,9 @@ public class RedParada {
     private HashMap<String, Parada> lugar;
     private static RedParada instance = null;
 
-    // --- Inicio de la clase interna DisjointSet ---
-    /**
-     * Clase auxiliar para la estructura de datos Disjoint Set (Union-Find).
-     * Esencial para detectar ciclos eficientemente en el algoritmo de Kruskal.
-     */
-    class DisjointSet {
-        private HashMap<String, String> parent;
-
-        public DisjointSet(Set<String> nodos) {
-            parent = new HashMap<>();
-            // Inicialmente, cada nodo es su propio padre
-            for (String nodo : nodos) {
-                parent.put(nodo, nodo);
-            }
-        }
-
-        /**
-         * Encuentra el representante (raíz) del conjunto al que pertenece 'i'.
-         * Utiliza compresión de caminos para optimizar futuras búsquedas.
-         */
-        public String find(String i) {
-            if (parent.get(i).equals(i))
-                return i;
-            // Compresión de caminos
-            String root = find(parent.get(i));
-            parent.put(i, root);
-            return root;
-        }
-
-        /**
-         * Une los conjuntos a los que pertenecen 'x' e 'y'.
-         */
-        public void union(String x, String y) {
-            String rootX = find(x);
-            String rootY = find(y);
-            if (!rootX.equals(rootY)) {
-                // Une un árbol al otro
-                parent.put(rootX, rootY);
-            }
-        }
-    }
-    // --- Fin de la clase interna DisjointSet ---
-
-
     public RedParada() {
         this.rutas = new HashMap<>();
         this.lugar = new HashMap<>();
-    }
-
-    public HashMap<String, LinkedList<Ruta>> getRutas() {
-        return rutas;
-    }
-
-    public void setRutas(HashMap<String, LinkedList<Ruta>> rutas) {
-        this.rutas = rutas;
-    }
-
-    public HashMap<String, Parada> getLugar() {
-        return lugar;
-    }
-
-    public void setLugar(HashMap<String, Parada> lugar) {
-        this.lugar = lugar;
     }
 
     public static RedParada getInstance() {
@@ -79,7 +19,6 @@ public class RedParada {
         }
         return instance;
     }
-
     public void agregarRuta(Ruta ruta) {
         String origen = ruta.getOrigen().getNombre();
         rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(ruta);
@@ -129,8 +68,68 @@ public class RedParada {
         rutas.putIfAbsent(nombre, new LinkedList<>());
     }
 
+    public HashMap<String, LinkedList<Ruta>> getRutas() {
+        return rutas;
+    }
+
+    public void setRutas(HashMap<String, LinkedList<Ruta>> rutas) {
+        this.rutas = rutas;
+    }
+
+    public HashMap<String, Parada> getLugar() {
+        return lugar;
+    }
+
+    public void setLugar(HashMap<String, Parada> lugar) {
+        this.lugar = lugar;
+    }
+
 
     /////////////////////////////////////////////////Funciones Prueba//////////////////////////////////////
+    // --- Inicio de la clase interna DisjointSet ---
+    /**
+     * Clase auxiliar para la estructura de datos Disjoint Set (Union-Find).
+     * Esencial para detectar ciclos eficientemente en el algoritmo de Kruskal.
+     */
+    class DisjointSet {
+        private HashMap<String, String> parent;
+
+        public DisjointSet(Set<String> nodos) {
+            parent = new HashMap<>();
+            // Inicialmente, cada nodo es su propio padre
+            for (String nodo : nodos) {
+                parent.put(nodo, nodo);
+            }
+        }
+
+        /**
+         * Encuentra el representante (raíz) del conjunto al que pertenece 'i'.
+         * Utiliza compresión de caminos para optimizar futuras búsquedas.
+         */
+        public String find(String i) {
+            if (parent.get(i).equals(i))
+                return i;
+            // Compresión de caminos
+            String root = find(parent.get(i));
+            parent.put(i, root);
+            return root;
+        }
+
+        /**
+         * Une los conjuntos a los que pertenecen 'x' e 'y'.
+         */
+        public void union(String x, String y) {
+            String rootX = find(x);
+            String rootY = find(y);
+            if (!rootX.equals(rootY)) {
+                // Une un árbol al otro
+                parent.put(rootX, rootY);
+            }
+        }
+    }
+    // --- Fin de la clase interna DisjointSet ---
+
+
     public void agregarNodo(String nombre, int posiciony, int posicionx) { //Agregar parada
         Parada aux = new Parada(nombre, "", posiciony, posicionx);
         lugar.put(nombre, aux);

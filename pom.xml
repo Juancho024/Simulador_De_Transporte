@@ -124,14 +124,14 @@
                 <executions>
                     <execution>
                         <!-- Default configuration for running with: mvn clean javafx:run -->
-                        <id>default-cli</id>
+                        <id>Simulador-de-Transporte</id>
                         <configuration>
                             <mainClass>
-                                org.example.simulador_de_transporte/org.example.simulador_de_transporte.HelloApplication
+                                application.App
                             </mainClass>
-                            <launcher>app</launcher>
-                            <jlinkZipName>app</jlinkZipName>
-                            <jlinkImageName>app</jlinkImageName>
+                            <launcher>App</launcher>
+                            <jlinkZipName>App</jlinkZipName>
+                            <jlinkImageName>App</jlinkImageName>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
