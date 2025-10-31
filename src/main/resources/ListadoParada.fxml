@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -53,13 +55,12 @@
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="txtTipoTransporte" layoutX="41.0" layoutY="215.0" prefHeight="29.0" prefWidth="358.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             <Label layoutX="39.0" layoutY="269.0" prefHeight="23.0" prefWidth="200.0" text="Nombre de la Parada:" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="txtNombre" layoutX="39.0" layoutY="302.0" prefHeight="29.0" prefWidth="358.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <TextField fx:id="txtNombre" layoutX="39.0" layoutY="302.0" prefHeight="29.0" prefWidth="358.0" />
             <Label layoutX="41.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Longitud:" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
@@ -70,8 +71,9 @@
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="txtLongitud" layoutX="39.0" layoutY="388.0" prefHeight="29.0" prefWidth="160.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <TextField fx:id="txtLatitud" layoutX="227.0" layoutY="388.0" prefHeight="29.0" prefWidth="171.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <ComboBox fx:id="cbxTipoTransporte" layoutX="39.0" layoutY="217.0" prefHeight="29.0" prefWidth="358.0" />
+            <Spinner fx:id="spnLongitud" layoutX="39.0" layoutY="388.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Spinner fx:id="spnLatitud" layoutX="222.0" layoutY="388.0" prefHeight="29.0" prefWidth="177.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             </children>
         </Pane>
       <Pane fx:id="panePrincipal" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
@@ -104,7 +106,6 @@
                   <Font name="Segoe UI Bold" size="16.0" />
                </font>
             </Button>
-            <ImageView fx:id="imgFondo" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true" />
             <Label layoutX="41.0" layoutY="182.0" prefHeight="23.0" prefWidth="177.0" text="Tipo de Transporte:" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
@@ -129,6 +130,7 @@
             <Label fx:id="lbNombre" layoutX="39.0" layoutY="305.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             <Label fx:id="lbLongitud" layoutX="38.0" layoutY="391.0" prefHeight="29.0" prefWidth="160.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             <Label fx:id="lbLatitud" layoutX="227.0" layoutY="391.0" prefHeight="29.0" prefWidth="177.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <ImageView fx:id="imgFondo" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
         <Label fx:id="lbPrincipal" alignment="CENTER" layoutX="882.0" layoutY="54.0" text="Detalles de la Parada" textAlignment="CENTER" textFill="WHITE">
