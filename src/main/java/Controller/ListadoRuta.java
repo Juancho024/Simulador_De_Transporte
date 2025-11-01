@@ -19,10 +19,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class ListadoRuta implements Initializable {
     @FXML
@@ -66,7 +63,6 @@ public class ListadoRuta implements Initializable {
 
     @FXML
     private TableColumn<Ruta, String> colEstado;
-
 
     @FXML
     private Label lbCosto;
@@ -121,8 +117,7 @@ public class ListadoRuta implements Initializable {
 
             for (LinkedList<Ruta> lista : RedParada.getInstance().getRutas().values()) {
                 for (Ruta ruta : lista) {
-                    if (ruta.getOrigen().getNombre().toLowerCase().contains(cosaBuscada) ||
-                            ruta.getDestino().getNombre().toLowerCase().contains(cosaBuscada)) {
+                    if (ruta.getOrigen().getNombre().toLowerCase().contains(cosaBuscada) || ruta.getDestino().getNombre().toLowerCase().contains(cosaBuscada) || ruta.getCosto() == Double.parseDouble(cosaBuscada) || ruta.getDistancia() == Double.parseDouble(cosaBuscada) || ruta.getNumTransbordos() == Integer.parseInt(cosaBuscada) || ruta.getTiempoRecorrido() == Double.parseDouble(cosaBuscada) || ruta.getNumTransbordos() == Float.parseFloat(cosaBuscada)) {
                         rutasFiltradas.add(ruta);
                     }
                 }
@@ -139,13 +134,40 @@ public class ListadoRuta implements Initializable {
         PanePrincipal.setVisible(true);
 //Pruebas
 //        tableRuta.getSelectionModel().clearSelection();
-//        btnRealizarMod.setDisable(true);
-//        btnCancelarMod.setDisable(true);
+        limpiarCampos();
+    }
+
+    private void limpiarCampos() {
+        btnModificar.setDisable(true);
+        btnEliminar.setDisable(true);
+        lbDestino.setText("");
+        lbOrigen.setText("");
+        lbDistancia.setText("");
+        lbCosto.setText("");
+        lbTiempo.setText("");
+        lbTransbordo.setText("");
     }
 
     @FXML
     void eliminarRuta(ActionEvent event) {
-
+        int index = tableRuta.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmar eliminación");
+            alert.setHeaderText("¿Estás seguro de que deseas eliminar esta ruta?");
+            alert.setContentText("Esta acción no se puede deshacer.");
+            Optional<ButtonType> result = alert.showAndWait();
+            alert.setResizable(false);
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                return;
+            } else {
+                Ruta ruta = tableRuta.getItems().get(index);
+                RedParada.getInstance().eliminarRuta(ruta);
+                tableRuta.getItems().remove(index);
+                tableRuta.refresh();
+                limpiarCampos();
+            }
+        }
     }
 
     @FXML
@@ -158,23 +180,33 @@ public class ListadoRuta implements Initializable {
     void realizarModificacion(ActionEvent event) {
         int index = tableRuta.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
-            Ruta ruta = tableRuta.getItems().get(index);
-            var origen = RedParada.getInstance().buscarParadaPorNombre(cbxOrigenMod.getValue());
-            var destino = RedParada.getInstance().buscarParadaPorNombre(cbxDestinoMod.getValue());
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmar modificación");
+            alert.setHeaderText("¿Estás seguro de que deseas modificar esta ruta?");
+            alert.setContentText("Esta acción no se puede deshacer.");
+            alert.setResizable(false);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                return;
+            } else {
+                Ruta ruta = tableRuta.getItems().get(index);
+                var origen = RedParada.getInstance().buscarParadaPorNombre(cbxOrigenMod.getValue());
+                var destino = RedParada.getInstance().buscarParadaPorNombre(cbxDestinoMod.getValue());
 
-            ruta.setDestino(origen);
-            ruta.setOrigen(destino);
-            ruta.setDistancia(spnDistanciaMod.getValue().floatValue());
-            ruta.setCosto(spnCostoMod.getValue().floatValue());
-            ruta.setTiempoRecorrido(spnTiempoMod.getValue().floatValue());
-            ruta.setNumTransbordos(spnTransbordoMod.getValue().intValue());
+                ruta.setDestino(origen);
+                ruta.setOrigen(destino);
+                ruta.setDistancia(spnDistanciaMod.getValue().floatValue());
+                ruta.setCosto(spnCostoMod.getValue().floatValue());
+                ruta.setTiempoRecorrido(spnTiempoMod.getValue().floatValue());
+                ruta.setNumTransbordos(spnTransbordoMod.getValue().intValue());
 
-            tableRuta.getItems().set(index, ruta);
-            tableRuta.refresh();
+                tableRuta.getItems().set(index, ruta);
+                tableRuta.refresh();
 
-            PaneModificar.setVisible(false);
-            PanePrincipal.setVisible(true);
-            cargarCampos();
+                PaneModificar.setVisible(false);
+                PanePrincipal.setVisible(true);
+                cargarCampos();
+            }
         }
     }
 
@@ -216,18 +248,10 @@ public class ListadoRuta implements Initializable {
         colEstado.setCellValueFactory(new PropertyValueFactory<>("posibleEvento"));
 
         cargarTablas();
-        spnDistanciaMod.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1)
-        );
-        spnCostoMod.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1)
-        );
-        spnTiempoMod.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1)
-        );
-        spnTransbordoMod.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 10, 0, 1)
-        );
+        spnDistanciaMod.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1));
+        spnCostoMod.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1));
+        spnTiempoMod.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1));
+        spnTransbordoMod.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 10, 0, 1));
 
         tableRuta.setOnMouseClicked(event -> {
             Ruta ruta = tableRuta.getSelectionModel().getSelectedItem();
@@ -268,15 +292,15 @@ public class ListadoRuta implements Initializable {
 
     private void cargarCamposMod() {
         Ruta ruta = tableRuta.getSelectionModel().getSelectedItem();
-       if(ruta != null){
-           cbxDestinoMod.setValue(ruta.getDestino().getNombre());
-           cbxOrigenMod.setValue(ruta.getOrigen().getNombre());
-           spnDistanciaMod.getValueFactory().setValue((double) ruta.getDistancia());
-           spnCostoMod.getValueFactory().setValue((double) ruta.getCosto());
-           spnTiempoMod.getValueFactory().setValue((double) ruta.getTiempoRecorrido());
-           spnTransbordoMod.getValueFactory().setValue((double) ruta.getNumTransbordos());
-           cargarParadas();
-       }
+        if (ruta != null) {
+            cbxDestinoMod.setValue(ruta.getDestino().getNombre());
+            cbxOrigenMod.setValue(ruta.getOrigen().getNombre());
+            spnDistanciaMod.getValueFactory().setValue((double) ruta.getDistancia());
+            spnCostoMod.getValueFactory().setValue((double) ruta.getCosto());
+            spnTiempoMod.getValueFactory().setValue((double) ruta.getTiempoRecorrido());
+            spnTransbordoMod.getValueFactory().setValue((double) ruta.getNumTransbordos());
+            cargarParadas();
+        }
     }
 
     public void cargarParadas() {

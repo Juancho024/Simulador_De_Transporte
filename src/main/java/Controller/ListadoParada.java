@@ -98,8 +98,17 @@ public class ListadoParada implements Initializable {
 
     @FXML
     void ActualizarParada(ActionEvent event) {
-            int index = tableParada.getSelectionModel().getSelectedIndex();
-            if (index >= 0) {
+        int index = tableParada.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmar modificación");
+            alert.setHeaderText("¿Estás seguro de que deseas modificar esta parada?");
+            alert.setContentText("Esta acción no se puede deshacer.");
+            alert.setResizable(false);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                return;
+            } else {
                 Parada parada = tableParada.getItems().get(index);
                 parada.setNombre(txtNombre.getText());
                 parada.setTipoTransporte(cbxTipoTransporte.getValue());
@@ -113,6 +122,7 @@ public class ListadoParada implements Initializable {
                 panePrincipal.setVisible(true);
                 cargarCampos();
             }
+        }
     }
 
     @FXML
@@ -121,7 +131,7 @@ public class ListadoParada implements Initializable {
         List<Parada> paradasFiltradas = new LinkedList<>();
 
         for (Parada parada : RedParada.getInstance().getLugar().values()) {
-            if (parada.getNombre().toLowerCase().contains(criterio) ||
+            if (parada.getNombre().toLowerCase().contains(criterio) || //Buscar formar de evaluar sin acento
                     parada.getTipoTransporte().toLowerCase().contains(criterio) ||
                     String.valueOf(parada.getPosiciony()).contains(criterio) ||
                     String.valueOf(parada.getPosicionx()).contains(criterio)) {
@@ -139,13 +149,38 @@ public class ListadoParada implements Initializable {
         panePrincipal.setVisible(true);
         //Pruebas
 //        tableParada.getSelectionModel().clearSelection();
-//        btnModificar.setDisable(true);
-//        btnEliminar.setDisable(true);
+        limpiarCampos();
+    }
+
+    private void limpiarCampos() {
+        btnModificar.setDisable(true);
+        btnEliminar.setDisable(true);
+        lbNombre.setText("");
+        lbTipoTransporte.setText("");
+        lbLatitud.setText("");
+        lbLongitud.setText("");
     }
 
     @FXML
     void eliminiarParada(ActionEvent event) {
-
+        int index = tableParada.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmar eliminación");
+            alert.setHeaderText("¿Estás seguro de que deseas eliminar esta parada?");
+            alert.setContentText("Esta acción no se puede deshacer.");
+            alert.setResizable(false);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                return;
+            } else {
+                Parada parada = tableParada.getItems().get(index);
+                RedParada.getInstance().eliminarParada(parada);
+                cargarTablas();
+                tableParada.refresh();
+                limpiarCampos();
+            }
+        }
     }
 
     @FXML
@@ -156,7 +191,7 @@ public class ListadoParada implements Initializable {
 
     private void cargarCamposMod() {
         Parada parada = tableParada.getSelectionModel().getSelectedItem();
-        if(parada != null) {
+        if (parada != null) {
             txtNombre.setText(parada.getNombre());
             cbxTipoTransporte.setValue(parada.getTipoTransporte());
             spnLatitud.getValueFactory().setValue(parada.getPosiciony());
@@ -187,7 +222,7 @@ public class ListadoParada implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) { //Poner los botones de modificar desabilidatos hasta que se seleccione una parada
         btnModificar.setDisable(true);
         btnEliminar.setDisable(true);
-        cbxTipoTransporte.getItems().addAll("Bus","Tren","Metro","Tranvía","Ferry");
+        cbxTipoTransporte.getItems().addAll("Bus", "Tren", "Metro", "Tranvía", "Ferry");
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colTipoTransporte.setCellValueFactory(new PropertyValueFactory<>("tipoTransporte"));
         colLatitud.setCellValueFactory(new PropertyValueFactory<>("posiciony"));
@@ -215,7 +250,8 @@ public class ListadoParada implements Initializable {
             }
         });
     }
-    private void cargarTablas(){
+
+    private void cargarTablas() {
         tableParada.getItems().clear();
         tableParada.getItems().setAll(RedParada.getInstance().getLugar().values());
         tableParada.refresh();
