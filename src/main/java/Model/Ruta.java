@@ -1,12 +1,13 @@
 package Model;
 
 public class Ruta {
+    private long id;
     private Parada origen;
     private Parada destino;
     private float distancia;
     private float tiempoRecorrido;
     private float costo;
-    private float numTransbordos;
+    private int numTransbordos;
     private String posibleEvento;
 
 //    public Ruta(Parada origen, Parada destino, int distancia) {
@@ -15,7 +16,7 @@ public class Ruta {
 //        this.distancia = distancia;
 //    }
 
-    public Ruta(Parada origen, Parada destino, float distancia, float tiempoRecorrido, float costo, float numTransbordos, String posibleEvento) {
+    public Ruta(Parada origen, Parada destino, float distancia, float tiempoRecorrido, float costo, int numTransbordos, String posibleEvento) {
         this.origen = origen;
         this.destino = destino;
         this.distancia = distancia;
@@ -44,6 +45,14 @@ public class Ruta {
         if(posibleEvento.equals("Normales")) {
             tiempoRecorrido /= 2;
         }
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getPosibleEvento() {
@@ -93,11 +102,23 @@ public class Ruta {
         this.costo = costo;
     }
 
-    public float getNumTransbordos() {
+    public int getNumTransbordos() {
         return numTransbordos;
     }
 
-    public void setNumTransbordos(float numTransbordos) {
+    public void setNumTransbordos(int numTransbordos) {
         this.numTransbordos = numTransbordos;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Ruta ruta)) return false;
+
+        return id == ruta.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
     }
 }

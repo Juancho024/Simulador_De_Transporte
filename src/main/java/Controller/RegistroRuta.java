@@ -92,7 +92,7 @@ public class RegistroRuta implements Initializable {
             alert.showAndWait();
             return;
         }
-        if(RedParada.getInstance().existeRutaIgual(new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (float) transbordo, "Normales"))) {
+        if(RedParada.getInstance().existeRutaIgual(new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales"))) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Ruta existente");
@@ -109,7 +109,7 @@ public class RegistroRuta implements Initializable {
             return;
         }
         try{
-                Ruta ruta = new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (float) transbordo, "Normales");
+                Ruta ruta = new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales");
                 RedParada.getInstance().agregarRuta(ruta);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Éxito");

@@ -1,5 +1,7 @@
 package Model;
 
+import DataBase.ParadaDAO;
+
 import java.util.*;
 
 public class RedParada {
@@ -160,7 +162,7 @@ public class RedParada {
         Parada paradaDestino = lugar.get(destino);
 
         if (paradaOrigen != null && paradaDestino != null) {
-            Ruta arista = new Ruta(paradaOrigen, paradaDestino, peso, 0.0f, 0.0f, 0.0f, "");
+            Ruta arista = new Ruta(paradaOrigen, paradaDestino, peso, 0.0f, 0.0f, 0, "");
             rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(arista);
         } else {
             System.out.println("Uno de los lugares no existe.");
@@ -195,6 +197,16 @@ public class RedParada {
         redParada.agregarNodo("C", 10, 15);
         redParada.agregarNodo("D", 10, 15);
         redParada.agregarNodo("E", 10, 15);
+
+//        Parada parada1 = new Parada("B", "Bus", 10, 15);
+//        parada1.setId(2L);
+//        ParadaDAO.getInstance().guardarParada(parada1);
+//        List<Parada> lista = new ArrayList<>(ParadaDAO.getInstance().obtenerParadas().values());
+//        for (Parada parada : lista) {
+//            System.out.println("Parada guardada: " + parada.getNombre() + ", Tipo: " + parada.getTipoTransporte());
+//        }
+//        ParadaDAO.getInstance().actualizarParada(parada1);
+//        ParadaDAO.getInstance().eliminarParada(1L);
 
         // Agregar aristas (rutas) - Bidireccionales para un buen test de MST
         redParada.agregarArista("A", "B", 10);
