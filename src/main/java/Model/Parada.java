@@ -1,6 +1,7 @@
 package Model;
 
 public class Parada {
+    private long id;
     private String nombre;
     private String tipoTransporte;
     private int posicionx;
@@ -11,6 +12,14 @@ public class Parada {
         this.posiciony = posiciony;
         this.posicionx = posicionx;
         this.tipoTransporte = tipoTransporte;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -43,5 +52,27 @@ public class Parada {
 
     public void setPosiciony(int posiciony) {
         this.posiciony = posiciony;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Parada parada)) return false;
+
+        return id == parada.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
+    @Override
+    public String toString() {
+        return "Parada{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", tipoTransporte='" + tipoTransporte + '\'' +
+                ", posicionX=" + posicionx +
+                ", posicionY=" + posiciony +
+                '}';
     }
 }

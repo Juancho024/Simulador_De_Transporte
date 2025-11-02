@@ -6,14 +6,12 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="690.0" prefWidth="1360.0" style="-fx-background-color: #20252D;" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Principal">
+<AnchorPane prefHeight="690.0" prefWidth="1360.0" style="-fx-background-color: #20252D;" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Principal">
    <children>
       <HBox layoutX="695.0" layoutY="26.0" spacing="60.0">
          <children>
@@ -47,15 +45,7 @@
             <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="113.0" text="Button" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <Pane layoutX="427.0" layoutY="84.0" prefHeight="587.0" prefWidth="911.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;">
-         <children>
-            <ImageView fx:id="imgMapa" fitHeight="574.0" fitWidth="903.0" layoutX="14.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/mapaRD.png" />
-               </image>
-            </ImageView>
-         </children>
-      </Pane>
+      <Pane layoutX="427.0" layoutY="84.0" prefHeight="587.0" prefWidth="911.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;" />
       <TableView fx:id="TableParada" layoutX="24.0" layoutY="151.0" prefHeight="214.0" prefWidth="359.0" style="-fx-background-color: lightgrey;">
         <columns>
           <TableColumn fx:id="colTipoTransporte" prefWidth="148.0" text="Tipo de Transporte" />

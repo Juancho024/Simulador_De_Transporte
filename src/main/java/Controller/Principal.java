@@ -170,6 +170,7 @@ public class Principal {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
+            stage.setOnHidden(e -> cargarTablas());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,6 +189,7 @@ public class Principal {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
+            stage.setOnHidden(e -> cargarTablas());
         } catch (Exception e){
             e.printStackTrace();
         }

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -19,6 +21,9 @@
     <children>
       <Pane fx:id="PaneModificar" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
          <children>
+            <Spinner fx:id="spnDistanciaMod" layoutX="29.0" layoutY="326.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <ComboBox fx:id="cbxOrigenMod" layoutX="29.0" layoutY="260.0" prefHeight="29.0" prefWidth="358.0" />
+            <ComboBox fx:id="cbxDestinoMod" layoutX="29.0" layoutY="187.0" prefHeight="29.0" prefWidth="358.0" />
             <Line endX="336.0" layoutX="107.0" layoutY="459.0" startX="-107.0">
                <stroke>
                   <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
@@ -77,12 +82,9 @@
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="txtDestinoMod" layoutX="29.0" layoutY="190.0" prefHeight="29.0" prefWidth="358.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <TextField fx:id="txtOrigenMod" layoutX="29.0" layoutY="260.0" prefHeight="29.0" prefWidth="358.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <TextField fx:id="txtDistanciaMod" layoutX="29.0" layoutY="326.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <TextField fx:id="txtCostoMod" layoutX="218.0" layoutY="326.0" prefHeight="29.0" prefWidth="170.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <TextField fx:id="txtTiempoMod" layoutX="30.0" layoutY="401.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <TextField fx:id="txtTransbordoMod" layoutX="219.0" layoutY="402.0" prefHeight="29.0" prefWidth="170.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Spinner fx:id="spnCostoMod" layoutX="218.0" layoutY="326.0" prefHeight="29.0" prefWidth="170.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Spinner fx:id="spnTiempoMod" layoutX="30.0" layoutY="402.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Spinner fx:id="spnTransbordoMod" layoutX="218.0" layoutY="402.0" prefHeight="29.0" prefWidth="170.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
          </children>
       </Pane>
         <Pane fx:id="PanePrincipal" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">

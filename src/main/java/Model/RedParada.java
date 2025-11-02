@@ -1,5 +1,7 @@
 package Model;
 
+import DataBase.ParadaDAO;
+
 import java.util.*;
 
 public class RedParada {
@@ -84,6 +86,25 @@ public class RedParada {
         this.lugar = lugar;
     }
 
+    public void eliminarParada(Parada parada) {
+        String nombre = parada.getNombre();
+        lugar.remove(nombre);
+        rutas.remove(nombre);
+
+        // Eliminar rutas que tengan a esta parada como destino
+        for (LinkedList<Ruta> listaRutas : rutas.values()) {
+            listaRutas.removeIf(ruta -> ruta.getDestino().getNombre().equals(nombre));
+        }
+    }
+
+    public void eliminarRuta(Ruta ruta) {
+        String origen = ruta.getOrigen().getNombre();
+        LinkedList<Ruta> listaRutas = rutas.get(origen);
+        // Eliminar la ruta específica de la lista
+        if (listaRutas != null) {
+            listaRutas.removeIf(r -> r.getDestino().getNombre().equals(ruta.getDestino().getNombre()));
+        }
+    }
 
     /////////////////////////////////////////////////Funciones Prueba//////////////////////////////////////
     // --- Inicio de la clase interna DisjointSet ---
@@ -141,7 +162,7 @@ public class RedParada {
         Parada paradaDestino = lugar.get(destino);
 
         if (paradaOrigen != null && paradaDestino != null) {
-            Ruta arista = new Ruta(paradaOrigen, paradaDestino, peso, 0.0f, 0.0f, 0.0f, "");
+            Ruta arista = new Ruta(paradaOrigen, paradaDestino, peso, 0.0f, 0.0f, 0, "");
             rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(arista);
         } else {
             System.out.println("Uno de los lugares no existe.");
@@ -149,7 +170,7 @@ public class RedParada {
     }
 
     public void mostrarGrafo() {
-        System.out.print("RedParada (Grafo Dirigido): \n");
+        System.out.print("Red Parada (Grafo Dirigido): \n");
         for (String aux : rutas.keySet()) {
             LinkedList<Ruta> listRutas = rutas.get(aux);
             System.out.print("Lugar " + aux + " tiene rutas al ");
@@ -176,6 +197,16 @@ public class RedParada {
         redParada.agregarNodo("C", 10, 15);
         redParada.agregarNodo("D", 10, 15);
         redParada.agregarNodo("E", 10, 15);
+
+//        Parada parada1 = new Parada("B", "Bus", 10, 15);
+//        parada1.setId(2L);
+//        ParadaDAO.getInstance().guardarParada(parada1);
+//        List<Parada> lista = new ArrayList<>(ParadaDAO.getInstance().obtenerParadas().values());
+//        for (Parada parada : lista) {
+//            System.out.println("Parada guardada: " + parada.getNombre() + ", Tipo: " + parada.getTipoTransporte());
+//        }
+//        ParadaDAO.getInstance().actualizarParada(parada1);
+//        ParadaDAO.getInstance().eliminarParada(1L);
 
         // Agregar aristas (rutas) - Bidireccionales para un buen test de MST
         redParada.agregarArista("A", "B", 10);
@@ -284,9 +315,12 @@ public class RedParada {
         for (int i = 0; i < n; i++) {
             indice.put(nombres.get(i), i);
         }
-        int distancia[][] = new int[n][n];
-        final int numMax = Integer.MAX_VALUE / 2; // Evitar overflow
 
+        // Matriz de pesos (ponderaciones)
+        float[][] distancia = new float[n][n];
+        final float numMax = Float.MAX_VALUE / 4; // Evita overflow
+
+        // Inicialización
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i == j)
@@ -295,13 +329,25 @@ public class RedParada {
                     distancia[i][j] = numMax;
             }
         }
-        for (String lugar : lugar.keySet()) {
-            for (Ruta ruta : rutas.get(lugar)) {
-                int i = indice.get(lugar);
+
+        // Asignar los pesos ponderados a las aristas
+        for (String origen : lugar.keySet()) {
+            for (Ruta ruta : rutas.get(origen)) {
+                int i = indice.get(origen);
                 int j = indice.get(ruta.getDestino().getNombre());
-                distancia[i][j] = (int) ruta.getDistancia();
+
+                float pesoPonderado = ruta.getDistancia()
+                        + 1.0f * ruta.getCosto()
+                        + 2.0f * ruta.getTiempoRecorrido()
+                        + 1.0f * ruta.getNumTransbordos();
+
+                if (pesoPonderado < distancia[i][j]) {
+                    distancia[i][j] = pesoPonderado;
+                }
             }
         }
+
+        // Algoritmo principal de Floyd-Warshall
         for (int k = 0; k < n; k++) {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
@@ -311,26 +357,28 @@ public class RedParada {
                 }
             }
         }
-        System.out.println("Floyd-Warshall - Matriz de distancias mínimas:");
-        System.out.print("     ");
+
+        // Imprimir la matriz de distancias mínimas
+        System.out.println("Floyd-Warshall (ponderado) - Matriz de pesos mínimos:");
+        System.out.print("       ");
         for (String nombre : nombres) {
-            System.out.printf("%5s", nombre);
+            System.out.printf("%10s", nombre);
         }
         System.out.println();
+
         for (int i = 0; i < n; i++) {
-            System.out.printf("%5s", nombres.get(i));
+            System.out.printf("%10s", nombres.get(i));
             for (int j = 0; j < n; j++) {
-                if (distancia[i][j] == numMax)
-                    System.out.printf("%5s", "∞");
+                if (distancia[i][j] >= numMax / 2)
+                    System.out.printf("%10s", "∞");
                 else
-                    System.out.printf("%5d", distancia[i][j]);
+                    System.out.printf("%10.2f", distancia[i][j]);
             }
             System.out.println();
         }
-
     }
 
-    private void generarEventoRandow() {
+    public void generarEventoRandow() {
         // Implementación para generar eventos aleatorios en el grafo
         Random random = new Random();
         List<String> claves = new ArrayList<>(this.rutas.keySet());
