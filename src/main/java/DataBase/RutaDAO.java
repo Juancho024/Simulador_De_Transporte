@@ -90,11 +90,14 @@ public class RutaDAO {
     }
 
 
-    private Parada obtenerParadaPorId(long destinoId) {
-        Parada parada = null;
+    private Parada obtenerParadaPorId(long id) {
         final String sql = "SELECT * FROM parada WHERE id = ?";
+        Parada parada = null;
+
         try(Connection connection = DataBaseConnection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()){
                 String nombre = resultSet.getString("nombre");
