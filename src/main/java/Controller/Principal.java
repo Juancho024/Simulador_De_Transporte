@@ -1,5 +1,7 @@
 package Controller;
 
+import DataBase.ParadaDAO;
+import DataBase.RutaDAO;
 import Model.Parada;
 import Model.RedParada;
 import Model.Ruta;
@@ -144,13 +146,13 @@ public class Principal {
     }
     public void cargarTablas(){
         TableParada.getItems().clear();
-        TableParada.getItems().setAll(RedParada.getInstance().getLugar().values());
+        TableParada.getItems().setAll(ParadaDAO.getInstance().obtenerParadas().values());
         TableParada.refresh();
 
         TableRuta.getItems().clear();
         List<Ruta> todasLasRutas = new ArrayList<>();
 
-        for (LinkedList<Ruta> lista : RedParada.getInstance().getRutas().values()) {
+        for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
             todasLasRutas.addAll(lista);
         }
 

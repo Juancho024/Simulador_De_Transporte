@@ -19,7 +19,7 @@ public class RutaDAO {
     }
 
     public void guardarRuta(Ruta ruta) {
-        final String sql = "INSERT INTO ruta (origen, destino, distancia, tiempoRecorrido, costo, numTransbordo, \"posibleEvento\") VALUES (?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO ruta (origen, destino, distancia, tiempoRecorrido, costo, numTransbordo, \"posibleevento\") VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try(Connection connection = DataBaseConnection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -62,7 +62,7 @@ public class RutaDAO {
         return rutas;
     }
     public void actualizarRuta(Ruta ruta){
-        final String sql = "UPDATE ruta SET origen = ?, destino = ?, distancia = ?, tiempoRecorrido = ?, costo = ?, numTransbordo = ?, \"posibleEvento\" = ? WHERE id = ?";
+        final String sql = "UPDATE ruta SET origen = ?, destino = ?, distancia = ?, tiempoRecorrido = ?, costo = ?, numTransbordo = ?, \"posibleevento\" = ? WHERE id = ?";
         try(Connection connection = DataBaseConnection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, ruta.getOrigen().getId());
@@ -101,12 +101,36 @@ public class RutaDAO {
                  String tipoTransporte = resultSet.getString("tipoTransporte");
                  int posiciony = resultSet.getInt("posiciony");
                  int posicionx = resultSet.getInt("posicionx");
-                 parada = new Parada(nombre, tipoTransporte, posicionx, posiciony);
+                 byte[] icono = resultSet.getBytes("icono");
+                 parada = new Parada(nombre, tipoTransporte, posicionx, posiciony, icono);
                  parada.setId(resultSet.getLong("id"));
             }
         } catch (SQLException e){
             e.printStackTrace();
         }
         return parada;
+    }
+
+    public Parada buscarParadaPorNombre(String name) {
+        final String sql = "SELECT * FROM parada WHERE nombre = ?";
+        Parada aux = null;
+        try(Connection connection = DataBaseConnection.getConnection()){
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                String nombre = resultSet.getString("nombre");
+                String tipoTransporte = resultSet.getString("tipoTransporte");
+                int posicionx = resultSet.getInt("posicionx");
+                int posiciony = resultSet.getInt("posiciony");
+                byte[] icono = resultSet.getBytes("icono");
+                aux = new Parada(nombre, tipoTransporte, posicionx, posiciony, icono);
+                aux.setId(resultSet.getLong("id"));
+
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return aux;
     }
 }

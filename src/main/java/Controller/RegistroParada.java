@@ -1,14 +1,27 @@
 package Controller;
 
+import DataBase.ParadaDAO;
 import Model.Parada;
 import Model.RedParada;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class RegistroParada implements Initializable {
@@ -49,6 +62,11 @@ public class RegistroParada implements Initializable {
     private TextField txtNombre;
 
     @FXML
+    private ImageView ImgIcono;
+
+    private byte[] iconoBytes;
+
+    @FXML
     void Cancelar(ActionEvent event) {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();
@@ -56,8 +74,31 @@ public class RegistroParada implements Initializable {
 
     @FXML
     void agregarIcono(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Icono");
 
+        FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter(
+                "Archivos de Imagen", Arrays.asList("*.png", "*.jpg", "*.jpeg"));
+
+        fileChooser.getExtensionFilters().add(imageFilter);
+        File file = fileChooser.showOpenDialog(btnIcono.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                iconoBytes = Files.readAllBytes(file.toPath());
+                Image img = new Image(new java.io.ByteArrayInputStream(iconoBytes));
+                ImgIcono.setImage(img);
+
+            } catch (IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de Archivo");
+                alert.setHeaderText("Error al cargar la imagen");
+                alert.setContentText("No se pudo leer el archivo: " + e.getMessage());
+                alert.showAndWait();
+            }
+        }
     }
+
 
     @FXML
     void registrarParada(ActionEvent event) {
@@ -76,8 +117,8 @@ public class RegistroParada implements Initializable {
         }
 
         try{
-            Parada nuevaParada = new Parada(nombre, tipoTransporte, latitud, longitud);
-            RedParada.getInstance().agregarParada(nuevaParada);
+            Parada nuevaParada = new Parada(nombre, tipoTransporte, latitud, longitud, iconoBytes);
+            ParadaDAO.getInstance().guardarParada(nuevaParada);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Registro Exitoso");
             alert.setHeaderText(null);
@@ -103,8 +144,9 @@ public class RegistroParada implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configurarSpinnersandCombox();
-
     }
+
+
 
     private void configurarSpinnersandCombox() {
         SpinnerValueFactory<Integer> Latitud = new SpinnerValueFactory.IntegerSpinnerValueFactory(-90, 90, 0, 1);

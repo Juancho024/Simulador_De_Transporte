@@ -6,12 +6,14 @@ public class Parada {
     private String tipoTransporte;
     private int posicionx;
     private int posiciony;
+    private byte[] icono;
 
-    public Parada(String nombre, String tipoTransporte, int posiciony, int posicionx) {
+    public Parada(String nombre, String tipoTransporte, int posiciony, int posicionx, byte[] icono) {
         this.nombre = nombre;
         this.posiciony = posiciony;
         this.posicionx = posicionx;
         this.tipoTransporte = tipoTransporte;
+        this.icono = icono;
     }
 
     public long getId() {
@@ -54,6 +56,14 @@ public class Parada {
         this.posiciony = posiciony;
     }
 
+    public byte[] getIcono() {
+        return icono;
+    }
+
+    public void setIcono(byte[] icono) {
+        this.icono = icono;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof Parada parada)) return false;
@@ -65,14 +75,14 @@ public class Parada {
     public int hashCode() {
         return Long.hashCode(id);
     }
-    @Override
-    public String toString() {
-        return "Parada{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", tipoTransporte='" + tipoTransporte + '\'' +
-                ", posicionX=" + posicionx +
-                ", posicionY=" + posiciony +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Parada{" +
+//                "id=" + id +
+//                ", nombre='" + nombre + '\'' +
+//                ", tipoTransporte='" + tipoTransporte + '\'' +
+//                ", posicionX=" + posicionx +
+//                ", posicionY=" + posiciony +
+//                '}';
+//    }
 }

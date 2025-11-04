@@ -1,5 +1,7 @@
 package Controller;
 
+import DataBase.ParadaDAO;
+import DataBase.RutaDAO;
 import Model.Parada;
 import Model.RedParada;
 import Model.Ruta;
@@ -10,7 +12,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public class RegistroRuta implements Initializable {
@@ -73,8 +79,9 @@ public class RegistroRuta implements Initializable {
         int transbordo = spnTransbordo.getValue();
         double tiempo = spnTiempo.getValue();
 
-        Parada auxOrigen = RedParada.getInstance().buscarParadaPorNombre(origen);
-        Parada auxDestino = RedParada.getInstance().buscarParadaPorNombre(destino);
+
+        Parada auxOrigen = ParadaDAO.getInstance().buscarParadaByName(origen);
+        Parada auxDestino = ParadaDAO.getInstance().buscarParadaByName(destino);
 
         if(auxOrigen == null || auxDestino == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -92,7 +99,7 @@ public class RegistroRuta implements Initializable {
             alert.showAndWait();
             return;
         }
-        if(RedParada.getInstance().existeRutaIgual(new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales"))) {
+        if(ParadaDAO.getInstance().existeRutaIgual(new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales"))) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Ruta existente");
@@ -109,8 +116,8 @@ public class RegistroRuta implements Initializable {
             return;
         }
         try{
-                Ruta ruta = new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales");
-                RedParada.getInstance().agregarRuta(ruta);
+                Ruta ruta = new Ruta(auxOrigen, auxDestino, (float) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales");
+                RutaDAO.getInstancia().guardarRuta(ruta);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Éxito");
                 alert.setHeaderText("Ruta registrada");
@@ -158,13 +165,18 @@ public class RegistroRuta implements Initializable {
     }
 
     public void cargarParadas() {
-        RedParada redParada = RedParada.getInstance();
-        if (redParada != null && !redParada.getLugar().isEmpty()) {
-            cbxOrigen.setItems(FXCollections.observableArrayList(redParada.getLugar().keySet()));
-            cbxDestino.setItems(FXCollections.observableArrayList(redParada.getLugar().keySet()));
+        HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
+
+        if (!paradas.isEmpty()) {
+            java.util.List<String> nombresParadas = paradas.values().stream()
+                    .map(Parada::getNombre)
+                    .collect(Collectors.toList());
+
+            cbxOrigen.setItems(FXCollections.observableArrayList(nombresParadas));
+            cbxDestino.setItems(FXCollections.observableArrayList(nombresParadas));
         } else {
-            cbxOrigen.setItems(FXCollections.observableArrayList());
-            cbxDestino.setItems(FXCollections.observableArrayList());
+            cbxOrigen.setItems(FXCollections.observableArrayList("No hay ninguna Parada Registrada."));
+            cbxDestino.setItems(FXCollections.observableArrayList("No hay ningua Parada Registrada."));
         }
     }
 }

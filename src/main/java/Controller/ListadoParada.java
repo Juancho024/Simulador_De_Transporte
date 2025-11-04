@@ -1,5 +1,6 @@
 package Controller;
 
+import DataBase.ParadaDAO;
 import Model.Parada;
 import Model.RedParada;
 import Utilities.paths;
@@ -11,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
@@ -20,6 +22,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 
 public class ListadoParada implements Initializable {
@@ -97,6 +100,14 @@ public class ListadoParada implements Initializable {
     private TextField txtNombre;
 
     @FXML
+    private Button btnIcono;
+
+    @FXML
+    void agregarIcono(ActionEvent event) {
+
+    }
+
+    @FXML
     void ActualizarParada(ActionEvent event) {
         int index = tableParada.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
@@ -115,6 +126,7 @@ public class ListadoParada implements Initializable {
                 parada.setPosiciony(Integer.parseInt(spnLatitud.getValue().toString()));
                 parada.setPosicionx(Integer.parseInt(spnLongitud.getValue().toString()));
 
+                ParadaDAO.getInstance().actualizarParada(parada);
                 tableParada.getItems().set(index, parada);
                 tableParada.refresh();
 
@@ -175,7 +187,7 @@ public class ListadoParada implements Initializable {
                 return;
             } else {
                 Parada parada = tableParada.getItems().get(index);
-                RedParada.getInstance().eliminarParada(parada);
+                ParadaDAO.getInstance().eliminarParada(parada.getId()); //Eliminar de la base de datos
                 cargarTablas();
                 tableParada.refresh();
                 limpiarCampos();
@@ -196,6 +208,8 @@ public class ListadoParada implements Initializable {
             cbxTipoTransporte.setValue(parada.getTipoTransporte());
             spnLatitud.getValueFactory().setValue(parada.getPosiciony());
             spnLongitud.getValueFactory().setValue(parada.getPosicionx());
+            Image img = new Image(new java.io.ByteArrayInputStream(parada.getIcono()));
+            imgFondoMod.setImage(img);
         }
     }
 
@@ -253,7 +267,7 @@ public class ListadoParada implements Initializable {
 
     private void cargarTablas() {
         tableParada.getItems().clear();
-        tableParada.getItems().setAll(RedParada.getInstance().getLugar().values());
+        tableParada.getItems().setAll(ParadaDAO.getInstance().obtenerParadas().values());
         tableParada.refresh();
     }
 
@@ -263,6 +277,8 @@ public class ListadoParada implements Initializable {
         lbTipoTransporte.setText(" " + parada.getTipoTransporte());
         lbLatitud.setText(" " + String.valueOf(parada.getPosiciony()));
         lbLongitud.setText(" " + String.valueOf(parada.getPosicionx()));
+        Image img = new Image(new java.io.ByteArrayInputStream(parada.getIcono()));
+        imgFondo.setImage(img); //Revisar y probar
     }
 
 }

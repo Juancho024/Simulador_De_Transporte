@@ -1,5 +1,8 @@
 package Controller;
 
+import DataBase.ParadaDAO;
+import DataBase.RutaDAO;
+import Model.Parada;
 import Model.RedParada;
 import Model.Ruta;
 import Utilities.paths;
@@ -20,6 +23,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ListadoRuta implements Initializable {
     @FXML
@@ -115,7 +119,7 @@ public class ListadoRuta implements Initializable {
             String cosaBuscada = txtBuscarRuta.getText().toLowerCase();
             List<Ruta> rutasFiltradas = new ArrayList<>();
 
-            for (LinkedList<Ruta> lista : RedParada.getInstance().getRutas().values()) {
+            for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
                 for (Ruta ruta : lista) {
                     if (ruta.getOrigen().getNombre().toLowerCase().contains(cosaBuscada) || ruta.getDestino().getNombre().toLowerCase().contains(cosaBuscada) || ruta.getCosto() == Double.parseDouble(cosaBuscada) || ruta.getDistancia() == Double.parseDouble(cosaBuscada) || ruta.getNumTransbordos() == Integer.parseInt(cosaBuscada) || ruta.getTiempoRecorrido() == Double.parseDouble(cosaBuscada) || ruta.getNumTransbordos() == Float.parseFloat(cosaBuscada)) {
                         rutasFiltradas.add(ruta);
@@ -162,7 +166,8 @@ public class ListadoRuta implements Initializable {
                 return;
             } else {
                 Ruta ruta = tableRuta.getItems().get(index);
-                RedParada.getInstance().eliminarRuta(ruta);
+//                RedParada.getInstance().eliminarRuta(ruta);
+                RutaDAO.getInstancia().eliminarRuta(ruta.getId());
                 tableRuta.getItems().remove(index);
                 tableRuta.refresh();
                 limpiarCampos();
@@ -190,8 +195,8 @@ public class ListadoRuta implements Initializable {
                 return;
             } else {
                 Ruta ruta = tableRuta.getItems().get(index);
-                var origen = RedParada.getInstance().buscarParadaPorNombre(cbxOrigenMod.getValue());
-                var destino = RedParada.getInstance().buscarParadaPorNombre(cbxDestinoMod.getValue());
+                var origen = RutaDAO.getInstancia().buscarParadaPorNombre(cbxOrigenMod.getValue());
+                var destino = RutaDAO.getInstancia().buscarParadaPorNombre(cbxDestinoMod.getValue());
 
                 ruta.setDestino(origen);
                 ruta.setOrigen(destino);
@@ -199,7 +204,7 @@ public class ListadoRuta implements Initializable {
                 ruta.setCosto(spnCostoMod.getValue().floatValue());
                 ruta.setTiempoRecorrido(spnTiempoMod.getValue().floatValue());
                 ruta.setNumTransbordos(spnTransbordoMod.getValue().intValue());
-
+                RutaDAO.getInstancia().actualizarRuta(ruta);
                 tableRuta.getItems().set(index, ruta);
                 tableRuta.refresh();
 
@@ -272,7 +277,7 @@ public class ListadoRuta implements Initializable {
         tableRuta.getItems().clear();
         List<Ruta> todasLasRutas = new LinkedList<>();
 
-        for (LinkedList<Ruta> lista : RedParada.getInstance().getRutas().values()) {
+        for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
             todasLasRutas.addAll(lista);
         }
 
@@ -304,13 +309,17 @@ public class ListadoRuta implements Initializable {
     }
 
     public void cargarParadas() {
-        RedParada redParada = RedParada.getInstance();
-        if (redParada != null && !redParada.getLugar().isEmpty()) {
-            cbxDestinoMod.setItems(FXCollections.observableArrayList(redParada.getLugar().keySet()));
-            cbxOrigenMod.setItems(FXCollections.observableArrayList(redParada.getLugar().keySet()));
+        HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
+        if (paradas != null && !paradas.isEmpty()) {
+            java.util.List<String> nombresParadas = paradas.values().stream()
+                    .map(Parada::getNombre)
+                    .collect(Collectors.toList());
+
+            cbxDestinoMod.setItems(FXCollections.observableArrayList(nombresParadas));
+            cbxOrigenMod.setItems(FXCollections.observableArrayList(nombresParadas));
         } else {
-            cbxDestinoMod.setItems(FXCollections.observableArrayList());
-            cbxOrigenMod.setItems(FXCollections.observableArrayList());
+            cbxDestinoMod.setItems(FXCollections.observableArrayList("No hay ninguna Parada Registrada."));
+            cbxOrigenMod.setItems(FXCollections.observableArrayList("No hay ninguna Parada Registrada."));
         }
     }
 }

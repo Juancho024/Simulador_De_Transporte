@@ -152,7 +152,8 @@ public class RedParada {
 
 
     public void agregarNodo(String nombre, int posiciony, int posicionx) { //Agregar parada
-        Parada aux = new Parada(nombre, "", posiciony, posicionx);
+        byte[] icono = null;
+        Parada aux = new Parada(nombre, "", posicionx, posiciony, icono);
         lugar.put(nombre, aux);
         rutas.putIfAbsent(nombre, new LinkedList<>());
     }
