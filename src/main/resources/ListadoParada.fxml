@@ -17,65 +17,8 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="670.0" prefWidth="1300.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ListadoParada">
+<AnchorPane prefHeight="670.0" prefWidth="1300.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ListadoParada">
     <children>
-      <Pane fx:id="panePrincipal" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
-         <children>
-            <Line endX="336.0" layoutX="107.0" layoutY="459.0" startX="-107.0">
-               <stroke>
-                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                     <stops>
-                        <Stop>
-                           <color>
-                              <Color red="0.239215686917305" green="0.2823529541492462" blue="0.33725491166114807" />
-                           </color>
-                        </Stop>
-                        <Stop offset="1.0">
-                           <color>
-                              <Color red="1.0" green="1.0" blue="1.0" />
-                           </color>
-                        </Stop>
-                     </stops>
-                  </RadialGradient>
-               </stroke>
-            </Line>
-            <Button fx:id="btnModificar" layoutX="71.0" layoutY="481.0" mnemonicParsing="false" onAction="#realizarModificacion" prefHeight="29.0" prefWidth="118.0" style="-fx-background-color: green;" text="Modificar" textFill="#fff7f7">
-               <font>
-                  <Font name="Segoe UI Bold" size="16.0" />
-               </font>
-            </Button>
-            <Button fx:id="btnEliminar" layoutX="274.0" layoutY="481.0" mnemonicParsing="false" onAction="#eliminiarParada" prefHeight="29.0" prefWidth="118.0" style="-fx-background-color: red;" text="Eliminar" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI Bold" size="16.0" />
-               </font>
-            </Button>
-            <Label layoutX="41.0" layoutY="182.0" prefHeight="23.0" prefWidth="177.0" text="Tipo de Transporte:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI Bold" size="18.0" />
-               </font>
-            </Label>
-            <Label layoutX="39.0" layoutY="269.0" prefHeight="23.0" prefWidth="200.0" text="Nombre de la Parada:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI Bold" size="18.0" />
-               </font>
-            </Label>
-            <Label layoutX="41.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Longitud:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI Bold" size="18.0" />
-               </font>
-            </Label>
-            <Label layoutX="227.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Latitud:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI Bold" size="18.0" />
-               </font>
-            </Label>
-            <Label fx:id="lbTipoTransporte" layoutX="38.0" layoutY="220.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <Label fx:id="lbNombre" layoutX="39.0" layoutY="305.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <Label fx:id="lbLongitud" layoutX="38.0" layoutY="391.0" prefHeight="29.0" prefWidth="160.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <Label fx:id="lbLatitud" layoutX="227.0" layoutY="391.0" prefHeight="29.0" prefWidth="177.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <ImageView fx:id="imgFondo" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true" />
-         </children>
-      </Pane>
         <Pane fx:id="paneModificacion" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
             <children>
                 <Line endX="336.0" layoutX="107.0" layoutY="459.0" startX="-107.0">
@@ -134,6 +77,63 @@
             <Button fx:id="btnIcono" layoutX="276.0" layoutY="157.0" mnemonicParsing="false" onAction="#agregarIcono" prefHeight="25.0" prefWidth="99.0" text="Agregar Icono" />
             </children>
         </Pane>
+      <Pane fx:id="panePrincipal" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
+         <children>
+            <Line endX="336.0" layoutX="107.0" layoutY="459.0" startX="-107.0">
+               <stroke>
+                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.239215686917305" green="0.2823529541492462" blue="0.33725491166114807" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </RadialGradient>
+               </stroke>
+            </Line>
+            <Button fx:id="btnModificar" layoutX="71.0" layoutY="481.0" mnemonicParsing="false" onAction="#realizarModificacion" prefHeight="29.0" prefWidth="118.0" style="-fx-background-color: green;" text="Modificar" textFill="#fff7f7">
+               <font>
+                  <Font name="Segoe UI Bold" size="16.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnEliminar" layoutX="274.0" layoutY="481.0" mnemonicParsing="false" onAction="#eliminiarParada" prefHeight="29.0" prefWidth="118.0" style="-fx-background-color: red;" text="Eliminar" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="16.0" />
+               </font>
+            </Button>
+            <Label layoutX="41.0" layoutY="182.0" prefHeight="23.0" prefWidth="177.0" text="Tipo de Transporte:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="39.0" layoutY="269.0" prefHeight="23.0" prefWidth="200.0" text="Nombre de la Parada:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="41.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Longitud:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="227.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Latitud:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="lbTipoTransporte" layoutX="38.0" layoutY="220.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Label fx:id="lbNombre" layoutX="39.0" layoutY="305.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Label fx:id="lbLongitud" layoutX="38.0" layoutY="391.0" prefHeight="29.0" prefWidth="160.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Label fx:id="lbLatitud" layoutX="227.0" layoutY="391.0" prefHeight="29.0" prefWidth="177.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <ImageView fx:id="imgFondo" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </Pane>
         <Label fx:id="lbPrincipal" alignment="CENTER" layoutX="882.0" layoutY="54.0" text="Detalles de la Parada" textAlignment="CENTER" textFill="WHITE">
             <font>
                 <Font name="Segoe UI Bold" size="36.0" />

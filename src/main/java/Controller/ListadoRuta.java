@@ -115,21 +115,25 @@ public class ListadoRuta implements Initializable {
 
     @FXML
     void buscarRuta() {
-        txtBuscarRuta.setOnMouseEntered(event -> {
-            String cosaBuscada = txtBuscarRuta.getText().toLowerCase();
-            List<Ruta> rutasFiltradas = new ArrayList<>();
+        String cosaBuscada = txtBuscarRuta.getText().toLowerCase();
+        List<Ruta> rutasFiltradas = new ArrayList<>();
 
-            for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
-                for (Ruta ruta : lista) {
-                    if (ruta.getOrigen().getNombre().toLowerCase().contains(cosaBuscada) || ruta.getDestino().getNombre().toLowerCase().contains(cosaBuscada) || ruta.getCosto() == Double.parseDouble(cosaBuscada) || ruta.getDistancia() == Double.parseDouble(cosaBuscada) || ruta.getNumTransbordos() == Integer.parseInt(cosaBuscada) || ruta.getTiempoRecorrido() == Double.parseDouble(cosaBuscada) || ruta.getNumTransbordos() == Float.parseFloat(cosaBuscada)) {
-                        rutasFiltradas.add(ruta);
-                    }
+        for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
+            for (Ruta ruta : lista) {
+                if (ruta.getOrigen().getNombre().toLowerCase().contains(cosaBuscada) ||
+                        ruta.getDestino().getNombre().toLowerCase().contains(cosaBuscada) ||
+                String.valueOf(ruta.getCosto()).contains(cosaBuscada) ||
+                        String.valueOf(ruta.getNumTransbordos()).contains(cosaBuscada) ||
+                String.valueOf(ruta.getDistancia()).contains(cosaBuscada) ||
+                        String.valueOf(ruta.getTiempoRecorrido()).contains(cosaBuscada) ||
+                        ruta.getPosibleEvento().toLowerCase().contains(cosaBuscada)){
+                    rutasFiltradas.add(ruta);
                 }
             }
+        }
 
-            tableRuta.getItems().setAll(rutasFiltradas);
-            tableRuta.refresh();
-        });
+        tableRuta.getItems().setAll(rutasFiltradas);
+        tableRuta.refresh();
     }
 
     @FXML

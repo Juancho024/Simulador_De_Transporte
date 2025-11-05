@@ -104,7 +104,7 @@ public class Principal {
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("costo"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colTipoTransporte.setCellValueFactory(new PropertyValueFactory<>("tipoTransporte"));
-
+        cargarTablas();
     }
 
     @FXML

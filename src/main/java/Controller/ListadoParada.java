@@ -17,9 +17,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -102,9 +104,33 @@ public class ListadoParada implements Initializable {
     @FXML
     private Button btnIcono;
 
+    byte[] iconoBytes;
+
     @FXML
     void agregarIcono(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Icono");
 
+        FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter(
+                "Archivos de Imagen", Arrays.asList("*.png", "*.jpg", "*.jpeg"));
+
+        fileChooser.getExtensionFilters().add(imageFilter);
+        File file = fileChooser.showOpenDialog(btnIcono.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                iconoBytes = Files.readAllBytes(file.toPath());
+                Image img = new Image(new java.io.ByteArrayInputStream(iconoBytes));
+                imgFondoMod.setImage(img);
+
+            } catch (IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error de Archivo");
+                alert.setHeaderText("Error al cargar la imagen");
+                alert.setContentText("No se pudo leer el archivo: " + e.getMessage());
+                alert.showAndWait();
+            }
+        }
     }
 
     @FXML
@@ -125,6 +151,7 @@ public class ListadoParada implements Initializable {
                 parada.setTipoTransporte(cbxTipoTransporte.getValue());
                 parada.setPosiciony(Integer.parseInt(spnLatitud.getValue().toString()));
                 parada.setPosicionx(Integer.parseInt(spnLongitud.getValue().toString()));
+                parada.setIcono(iconoBytes);
 
                 ParadaDAO.getInstance().actualizarParada(parada);
                 tableParada.getItems().set(index, parada);
@@ -142,7 +169,7 @@ public class ListadoParada implements Initializable {
         String criterio = txtBuscarParada.getText().toLowerCase();
         List<Parada> paradasFiltradas = new LinkedList<>();
 
-        for (Parada parada : RedParada.getInstance().getLugar().values()) {
+        for (Parada parada : ParadaDAO.getInstance().obtenerParadas().values()) {
             if (parada.getNombre().toLowerCase().contains(criterio) || //Buscar formar de evaluar sin acento
                     parada.getTipoTransporte().toLowerCase().contains(criterio) ||
                     String.valueOf(parada.getPosiciony()).contains(criterio) ||

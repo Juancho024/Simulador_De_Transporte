@@ -65,6 +65,7 @@ public class ParadaDAO {
             preparedStatement.setString(2, parada.getTipoTransporte());
             preparedStatement.setInt(3, parada.getPosicionx());
             preparedStatement.setInt(4, parada.getPosiciony());
+            preparedStatement.setBytes(5, parada.getIcono());
             preparedStatement.setLong(5, parada.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e){
@@ -108,7 +109,7 @@ public class ParadaDAO {
     }
 
     public boolean existeRutaIgual(Ruta aux) {
-        final String sql = "SELECT COUNT(*) AS count FROM ruta WHERE origen = ? AND destino = ?";
+        final String sql = "SELECT COUNT(*) AS count FROM ruta WHERE origen_id = ? AND destino_id = ?";
         boolean existe = false;
 
         try (Connection connection = DataBaseConnection.getConnection()) {

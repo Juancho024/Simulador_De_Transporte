@@ -107,7 +107,7 @@ public class RegistroParada implements Initializable {
         int latitud = spnLatitud.getValue();
         int longitud = spnLongitud.getValue();
 
-        if(cbxTipoTransporte.getValue() == null|| txtNombre.getText().isEmpty() || latitud == 0 || longitud == 0){
+        if(iconoBytes == null || cbxTipoTransporte.getValue() == null|| txtNombre.getText().isEmpty() || latitud == 0 || longitud == 0){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error de validación");
             alert.setHeaderText(null);
@@ -137,6 +137,8 @@ public class RegistroParada implements Initializable {
     private void limpiarCampos() {
         cbxTipoTransporte.setValue(null);
         txtNombre.setText("");
+        iconoBytes = null;
+        ImgIcono.setImage(null);
         spnLatitud.getValueFactory().setValue(0);
         spnLongitud.getValueFactory().setValue(0);
     }
@@ -145,8 +147,6 @@ public class RegistroParada implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configurarSpinnersandCombox();
     }
-
-
 
     private void configurarSpinnersandCombox() {
         SpinnerValueFactory<Integer> Latitud = new SpinnerValueFactory.IntegerSpinnerValueFactory(-90, 90, 0, 1);

@@ -19,7 +19,7 @@ public class RutaDAO {
     }
 
     public void guardarRuta(Ruta ruta) {
-        final String sql = "INSERT INTO ruta (origen, destino, distancia, tiempoRecorrido, costo, numTransbordo, \"posibleevento\") VALUES (?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO ruta (origen_id, destino_id, distancia, tiempoRecorrido, costo, numTransbordo, \"posibleevento\") VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try(Connection connection = DataBaseConnection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -62,7 +62,7 @@ public class RutaDAO {
         return rutas;
     }
     public void actualizarRuta(Ruta ruta){
-        final String sql = "UPDATE ruta SET origen = ?, destino = ?, distancia = ?, tiempoRecorrido = ?, costo = ?, numTransbordo = ?, \"posibleevento\" = ? WHERE id = ?";
+        final String sql = "UPDATE ruta SET origen_id = ?, destino_id = ?, distancia = ?, tiempoRecorrido = ?, costo = ?, numTransbordo = ?, \"posibleevento\" = ? WHERE id = ?";
         try(Connection connection = DataBaseConnection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, ruta.getOrigen().getId());
