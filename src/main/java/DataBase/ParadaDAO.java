@@ -57,7 +57,7 @@ public class ParadaDAO {
     }
 
     public void actualizarParada(Parada parada) {
-        final String sql = "UPDATE parada SET nombre = ?, \"tipoTransporte\" = ?, posicionx = ?, posiciony = ? WHERE id = ?";
+        final String sql = "UPDATE parada SET nombre = ?, \"tipoTransporte\" = ?, posicionx = ?, posiciony = ?, icono = ? WHERE id = ?";
 
         try(Connection connection = DataBaseConnection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -66,7 +66,7 @@ public class ParadaDAO {
             preparedStatement.setInt(3, parada.getPosicionx());
             preparedStatement.setInt(4, parada.getPosiciony());
             preparedStatement.setBytes(5, parada.getIcono());
-            preparedStatement.setLong(5, parada.getId());
+            preparedStatement.setLong(6, parada.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();

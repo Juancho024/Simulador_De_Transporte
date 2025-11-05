@@ -18,6 +18,7 @@ import javafx.scene.image.Image;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -67,6 +68,9 @@ public class RegistroParada implements Initializable {
     private byte[] iconoBytes;
 
     @FXML
+    private ImageView imgIconoDefault;
+
+    @FXML
     void Cancelar(ActionEvent event) {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();
@@ -74,6 +78,7 @@ public class RegistroParada implements Initializable {
 
     @FXML
     void agregarIcono(ActionEvent event) {
+        imgIconoDefault.setVisible(false);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar Icono");
 
@@ -141,11 +146,19 @@ public class RegistroParada implements Initializable {
         ImgIcono.setImage(null);
         spnLatitud.getValueFactory().setValue(0);
         spnLongitud.getValueFactory().setValue(0);
+        imgIconoDefault.setVisible(true);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configurarSpinnersandCombox();
+//        String rutaRecurso = "/iconos/icono.png";
+//        InputStream defaultStream = getClass().getResourceAsStream(rutaRecurso);
+//        ImgIcono.setImage(new Image(defaultStream));
+//        ImgIcono.setFitWidth(50);
+//        ImgIcono.setFitHeight(50);
+//        ImgIcono.setPreserveRatio(true);
+//       ImgIcono.setSmooth(true);
     }
 
     private void configurarSpinnersandCombox() {

@@ -74,7 +74,7 @@
             <ComboBox fx:id="cbxTipoTransporte" layoutX="39.0" layoutY="217.0" prefHeight="29.0" prefWidth="358.0" />
             <Spinner fx:id="spnLongitud" layoutX="39.0" layoutY="388.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             <Spinner fx:id="spnLatitud" layoutX="222.0" layoutY="388.0" prefHeight="29.0" prefWidth="177.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <Button fx:id="btnIcono" layoutX="276.0" layoutY="157.0" mnemonicParsing="false" onAction="#agregarIcono" prefHeight="25.0" prefWidth="99.0" text="Agregar Icono" />
+            <Button fx:id="btnIcono" layoutX="276.0" layoutY="157.0" mnemonicParsing="false" onAction="#agregarIcono" prefHeight="25.0" prefWidth="99.0" text="Agregar Icono" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;"/>
             </children>
         </Pane>
       <Pane fx:id="panePrincipal" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
