@@ -1,16 +1,19 @@
 package Model;
 
+import DataBase.ParadaDAO;
+import DataBase.RutaDAO;
+
 import java.util.*;
 
 public class RedParada {
 
-    private HashMap<String, LinkedList<Ruta>> rutas;
-    private HashMap<String, Parada> lugar;
+    private HashMap<Long, LinkedList<Ruta>> rutas;
+    private HashMap<Long, Parada> lugar;
     private static RedParada instance = null;
 
     public RedParada() {
-        this.rutas = new HashMap<>();
-        this.lugar = new HashMap<>();
+        this.rutas = RutaDAO.getInstancia().obtenerRutas();
+        this.lugar = ParadaDAO.getInstance().obtenerParadas();
     }
 
     public static RedParada getInstance() {
@@ -20,25 +23,25 @@ public class RedParada {
         return instance;
     }
 
-    public HashMap<String, LinkedList<Ruta>> getRutas() { return rutas; }
-    public void setRutas(HashMap<String, LinkedList<Ruta>> rutas) { this.rutas = rutas; }
-    public HashMap<String, Parada> getLugar() { return lugar; }
-    public void setLugar(HashMap<String, Parada> lugar) { this.lugar = lugar; }
+    public HashMap<Long, LinkedList<Ruta>> getRutas() { return rutas; }
+    public void setRutas(HashMap<Long, LinkedList<Ruta>> rutas) { this.rutas = rutas; }
+    public HashMap<Long, Parada> getLugar() { return lugar; }
+    public void setLugar(HashMap<Long, Parada> lugar) { this.lugar = lugar; }
 
 
-    public void agregarRuta(Ruta ruta) {
-        String origen = ruta.getOrigen().getNombre();
-        rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(ruta);
-    }
-    public Parada buscarParadaPorNombre(String origen) {
-        return lugar.get(origen);
-    }
-    public void agregarParada(Parada nuevaParada) {
-        String nombre = nuevaParada.getNombre();
-        lugar.put(nombre, nuevaParada);
-        rutas.putIfAbsent(nombre, new LinkedList<>());
-    }
-    public boolean existeRutaIgual(Ruta nuevaRuta) { /* ... sin cambios ... */ return false; }
+//    public void agregarRuta(Ruta ruta) {
+//        String origen = ruta.getOrigen().getNombre();
+//        rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(ruta);
+//    }
+//    public Parada buscarParadaPorNombre(String origen) {
+//        return lugar.get(origen);
+//    }
+//    public void agregarParada(Parada nuevaParada) {
+//        String nombre = nuevaParada.getNombre();
+//        lugar.put(nombre, nuevaParada);
+//        rutas.putIfAbsent(nombre, new LinkedList<>());
+//    }
+//    public boolean existeRutaIgual(Ruta nuevaRuta) { /* ... sin cambios ... */ return false; }
 
     public ResultadoRuta calcularRutaMasEficiente(String inicio, String fin) {
         return dijkstraGeneral(inicio, fin, "eficiente");
@@ -60,9 +63,9 @@ public class RedParada {
         HashMap<String, String> previo = new HashMap<>();
         List<Ruta> allRutas = getAllRutas();
 
-        for (String nodo : lugar.keySet()) {
-            costos.put(nodo, Float.MAX_VALUE);
-            previo.put(nodo, null);
+        for (Long nodo : lugar.keySet()) {
+            costos.put(String.valueOf(nodo), Float.MAX_VALUE);
+            previo.put(String.valueOf(nodo), null); //prueba
         }
         costos.put(inicio, 0.0f);
 
@@ -101,9 +104,9 @@ public class RedParada {
         HashMap<String, String> previo = new HashMap<>();
         PriorityQueue<ColaPrioritaria> cola = new PriorityQueue<>(Comparator.comparingDouble(ColaPrioritaria::getKm));
 
-        for (String nodo : lugar.keySet()) {
-            pesos.put(nodo, Float.MAX_VALUE);
-            previo.put(nodo, null);
+        for (Long nodo : lugar.keySet()) {
+            pesos.put(String.valueOf(nodo), Float.MAX_VALUE);
+            previo.put(String.valueOf(nodo), null); //prueba
         }
         pesos.put(inicio, 0.0f);
         cola.add(new ColaPrioritaria(inicio, 0.0f));

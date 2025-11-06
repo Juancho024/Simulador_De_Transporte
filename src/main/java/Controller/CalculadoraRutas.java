@@ -1,7 +1,10 @@
 package Controller;
 
+import DataBase.ParadaDAO;
+import Model.Parada;
 import Model.RedParada;
 import Model.ResultadoRuta;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -9,6 +12,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class CalculadoraRutas {
@@ -60,9 +64,22 @@ public class CalculadoraRutas {
 
     private void cargarComboBoxes() {
         // Obtiene la lista de nombres de las paradas y la ordena alfabéticamente
-        var nombresParadas = redParada.getLugar().keySet().stream().sorted().collect(Collectors.toList());
-        cbOrigen.getItems().setAll(nombresParadas);
-        cbDestino.getItems().setAll(nombresParadas);
+//        var nombresParadas = redParada.getLugar().keySet().stream().sorted().collect(Collectors.toList());
+//        cbOrigen.getItems().setAll(nombresParadas);
+//        cbDestino.getItems().setAll(nombresParadas);
+        //Cambio para base de datos
+        HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
+        if (paradas != null && !paradas.isEmpty()) {
+            java.util.List<String> nombresParadas = paradas.values().stream()
+                    .map(Parada::getNombre)
+                    .collect(Collectors.toList());
+
+            cbDestino.setItems(FXCollections.observableArrayList(nombresParadas));
+            cbOrigen.setItems(FXCollections.observableArrayList(nombresParadas));
+        } else {
+            cbDestino.setItems(FXCollections.observableArrayList("No hay ninguna Parada Registrada."));
+            cbOrigen.setItems(FXCollections.observableArrayList("No hay ninguna Parada Registrada."));
+        }
     }
 
     @FXML
