@@ -43,6 +43,11 @@ public class RedParada {
 //    }
 //    public boolean existeRutaIgual(Ruta nuevaRuta) { /* ... sin cambios ... */ return false; }
 
+    public void recargarGrafo() {
+        this.rutas = RutaDAO.getInstancia().obtenerRutas();
+        this.lugar = ParadaDAO.getInstance().obtenerParadas();
+    }
+
     public ResultadoRuta calcularRutaMasEficiente(Long origen_id, Long destino_id) {
         return dijkstraGeneral(origen_id, destino_id, "eficiente");
     }
@@ -98,6 +103,7 @@ public class RedParada {
 
 
     private ResultadoRuta dijkstraGeneral(Long origin_id, Long destino_id, String criterio) {
+        recargarGrafo();
         if (!lugar.containsKey(origin_id) || !lugar.containsKey(destino_id)) {
             return new ResultadoRuta("El lugar de inicio o fin no existe.");
         }

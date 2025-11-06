@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #ecf0f1;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CalculadoraRutas">
+<BorderPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #34495e;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CalculadoraRutas">
 
     <top>
         <VBox>
@@ -13,7 +13,7 @@
             <Label text="Visualización del Grafo" textFill="#2c3e50">
                 <font><Font name="Segoe UI Bold" size="18.0" /></font>
             </Label>
-            <AnchorPane fx:id="paneGrafo" prefHeight="250.0" style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-width: 2;">
+            <AnchorPane fx:id="paneGrafo" prefHeight="250.0" style="-fx-background-color: #325170; -fx-border-color: #bdc3c7; -fx-border-width: 2;">
                 <Label layoutX="350.0" layoutY="110.0" text="[Mapa del grafo aquí]" textFill="#95a5a6">
                     <font><Font size="16.0" /></font>
                 </Label>
@@ -158,14 +158,14 @@
                         <Label fx:id="lblTransbordos4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
                     </HBox>
                 </VBox>
-            <columnConstraints>
-               <ColumnConstraints />
-               <ColumnConstraints />
-            </columnConstraints>
-            <rowConstraints>
-               <RowConstraints />
-               <RowConstraints />
-            </rowConstraints>
+                <columnConstraints>
+                    <ColumnConstraints />
+                    <ColumnConstraints />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints />
+                    <RowConstraints />
+                </rowConstraints>
             </GridPane>
         </VBox>
     </center>
