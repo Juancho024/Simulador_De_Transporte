@@ -196,8 +196,8 @@
         </HBox>
       <TableView fx:id="tableRuta" layoutX="34.0" layoutY="143.0" prefHeight="505.0" prefWidth="771.0" stylesheets="@css/table-Styles.css">
         <columns>
-          <TableColumn fx:id="colDestino" prefWidth="174.0" text="Destino" />
             <TableColumn fx:id="colOrigen" prefWidth="158.0" text="Origen" />
+          <TableColumn fx:id="colDestino" prefWidth="174.0" text="Destino" />
             <TableColumn fx:id="colDistancia" prefWidth="108.0" text="Distancia" />
             <TableColumn fx:id="colCosto" prefWidth="87.0" style="-fx-text-fill: #2B333F;" text="Costo" />
             <TableColumn fx:id="colTiempo" prefWidth="84.0" text="Tiempo" />

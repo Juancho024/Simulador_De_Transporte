@@ -38,9 +38,11 @@ public class RutaDAO {
     public HashMap<Long, LinkedList<Ruta>> obtenerRutas(){
         HashMap<Long, LinkedList<Ruta>> rutas = new HashMap<>();
         final String sql = "SELECT * FROM ruta";
+
         try(Connection connection = DataBaseConnection.getConnection()){
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
+
             while (resultSet.next()){
                 Parada origen = obtenerParadaPorId(resultSet.getLong("origen_id"));
                 Parada destino = obtenerParadaPorId(resultSet.getLong("destino_id"));
@@ -49,11 +51,15 @@ public class RutaDAO {
                 float costo = resultSet.getFloat("costo");
                 int numTransbordos = resultSet.getInt("numTransbordo");
                 String posibleEvento = resultSet.getString("posibleEvento");
+
                 Ruta ruta = new Ruta(origen, destino, distancia, tiempoRecorrido, costo, numTransbordos, posibleEvento);
                 ruta.setId(resultSet.getLong("id"));
 
-                Long referencia = ruta.getId();
-                rutas.computeIfAbsent(referencia, k -> new LinkedList<>()).add(ruta);
+                // Usar el ID del Origen (Parada) como clave del mapa
+                Long idOrigenParada = origen.getId(); // o resultSet.getLong("origen_id");
+
+                // Si la clave (ID de Origen) no existe, crea una nueva lista. Luego, añade la ruta a esa lista.
+                rutas.computeIfAbsent(idOrigenParada, k -> new LinkedList<>()).add(ruta);
             }
         } catch (SQLException e){
             e.printStackTrace();

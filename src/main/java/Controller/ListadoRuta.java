@@ -197,7 +197,9 @@ public class ListadoRuta implements Initializable {
                 alertError.showAndWait();
                 return;
             }
-            if(RutaDAO.getInstancia().existeRutaIgual(
+            boolean diferenteOrigen = !tableRuta.getItems().get(index).getOrigen().getNombre().equals(cbxOrigenMod.getValue());
+            boolean diferenteDestino = !tableRuta.getItems().get(index).getDestino().getNombre().equals(cbxDestinoMod.getValue());
+            if((diferenteDestino || diferenteOrigen) && RutaDAO.getInstancia().existeRutaIgual(
                     new Ruta(RutaDAO.getInstancia().buscarParadaPorNombre(cbxOrigenMod.getValue()),
                             RutaDAO.getInstancia().buscarParadaPorNombre(cbxDestinoMod.getValue()),
                             spnDistanciaMod.getValue().floatValue(),

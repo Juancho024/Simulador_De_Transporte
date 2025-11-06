@@ -57,8 +57,8 @@
         </TableView>
         <TableView fx:id="TableRuta" layoutX="24.0" layoutY="440.0" prefHeight="197.0" prefWidth="359.0" style="-fx-border-color: #34495e; -fx-background-color: lightgrey;" styleClass="rounded-table">
             <columns>
-                <TableColumn fx:id="colDestino" prefWidth="106.0" text="Destino" />
                 <TableColumn fx:id="colOrigen" prefWidth="97.0" text="Origen" />
+                <TableColumn fx:id="colDestino" prefWidth="106.0" text="Destino" />
                 <TableColumn fx:id="colDistancia" prefWidth="76.0" text="Distancia" />
                 <TableColumn fx:id="colPrecio" prefWidth="79.0" text="Precio" />
             </columns>

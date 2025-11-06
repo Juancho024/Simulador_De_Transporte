@@ -153,6 +153,7 @@ public class RegistroParada implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configurarSpinnersandCombox();
+        iconoBytes = null;
     }
 
     private void configurarSpinnersandCombox() {
