@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -83,7 +84,7 @@ public class RegistroRuta implements Initializable {
         Parada auxOrigen = ParadaDAO.getInstance().buscarParadaByName(origen);
         Parada auxDestino = ParadaDAO.getInstance().buscarParadaByName(destino);
 
-        if(auxOrigen == null || auxDestino == null) {
+        if (auxOrigen == null || auxDestino == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Parada no encontrada");
@@ -91,7 +92,7 @@ public class RegistroRuta implements Initializable {
             alert.showAndWait();
             return;
         }
-        if(origen.equals(destino)) {
+        if (origen.equals(destino)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Paradas iguales");
@@ -99,7 +100,7 @@ public class RegistroRuta implements Initializable {
             alert.showAndWait();
             return;
         }
-        if(ParadaDAO.getInstance().existeRutaIgual(new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales"))) {
+        if (RutaDAO.getInstancia().existeRutaIgual(new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales"))) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Ruta existente");
@@ -107,7 +108,15 @@ public class RegistroRuta implements Initializable {
             alert.showAndWait();
             return;
         }
-        if(distancia <= 0 || tiempo <= 0 || costo < 0 || transbordo < 0) {
+        if (RutaDAO.getInstancia().existeRutaIgual(new Ruta(auxDestino, auxOrigen, (int) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales"))) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Ruta existente");
+            alert.setContentText("Ya existe una ruta entre las paradas seleccionadas.");
+            alert.showAndWait();
+            return;
+        }
+        if (distancia <= 0 || tiempo <= 0 || costo <= 0 || transbordo < 0) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Valores inválidos");
@@ -115,14 +124,14 @@ public class RegistroRuta implements Initializable {
             alert.showAndWait();
             return;
         }
-        try{
-                Ruta ruta = new Ruta(auxOrigen, auxDestino, (float) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales");
-                RutaDAO.getInstancia().guardarRuta(ruta);
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Éxito");
-                alert.setHeaderText("Ruta registrada");
-                alert.setContentText("La ruta ha sido registrada exitosamente.");
-                alert.showAndWait();
+        try {
+            Ruta ruta = new Ruta(auxOrigen, auxDestino, (float) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales");
+            RutaDAO.getInstancia().guardarRuta(ruta);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Éxito");
+            alert.setHeaderText("Ruta registrada");
+            alert.setContentText("La ruta ha sido registrada exitosamente.");
+            alert.showAndWait();
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -144,7 +153,7 @@ public class RegistroRuta implements Initializable {
     }
 
     @FXML
-    void  initialize() {
+    void initialize() {
     }
 
     private void configurarSpinners() {

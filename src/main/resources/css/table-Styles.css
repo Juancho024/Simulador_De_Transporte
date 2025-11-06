@@ -1,11 +1,15 @@
-/* Estilo Base de la Tabla (usando tus colores) */
+/* ======================================= */
+/* CONFIGURACIÓN BASE DE LA TABLA LISTADO  */
+/* ======================================= */
 .table-view {
     -fx-base: #2B333F;
-    -fx-background-color: #2B333F;
     -fx-table-cell-border-color: #3D4856;
+    /* ANULA FOCO GLOBAL DE LA TABLA */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
-/* 1. Estilo del Encabezado (Mantener tu fondo gris oscuro) */
+/* Encabezados y Cebra (sin cambios) */
 .table-view .column-header,
 .table-view .filler {
     -fx-background-color: #3D4856;
@@ -16,23 +20,25 @@
     -fx-font-weight: bold;
 }
 
-/* 2. Estilo de la Fila de Selección (¡El "Azulito" que quieres!) */
-.table-row-cell:selected {
-    /* Fondo azul suave para la selección */
-    -fx-background-color: #2A90F8;
+.table-row-cell:odd {
+    -fx-border-width: 0;
+    -fx-background-color: #F0F0F0;
 }
 
-/* 3. Estilo de Celdas de Datos (Fondo oscuro y texto blanco) */
+.table-row-cell:even {
+    -fx-border-width: 0;
+    -fx-background-color: #E8E8FF;
+}
+
 .table-cell {
-    -fx-background-color: #2B333F;
-    -fx-text-fill: white;
-    /* Líneas divisorias */
-    -fx-border-color: #3D4856;
-    -fx-border-width: 0 1px 1px 0;
+    -fx-border-width: 0;
+    -fx-text-fill: #333333;
 }
 
-/* 4. Asegurar que el texto dentro de la celda seleccionada sea blanco */
-.table-row-cell:selected .text {
-    -fx-fill: white;
+/*Fila Seleccionada (Siempre azul)*/
+.table-row-cell:selected {
+    -fx-border-width: 0;
+    -fx-background-color: #007AFF;
     -fx-text-fill: white;
+    -fx-background-insets: 0, 0; /* Asegura que el foco no tenga margen */
 }

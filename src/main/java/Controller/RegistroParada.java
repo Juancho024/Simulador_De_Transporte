@@ -81,6 +81,7 @@ public class RegistroParada implements Initializable {
         imgIconoDefault.setVisible(false);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar Icono");
+        fileChooser.setInitialDirectory(new File("C:/Users/esteb/Downloads"));
 
         FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter(
                 "Archivos de Imagen", Arrays.asList("*.png", "*.jpg", "*.jpeg"));
@@ -152,13 +153,6 @@ public class RegistroParada implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configurarSpinnersandCombox();
-//        String rutaRecurso = "/iconos/icono.png";
-//        InputStream defaultStream = getClass().getResourceAsStream(rutaRecurso);
-//        ImgIcono.setImage(new Image(defaultStream));
-//        ImgIcono.setFitWidth(50);
-//        ImgIcono.setFitHeight(50);
-//        ImgIcono.setPreserveRatio(true);
-//       ImgIcono.setSmooth(true);
     }
 
     private void configurarSpinnersandCombox() {

@@ -1,6 +1,7 @@
 package Controller;
 
 import DataBase.ParadaDAO;
+import DataBase.RutaDAO;
 import Model.Parada;
 import Model.RedParada;
 import Utilities.paths;
@@ -137,6 +138,39 @@ public class ListadoParada implements Initializable {
     void ActualizarParada(ActionEvent event) {
         int index = tableParada.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
+            if(iconoBytes == null){
+                Alert alertIcono = new Alert(Alert.AlertType.ERROR);
+                alertIcono.setTitle("Error de validación");
+                alertIcono.setHeaderText("Faltan datos obligatorios");
+                alertIcono.setContentText("Por favor, asegúrate de haber seleccionado un icono para la parada.");
+                alertIcono.showAndWait();
+                return;
+            }
+            if(cbxTipoTransporte.getValue() == null || txtNombre.getText().isEmpty()){
+                Alert alertCampos = new Alert(Alert.AlertType.ERROR);
+                alertCampos.setTitle("Error de validación");
+                alertCampos.setHeaderText("Faltan datos obligatorios");
+                alertCampos.setContentText("Por favor, completa todos los campos obligatorios antes de actualizar la parada.");
+                alertCampos.showAndWait();
+                return;
+            }
+            if(spnLatitud.getValue() == 0 || spnLongitud.getValue() == 0){
+                Alert alertCampos = new Alert(Alert.AlertType.ERROR);
+                alertCampos.setTitle("Error de validación");
+                alertCampos.setHeaderText("Faltan datos obligatorios");
+                alertCampos.setContentText("La latitud y longitud no pueden ser cero. Por favor, ingresa valores válidos.");
+                alertCampos.showAndWait();
+                return;
+            }
+            if(spnLatitud.getValue() < -100 || spnLatitud.getValue() > 100 ||
+                    spnLongitud.getValue() < -100 || spnLongitud.getValue() > 100){
+                Alert alertCampos = new Alert(Alert.AlertType.ERROR);
+                alertCampos.setTitle("Error de validación");
+                alertCampos.setHeaderText("Valores fuera de rango");
+                alertCampos.setContentText("La latitud y longitud deben estar entre -100 y 100. Por favor, ingresa valores válidos.");
+                alertCampos.showAndWait();
+                return;
+            }
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmar modificación");
             alert.setHeaderText("¿Estás seguro de que deseas modificar esta parada?");
@@ -215,6 +249,7 @@ public class ListadoParada implements Initializable {
             } else {
                 Parada parada = tableParada.getItems().get(index);
                 ParadaDAO.getInstance().eliminarParada(parada.getId()); //Eliminar de la base de datos
+                RutaDAO.getInstancia().eliminarRutaByParada(parada.getId()); //Eliminar rutas asociadas a la parada
                 cargarTablas();
                 tableParada.refresh();
                 limpiarCampos();
@@ -235,6 +270,7 @@ public class ListadoParada implements Initializable {
             cbxTipoTransporte.setValue(parada.getTipoTransporte());
             spnLatitud.getValueFactory().setValue(parada.getPosiciony());
             spnLongitud.getValueFactory().setValue(parada.getPosicionx());
+            iconoBytes = parada.getIcono();
             Image img = new Image(new java.io.ByteArrayInputStream(parada.getIcono()));
             imgFondoMod.setImage(img);
         }

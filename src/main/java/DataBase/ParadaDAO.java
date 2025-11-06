@@ -108,24 +108,5 @@ public class ParadaDAO {
         }
     }
 
-    public boolean existeRutaIgual(Ruta aux) {
-        final String sql = "SELECT COUNT(*) AS count FROM ruta WHERE origen_id = ? AND destino_id = ?";
-        boolean existe = false;
-
-        try (Connection connection = DataBaseConnection.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, aux.getOrigen().getId());
-            preparedStatement.setLong(2, aux.getDestino().getId());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                int count = resultSet.getInt("count");
-                existe = count > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return existe;
-    }
-
 }
 

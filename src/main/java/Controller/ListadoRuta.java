@@ -6,6 +6,7 @@ import Model.Parada;
 import Model.RedParada;
 import Model.Ruta;
 import Utilities.paths;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -170,7 +171,6 @@ public class ListadoRuta implements Initializable {
                 return;
             } else {
                 Ruta ruta = tableRuta.getItems().get(index);
-//                RedParada.getInstance().eliminarRuta(ruta);
                 RutaDAO.getInstancia().eliminarRuta(ruta.getId());
                 tableRuta.getItems().remove(index);
                 tableRuta.refresh();
@@ -189,6 +189,40 @@ public class ListadoRuta implements Initializable {
     void realizarModificacion(ActionEvent event) {
         int index = tableRuta.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
+            if(cbxDestinoMod.getValue().equals(cbxOrigenMod.getValue())){
+                Alert alertError = new Alert(Alert.AlertType.ERROR);
+                alertError.setTitle("Error");
+                alertError.setHeaderText("Paradas iguales");
+                alertError.setContentText("La parada de origen y destino no pueden ser iguales.");
+                alertError.showAndWait();
+                return;
+            }
+            if(RutaDAO.getInstancia().existeRutaIgual(
+                    new Ruta(RutaDAO.getInstancia().buscarParadaPorNombre(cbxOrigenMod.getValue()),
+                            RutaDAO.getInstancia().buscarParadaPorNombre(cbxDestinoMod.getValue()),
+                            spnDistanciaMod.getValue().floatValue(),
+                            spnTiempoMod.getValue().floatValue(),
+                            spnCostoMod.getValue().floatValue(),
+                            spnTransbordoMod.getValue().intValue(),
+                            "Normales"))){
+                Alert alertError = new Alert(Alert.AlertType.ERROR);
+                alertError.setTitle("Error");
+                alertError.setHeaderText("Ruta existente");
+                alertError.setContentText("Ya existe una ruta entre las paradas seleccionadas.");
+                alertError.showAndWait();
+                return;
+            }
+            if(spnDistanciaMod.getValue().floatValue() <= 0 ||
+                    spnTiempoMod.getValue().floatValue() <= 0 ||
+                    spnCostoMod.getValue().floatValue() < 0 ||
+                    spnTransbordoMod.getValue().intValue() < 0){
+                Alert alertError = new Alert(Alert.AlertType.ERROR);
+                alertError.setTitle("Error de validación");
+                alertError.setHeaderText(null);
+                alertError.setContentText("Por favor, ingrese valores válidos para todos los campos.");
+                alertError.showAndWait();
+                return;
+            }
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmar modificación");
             alert.setHeaderText("¿Estás seguro de que deseas modificar esta ruta?");

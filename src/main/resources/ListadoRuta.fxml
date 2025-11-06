@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="670.0" prefWidth="1300.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ListadoRuta">
+<AnchorPane prefHeight="670.0" prefWidth="1300.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ListadoRuta">
     <children>
       <Pane fx:id="PaneModificar" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
          <children>
@@ -194,7 +194,7 @@
                 </Button>
             </children>
         </HBox>
-      <TableView fx:id="tableRuta" layoutX="34.0" layoutY="143.0" prefHeight="505.0" prefWidth="771.0">
+      <TableView fx:id="tableRuta" layoutX="34.0" layoutY="143.0" prefHeight="505.0" prefWidth="771.0" stylesheets="@css/table-Styles.css">
         <columns>
           <TableColumn fx:id="colDestino" prefWidth="174.0" text="Destino" />
             <TableColumn fx:id="colOrigen" prefWidth="158.0" text="Origen" />

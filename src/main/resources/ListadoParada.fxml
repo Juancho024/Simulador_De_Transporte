@@ -17,10 +17,15 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="670.0" prefWidth="1300.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ListadoParada">
+<AnchorPane prefHeight="670.0" prefWidth="1300.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ListadoParada">
     <children>
         <Pane fx:id="paneModificacion" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
             <children>
+            <Label layoutX="41.0" layoutY="182.0" prefHeight="23.0" prefWidth="177.0" text="Tipo de Transporte:" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="18.0" />
+               </font>
+            </Label>
                 <Line endX="336.0" layoutX="107.0" layoutY="459.0" startX="-107.0">
                     <stroke>
                         <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
@@ -50,11 +55,6 @@
                </font>
             </Button>
             <ImageView fx:id="imgFondoMod" fitHeight="133.0" fitWidth="168.0" layoutX="247.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-            <Label layoutX="41.0" layoutY="182.0" prefHeight="23.0" prefWidth="177.0" text="Tipo de Transporte:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI Bold" size="18.0" />
-               </font>
-            </Label>
             <Label layoutX="39.0" layoutY="269.0" prefHeight="23.0" prefWidth="200.0" text="Nombre de la Parada:" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
@@ -74,7 +74,7 @@
             <ComboBox fx:id="cbxTipoTransporte" layoutX="39.0" layoutY="217.0" prefHeight="29.0" prefWidth="358.0" />
             <Spinner fx:id="spnLongitud" layoutX="39.0" layoutY="388.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             <Spinner fx:id="spnLatitud" layoutX="222.0" layoutY="388.0" prefHeight="29.0" prefWidth="177.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <Button fx:id="btnIcono" layoutX="276.0" layoutY="157.0" mnemonicParsing="false" onAction="#agregarIcono" prefHeight="25.0" prefWidth="99.0" text="Agregar Icono" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;"/>
+            <Button fx:id="btnIcono" layoutX="276.0" layoutY="157.0" mnemonicParsing="false" onAction="#agregarIcono" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5; -fx-background-radius: 15; -fx-border-radius: 15;" text="Agregar Icono" />
             </children>
         </Pane>
       <Pane fx:id="panePrincipal" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
@@ -153,7 +153,7 @@
                 </Button>
             </children>
         </HBox>
-      <TableView fx:id="tableParada" layoutX="34.0" layoutY="135.0" prefHeight="516.0" prefWidth="779.0">
+      <TableView fx:id="tableParada" layoutX="34.0" layoutY="135.0" prefHeight="516.0" prefWidth="779.0" stylesheets="@css/table-Styles.css">
         <columns>
           <TableColumn fx:id="colTipoTransporte" prefWidth="207.0" text="Tipo de Transporte" />
           <TableColumn fx:id="colNombre" minWidth="0.0" prefWidth="246.0" text="Nombre" />
