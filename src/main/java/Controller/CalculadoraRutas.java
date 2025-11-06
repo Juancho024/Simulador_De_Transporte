@@ -84,8 +84,8 @@ public class CalculadoraRutas {
 
     @FXML
     void buscarRutas() {
-        String origen = cbOrigen.getValue();
-        String destino = cbDestino.getValue();
+        Long origen = buscarParadaIdPorNombre(cbOrigen.getValue());
+        Long destino = buscarParadaIdPorNombre(cbDestino.getValue());
 
 
         if (origen == null || destino == null) {
@@ -99,7 +99,7 @@ public class CalculadoraRutas {
 
         // Limpiar los resultados anteriores
         limpiarTodosLosPaneles();
-
+        RedParada.getInstance().mostrarRutaSimplePorConsola(origen, destino);
 
         ResultadoRuta resultadoEficiente = redParada.calcularRutaMasEficiente(origen, destino);
         actualizarPanel(resultadoEficiente, lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1);
@@ -115,6 +115,15 @@ public class CalculadoraRutas {
 
         ResultadoRuta resultadoMenorTiempo = redParada.calcularRutaMenorTiempo(origen, destino);
         actualizarPanel(resultadoMenorTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4);
+    }
+
+    private Long buscarParadaIdPorNombre(String value) {
+        for (var entrada : redParada.getLugar().entrySet()) {
+            if (entrada.getValue().getNombre().equals(value)) {
+                return entrada.getKey();
+            }
+        }
+        return null;
     }
 
     /**

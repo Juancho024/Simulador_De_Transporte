@@ -1,29 +1,23 @@
 package Model;
 
 public class ColaPrioritaria {
-    private String nombre;
+    private Long id;
     private float km;
-    private int tiempo;
-    private float costo;
-    private float numTransbordos;
 
-    public ColaPrioritaria(String nombre, float km) {
-        this.nombre = nombre;
+    public ColaPrioritaria(Long id, float km) {
+        this.id = id;
         this.km = km;
     }
 
-    public String getNombre() {
-        return nombre;
+    public Long getId() {
+        return id;
     }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setId(Long id) {
+        this.id = id;
     }
-
     public float getKm() {
         return km;
     }
-
     public void setKm(int km) {
         this.km = km;
     }
