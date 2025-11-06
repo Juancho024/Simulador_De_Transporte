@@ -11,7 +11,7 @@ import javafx.scene.layout.AnchorPane;
 
 import java.util.stream.Collectors;
 
-public class NuevaCalculadoraV2 {
+public class CalculadoraRutas {
 
     // --- Componentes FXML de la Interfaz ---
 

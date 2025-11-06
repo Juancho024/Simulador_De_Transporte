@@ -1,74 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ContextMenu?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="690.0" prefWidth="1360.0" style="-fx-background-color: #20252D;" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Principal">
-   <children>
-      <HBox layoutX="695.0" layoutY="26.0" spacing="60.0">
-         <children>
-            <Button fx:id="btnRegistros" mnemonicParsing="false" prefHeight="33.0" prefWidth="113.0" style="-fx-background-color: darkgreen;" text="REGISTROS" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI Bold" size="16.0" />
-               </font>
-               <contextMenu>
-                  <ContextMenu fx:id="menuRegistros" width="113.0">
-                    <items>
-                      <MenuItem fx:id="itemParada" mnemonicParsing="false" onAction="#crearParada" text="Crear Parada      " />
-                        <MenuItem fx:id="itemRuta" mnemonicParsing="false" onAction="#crearRuta" text=" Crear Ruta     " />
-                    </items>
-                  </ContextMenu>
-               </contextMenu>
-            </Button>
-            <Button fx:id="btnListados" mnemonicParsing="false" prefHeight="33.0" prefWidth="113.0" style="-fx-background-color: darkgreen;" text="LISTADOS" textAlignment="CENTER" textFill="#fffafa">
-               <font>
-                  <Font name="Segoe UI Bold" size="16.0" />
-               </font>
-               <contextMenu>
-                  <ContextMenu fx:id="MenuListados">
-                    <items>
-                      <MenuItem fx:id="itemListadoParada" mnemonicParsing="false" onAction="#listarParada" text="Listado de Paradas" />
-                        <MenuItem fx:id="itemListadoRuta" mnemonicParsing="false" onAction="#listarRutas" text="Listado de Rutas" />
-                    </items>
-                  </ContextMenu>
-               </contextMenu>
-            </Button>
-            <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="113.0" text="Button" />
-            <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="113.0" text="Button" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-      <Pane layoutX="427.0" layoutY="84.0" prefHeight="587.0" prefWidth="911.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;" />
-      <TableView fx:id="TableParada" layoutX="24.0" layoutY="151.0" prefHeight="214.0" prefWidth="359.0" style="-fx-background-color: lightgrey;">
-        <columns>
-          <TableColumn fx:id="colTipoTransporte" prefWidth="148.0" text="Tipo de Transporte" />
-          <TableColumn fx:id="colNombre" prefWidth="210.0" text="Nombre" />
-        </columns>
-      </TableView>
-      <TableView fx:id="TableRuta" layoutX="24.0" layoutY="440.0" prefHeight="197.0" prefWidth="359.0" style="-fx-border-color: #34495e; -fx-background-color: lightgrey;" styleClass="rounded-table">
-        <columns>
-          <TableColumn fx:id="colDestino" prefWidth="106.0" text="Destino" />
-          <TableColumn fx:id="colOrigen" prefWidth="97.0" text="Origen" />
-            <TableColumn fx:id="colDistancia" prefWidth="76.0" text="Distancia" />
-            <TableColumn fx:id="colPrecio" prefWidth="79.0" text="Precio" />
-        </columns>
-      </TableView>
-      <Label fx:id="lbPrincipal" alignment="CENTER" layoutX="103.0" layoutY="112.0" text="Listado de Parada" textFill="WHITE">
-         <font>
-            <Font name="Segoe UI Bold" size="24.0" />
-         </font>
-      </Label>
-      <Label fx:id="lbPrincipal1" alignment="CENTER" layoutX="116.0" layoutY="401.0" text="Listado de Ruta" textAlignment="CENTER" textFill="#fff8f8">
-         <font>
-            <Font name="Segoe UI Bold" size="24.0" />
-         </font>
-      </Label>
-   </children>
+<AnchorPane prefHeight="690.0" prefWidth="1360.0" style="-fx-background-color: #34495e;" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Principal">
+    <children>
+        <HBox layoutX="695.0" layoutY="26.0" spacing="60.0">
+            <children>
+                <Button fx:id="btnRegistros" mnemonicParsing="false" prefHeight="33.0" prefWidth="113.0" style="-fx-background-color: darkgreen;" text="REGISTROS" textAlignment="CENTER" textFill="WHITE">
+                    <font>
+                        <Font name="Segoe UI Bold" size="16.0" />
+                    </font>
+                    <contextMenu>
+                        <ContextMenu fx:id="menuRegistros" width="113.0">
+                            <items>
+                                <MenuItem fx:id="itemParada" mnemonicParsing="false" onAction="#crearParada" text="Crear Parada      " />
+                                <MenuItem fx:id="itemRuta" mnemonicParsing="false" onAction="#crearRuta" text=" Crear Ruta     " />
+                            </items>
+                        </ContextMenu>
+                    </contextMenu>
+                </Button>
+                <Button fx:id="btnListados" mnemonicParsing="false" prefHeight="33.0" prefWidth="113.0" style="-fx-background-color: darkgreen;" text="LISTADOS" textAlignment="CENTER" textFill="#fffafa">
+                    <font>
+                        <Font name="Segoe UI Bold" size="16.0" />
+                    </font>
+                    <contextMenu>
+                        <ContextMenu fx:id="MenuListados">
+                            <items>
+                                <MenuItem fx:id="itemListadoParada" mnemonicParsing="false" onAction="#listarParada" text="Listado de Paradas" />
+                                <MenuItem fx:id="itemListadoRuta" mnemonicParsing="false" onAction="#listarRutas" text="Listado de Rutas" />
+                            </items>
+                        </ContextMenu>
+                    </contextMenu>
+                </Button>
+                <Button fx:id="btnCalculadora" mnemonicParsing="false" onAction="#abrirCalculadora" prefHeight="33.0" prefWidth="180.0" style="-fx-background-color: darkgreen;" text="CALCULAR RUTAS" textAlignment="CENTER" textFill="WHITE">
+                    <font>
+                        <Font name="Segoe UI Bold" size="14.0" />
+                    </font>
+                </Button>
+            </children>
+        </HBox>
+        <Pane layoutX="427.0" layoutY="84.0" prefHeight="587.0" prefWidth="911.0" style="-fx-background-color: lightblue; -fx-border-radius: 15; -fx-background-radius: 15;">
+            <children>
+                <ImageView fx:id="imgMapa" fitHeight="574.0" fitWidth="903.0" layoutX="14.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@img/mapaRD.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </Pane>
+        <TableView fx:id="TableParada" layoutX="24.0" layoutY="151.0" prefHeight="214.0" prefWidth="359.0" style="-fx-background-color: lightgrey;">
+            <columns>
+                <TableColumn fx:id="colTipoTransporte" prefWidth="148.0" text="Tipo de Transporte" />
+                <TableColumn fx:id="colNombre" prefWidth="210.0" text="Nombre" />
+            </columns>
+        </TableView>
+        <TableView fx:id="TableRuta" layoutX="24.0" layoutY="440.0" prefHeight="197.0" prefWidth="359.0" style="-fx-border-color: #34495e; -fx-background-color: lightgrey;" styleClass="rounded-table">
+            <columns>
+                <TableColumn fx:id="colDestino" prefWidth="106.0" text="Destino" />
+                <TableColumn fx:id="colOrigen" prefWidth="97.0" text="Origen" />
+                <TableColumn fx:id="colDistancia" prefWidth="76.0" text="Distancia" />
+                <TableColumn fx:id="colPrecio" prefWidth="79.0" text="Precio" />
+            </columns>
+        </TableView>
+        <Label fx:id="lbPrincipal" alignment="CENTER" layoutX="103.0" layoutY="112.0" text="Listado de Parada" textFill="WHITE">
+            <font>
+                <Font name="Segoe UI Bold" size="24.0" />
+            </font>
+        </Label>
+        <Label fx:id="lbPrincipal1" alignment="CENTER" layoutX="116.0" layoutY="401.0" text="Listado de Ruta" textAlignment="CENTER" textFill="#fff8f8">
+            <font>
+                <Font name="Segoe UI Bold" size="24.0" />
+            </font>
+        </Label>
+    </children>
 </AnchorPane>
