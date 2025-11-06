@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -68,6 +69,9 @@ public class Principal {
     private TableColumn<Ruta, Float> colPrecio;
 
     @FXML
+    private Button btnCalculadora;
+
+    @FXML
     private TableColumn<Parada, String> colTipoTransporte;
 
     @FXML
@@ -92,6 +96,8 @@ public class Principal {
         btnListados.setOnAction(Event -> {
             MenuListados.show(btnListados, Side.BOTTOM, 0, 0);
         });
+
+
         colOrigen.setCellValueFactory(cellData -> {
             Ruta ruta = cellData.getValue();
             return new SimpleStringProperty(ruta.getOrigen().getNombre());
@@ -196,4 +202,23 @@ public class Principal {
             e.printStackTrace();
         }
     }
+
+        @FXML
+        void abrirCalculadora(ActionEvent event) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.NUEVA_CALCULADORA_V2));
+                BorderPane root = loader.load();
+
+                Stage stage = new Stage();
+                stage.setTitle("Calculadora de Rutas - Vista Múltiple");
+                Stage ownerStage = (Stage) btnCalculadora.getScene().getWindow();
+                stage.initOwner(ownerStage);
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.setScene(new Scene(root));
+                stage.setResizable(false);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 }
