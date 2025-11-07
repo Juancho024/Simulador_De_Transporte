@@ -20,12 +20,10 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.PRINCIPAL));
         AnchorPane pane = (AnchorPane) loader.load(); //Cualquier cosa
 
-        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-        Scene scene = new Scene(pane, 1360, 690);
-
+        Scene scene = new Scene(pane);
         stage.setTitle("Simulador de Transporte de Ruta");
-
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
 
     }
