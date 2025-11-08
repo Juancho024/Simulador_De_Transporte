@@ -7,4 +7,5 @@ public class paths {
     public static final String LISTADO_RUTA = "../ListadoRuta.fxml";
     public static final String LISTADO_PARADA = "../ListadoParada.fxml";
     public static final String NUEVA_CALCULADORA_V2 = "../CalculadoraRutas.fxml";
+    public static final String SMART_GRAPH = "../css/smartgraph.css";
 }

@@ -48,7 +48,7 @@
                 </Button>
             </children>
         </HBox>
-        <Pane layoutX="427.0" layoutY="84.0" prefHeight="587.0" prefWidth="911.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;" />
+        <Pane fx:id="paneGrafos" layoutX="427.0" layoutY="84.0" prefHeight="587.0" prefWidth="911.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;" />
         <TableView fx:id="TableParada" layoutX="24.0" layoutY="151.0" prefHeight="214.0" prefWidth="359.0" style="-fx-background-color: lightgrey;">
             <columns>
                 <TableColumn fx:id="colTipoTransporte" prefWidth="148.0" text="Tipo de Transporte" />
