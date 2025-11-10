@@ -52,19 +52,19 @@ public class ListadoRuta implements Initializable {
     private Button btnRegistrar;
 
     @FXML
-    private TableColumn<Ruta, Double> colCosto;
+    private TableColumn<Ruta, Float> colCosto;
 
     @FXML
     private TableColumn<Ruta, String> colDestino;
 
     @FXML
-    private TableColumn<Ruta, Double> colDistancia;
+    private TableColumn<Ruta, Float> colDistancia;
 
     @FXML
     private TableColumn<Ruta, String> colOrigen;
 
     @FXML
-    private TableColumn<Ruta, Double> colTiempo;
+    private TableColumn<Ruta, Float> colTiempo;
 
     @FXML
     private TableColumn<Ruta, Integer> colTransbordo;
@@ -302,8 +302,53 @@ public class ListadoRuta implements Initializable {
             return new SimpleStringProperty(ruta.getDestino().getNombre());
         });
         colDistancia.setCellValueFactory(new PropertyValueFactory<>("Distancia"));
+        colDistancia.setCellFactory(column -> {
+            return new TableCell<Ruta, Float>() {
+                @Override
+                protected void updateItem(Float distancia, boolean empty) {
+                    super.updateItem(distancia, empty);
+
+                    if (empty || distancia == null) {
+                        setText(null);
+                    } else {
+                        String textoDistancia = String.format("%.2f km", distancia);
+                        setText(textoDistancia);
+                    }
+                }
+            };
+        });
         colCosto.setCellValueFactory(new PropertyValueFactory<>("Costo"));
+        colCosto.setCellFactory(column -> {
+            return new TableCell<Ruta, Float>() {
+                @Override
+                protected void updateItem(Float costo, boolean empty) {
+                    super.updateItem(costo, empty);
+
+                    if (empty || costo == null) {
+                        setText(null);
+                    } else {
+                        String textoCosto = String.format("$%.2f", costo);
+                        setText(textoCosto);
+                    }
+                }
+            };
+        });
         colTiempo.setCellValueFactory(new PropertyValueFactory<>("tiempoRecorrido"));
+        colTiempo.setCellFactory(column -> {
+            return new TableCell<Ruta, Float>() {
+                @Override
+                protected void updateItem(Float tiempo, boolean empty) {
+                    super.updateItem(tiempo, empty);
+
+                    if (empty || tiempo == null) {
+                        setText(null);
+                    } else {
+                        String textoTiempo = String.format("%.2f min", tiempo);
+                        setText(textoTiempo);
+                    }
+                }
+            };
+        });
         colTransbordo.setCellValueFactory(new PropertyValueFactory<>("numTransbordos"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("posibleEvento"));
         colEstado.setCellFactory(column -> new TableCell<Ruta, String>() {
@@ -386,9 +431,12 @@ public class ListadoRuta implements Initializable {
 
         lbDestino.setText(" " + ruta.getDestino().getNombre());
         lbOrigen.setText(" " + ruta.getOrigen().getNombre());
-        lbDistancia.setText(" " + String.valueOf(ruta.getDistancia()));
-        lbCosto.setText(" " + String.valueOf(ruta.getCosto()));
-        lbTiempo.setText(" " + String.valueOf(ruta.getTiempoRecorrido()));
+        float distancia = ruta.getDistancia();
+        lbDistancia.setText(" %.2f km".formatted(distancia));
+        float costo = ruta.getCosto();
+        lbCosto.setText(" $%.2f".formatted(costo));
+        float tiempo = ruta.getTiempoRecorrido();
+        lbTiempo.setText(" %.2f min".formatted(tiempo));
         lbTransbordo.setText(" " + String.valueOf(ruta.getNumTransbordos()));
     }
 
