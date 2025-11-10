@@ -97,7 +97,6 @@ public class Principal {
             MenuListados.show(btnListados, Side.BOTTOM, 0, 0);
         });
 
-
         colOrigen.setCellValueFactory(cellData -> {
             Ruta ruta = cellData.getValue();
             return new SimpleStringProperty(ruta.getOrigen().getNombre());

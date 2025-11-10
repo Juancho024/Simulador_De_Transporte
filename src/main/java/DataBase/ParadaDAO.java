@@ -26,9 +26,12 @@ public class ParadaDAO {
             preparedStatement.setString(2, parada.getTipoTransporte());
             preparedStatement.setInt(3, parada.getPosicionx());
             preparedStatement.setInt(4, parada.getPosiciony());
-            preparedStatement.setBytes(5, parada.getIcono()); //CONDICIONAL != NULL
-//            parada.getIcono().length
-//            preparedStatement.setBytes(6, new byte[]);
+            preparedStatement.setBytes(5, parada.getIcono());
+            if(parada.getIcono() == null){
+                preparedStatement.setNull(5, Types.BINARY);
+            } else {
+                preparedStatement.setBytes(5, parada.getIcono());
+            }
             preparedStatement.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();

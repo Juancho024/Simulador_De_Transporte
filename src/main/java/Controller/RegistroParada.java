@@ -113,7 +113,7 @@ public class RegistroParada implements Initializable {
         int latitud = spnLatitud.getValue();
         int longitud = spnLongitud.getValue();
 
-        if(iconoBytes == null || cbxTipoTransporte.getValue() == null|| txtNombre.getText().isEmpty() || latitud == 0 || longitud == 0){
+        if(cbxTipoTransporte.getValue() == null|| txtNombre.getText().isEmpty() || latitud == 0 || longitud == 0){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error de validación");
             alert.setHeaderText(null);

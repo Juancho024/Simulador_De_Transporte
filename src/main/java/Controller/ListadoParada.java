@@ -340,8 +340,13 @@ public class ListadoParada implements Initializable {
         lbTipoTransporte.setText(" " + parada.getTipoTransporte());
         lbLatitud.setText(" " + String.valueOf(parada.getPosiciony()));
         lbLongitud.setText(" " + String.valueOf(parada.getPosicionx()));
-        Image img = new Image(new java.io.ByteArrayInputStream(parada.getIcono()));
-        imgFondo.setImage(img); //Revisar y probar
+        byte[] iconoBytes = parada.getIcono();
+        if (iconoBytes != null && iconoBytes.length > 0) {
+            Image img = new Image(new java.io.ByteArrayInputStream(iconoBytes));
+            imgFondo.setImage(img);
+        } else {
+            imgFondo.setImage(null);
+        }
     }
 
 }
