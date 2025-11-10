@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #20252D;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.FloydWarshallControlVisual">
+    <center>
+
+        <AnchorPane fx:id="graphPane" style="-fx-background-color: #2B333F;">
+            <BorderPane.margin>
+                <Insets bottom="10.0" left="10.0" top="10.0" />
+            </BorderPane.margin>
+
+            <ProgressIndicator fx:id="progressIndicator" layoutX="500.0" layoutY="300.0" prefHeight="100.0" prefWidth="100.0" visible="true" />
+        </AnchorPane>
+    </center>
+    <right>
+
+        <VBox alignment="TOP_CENTER" prefWidth="280.0" spacing="15.0" style="-fx-background-color: #2B333F;">
+            <BorderPane.margin>
+                <Insets bottom="10.0" right="10.0" top="10.0" />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <children>
+                <Label text="Resultados de la Ruta" textFill="WHITE">
+                    <font>
+                        <Font name="Segoe UI Bold" size="20.0" />
+                    </font>
+                </Label>
+                <VBox spacing="5.0" style="-fx-background-color: #20252D; -fx-background-radius: 5; -fx-padding: 10;">
+                    <children>
+                        <Label text="ORIGEN:" textFill="#bdc3c7">
+                            <font>
+                                <Font name="Segoe UI Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblOrigen" text="--" textFill="WHITE" wrapText="true">
+                            <font>
+                                <Font name="Segoe UI" size="16.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+                <VBox spacing="5.0" style="-fx-background-color: #20252D; -fx-background-radius: 5; -fx-padding: 10;">
+                    <children>
+                        <Label text="DESTINO:" textFill="#bdc3c7">
+                            <font>
+                                <Font name="Segoe UI Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblDestino" text="--" textFill="WHITE" wrapText="true">
+                            <font>
+                                <Font name="Segoe UI" size="16.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+                <VBox spacing="5.0" style="-fx-background-color: #20252D; -fx-background-radius: 5; -fx-padding: 10;">
+                    <children>
+                        <Label text="DISTANCIA TOTAL:" textFill="#bdc3c7">
+                            <font>
+                                <Font name="Segoe UI Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblDistancia" text="-- km" textFill="WHITE">
+                            <font>
+                                <Font name="Segoe UI" size="16.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+                <VBox spacing="5.0" style="-fx-background-color: #20252D; -fx-background-radius: 5; -fx-padding: 10;">
+                    <children>
+                        <Label text="COSTO TOTAL:" textFill="#bdc3c7">
+                            <font>
+                                <Font name="Segoe UI Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblCosto" text="-- $" textFill="WHITE">
+                            <font>
+                                <Font name="Segoe UI" size="16.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+                <Label text="CAMINO:" textFill="#bdc3c7">
+                    <font>
+                        <Font name="Segoe UI Bold" size="14.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </Label>
+                <ListView fx:id="lvCamino" prefHeight="250.0" style="-fx-background-color: #34495e; -fx-control-inner-background: #34495e;" />
+            </children>
+        </VBox>
+    </right>
+    <bottom>
+
+        <Label fx:id="lblStatus" alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-background-color: #007AFF; -fx-padding: 8;" text="Calculando todas las rutas... Por favor, espere." textFill="WHITE">
+            <font>
+                <Font name="Segoe UI Bold" size="16.0" />
+            </font>
+            <BorderPane.margin>
+                <Insets left="10.0" right="10.0" />
+            </BorderPane.margin>
+        </Label>
+    </bottom>
+</BorderPane>

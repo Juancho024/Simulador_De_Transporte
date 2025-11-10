@@ -5,12 +5,12 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #34495e;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CalculadoraRutas">
+<BorderPane prefHeight="783.0" prefWidth="900.0" style="-fx-background-color: #34495e;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CalculadoraRutas">
 
     <top>
         <VBox>
             <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-            <Label text="Visualización del Grafo" textFill="#2c3e50">
+            <Label text="Visualización del Grafo" textFill="#ecf0f1">
                 <font><Font name="Segoe UI Bold" size="18.0" /></font>
             </Label>
             <AnchorPane fx:id="paneGrafo" prefHeight="250.0" style="-fx-background-color: #325170; -fx-border-color: #bdc3c7; -fx-border-width: 2;">
@@ -23,150 +23,151 @@
 
 
     <center>
-        <VBox spacing="15">
-            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: #34495e; -fx-background: #34495e;">
+            <VBox spacing="15">
+                <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
 
-
-            <HBox alignment="CENTER_LEFT" spacing="15">
-                <Label text="Origen:" textFill="#34495e">
-                    <font><Font name="Segoe UI" size="14.0" /></font>
-                </Label>
-                <ComboBox fx:id="cbOrigen" prefWidth="200.0" promptText="Seleccione parada origen" />
-
-                <Label text="Destino:" textFill="#34495e">
-                    <font><Font name="Segoe UI" size="14.0" /></font>
-                </Label>
-                <ComboBox fx:id="cbDestino" prefWidth="200.0" promptText="Seleccione parada destino" />
-
-                <Button fx:id="btnBuscar" onAction="#buscarRutas" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #27ae60;" text="Buscar" textFill="WHITE">
-                    <font><Font name="Segoe UI Bold" size="14.0" /></font>
-                </Button>
-            </HBox>
-
-            <Separator />
-
-
-            <GridPane hgap="15" vgap="15">
-
-                <VBox prefHeight="182.0" prefWidth="402.0" spacing="8" style="-fx-background-color: white; -fx-border-color: #3498db; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-                    <Label text="Mejor Ruta" textFill="#3498db">
-                        <font><Font name="Segoe UI Bold" size="16.0" /></font>
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Label text="Origen:" textFill="#ecf0f1">
+                        <font><Font name="Segoe UI" size="14.0" /></font>
                     </Label>
-                    <Label text="(Dijkstra - Ruta más eficiente)" textFill="#7f8c8d">
-                        <font><Font size="11.0" /></font>
+                    <ComboBox fx:id="cbOrigen" prefWidth="200.0" promptText="Seleccione parada origen" />
+
+                    <Label text="Destino:" textFill="#ecf0f1">
+                        <font><Font name="Segoe UI" size="14.0" /></font>
                     </Label>
-                    <Separator />
-                    <HBox spacing="5">
-                        <Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblCosto1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblDistancia1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblTiempo1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblTransbordos1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                </VBox>
+                    <ComboBox fx:id="cbDestino" prefWidth="200.0" promptText="Seleccione parada destino" />
+
+                    <Button fx:id="btnBuscar" onAction="#buscarRutas" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #27ae60;" text="Buscar" textFill="WHITE">
+                        <font><Font name="Segoe UI Bold" size="14.0" /></font>
+                    </Button>
+                </HBox>
+
+                <Separator />
 
 
-                <VBox prefHeight="181.0" prefWidth="408.0" spacing="8" style="-fx-background-color: white; -fx-border-color: #27ae60; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-                    <Label text="Menor Costo" textFill="#27ae60">
-                        <font><Font name="Segoe UI Bold" size="16.0" /></font>
-                    </Label>
-                    <Label text="(Bellman-Ford)" textFill="#7f8c8d">
-                        <font><Font size="11.0" /></font>
-                    </Label>
-                    <Separator />
-                    <HBox spacing="5">
-                        <Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblCosto2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblDistancia2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblTiempo2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblTransbordos2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                </VBox>
+                <GridPane hgap="15" vgap="15">
+
+                    <VBox prefHeight="182.0" prefWidth="402.0" spacing="8" style="-fx-background-color: white; -fx-border-color: #3498db; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                        <Label text="Mejor Ruta" textFill="#3498db">
+                            <font><Font name="Segoe UI Bold" size="16.0" /></font>
+                        </Label>
+                        <Label text="(Dijkstra - Ruta más eficiente)" textFill="#7f8c8d">
+                            <font><Font size="11.0" /></font>
+                        </Label>
+                        <Separator />
+                        <HBox spacing="5">
+                            <Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblCosto1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblDistancia1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblTiempo1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblTransbordos1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                    </VBox>
 
 
-                <VBox spacing="8" style="-fx-background-color: white; -fx-border-color: #e74c3c; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-                    <Label text="Menor Distancia" textFill="#e74c3c">
-                        <font><Font name="Segoe UI Bold" size="16.0" /></font>
-                    </Label>
-                    <Label text="(Distancia más corta)" textFill="#7f8c8d">
-                        <font><Font size="11.0" /></font>
-                    </Label>
-                    <Separator />
-                    <HBox spacing="5">
-                        <Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblCosto3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblDistancia3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblTiempo3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblTransbordos3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                </VBox>
+                    <VBox prefHeight="181.0" prefWidth="408.0" spacing="8" style="-fx-background-color: white; -fx-border-color: #27ae60; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                        <Label text="Menor Costo" textFill="#27ae60">
+                            <font><Font name="Segoe UI Bold" size="16.0" /></font>
+                        </Label>
+                        <Label text="(Bellman-Ford)" textFill="#7f8c8d">
+                            <font><Font size="11.0" /></font>
+                        </Label>
+                        <Separator />
+                        <HBox spacing="5">
+                            <Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblCosto2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblDistancia2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblTiempo2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblTransbordos2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                    </VBox>
 
 
-                <VBox spacing="8" style="-fx-background-color: white; -fx-border-color: #f39c12; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-                    <Label text="Menor Tiempo" textFill="#f39c12">
-                        <font><Font name="Segoe UI Bold" size="16.0" /></font>
-                    </Label>
-                    <Label text="(Tiempo mínimo)" textFill="#7f8c8d">
-                        <font><Font size="11.0" /></font>
-                    </Label>
-                    <Separator />
-                    <HBox spacing="5">
-                        <Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblCosto4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblDistancia4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblTiempo4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                    <HBox spacing="5">
-                        <Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
-                        <Label fx:id="lblTransbordos4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
-                    </HBox>
-                </VBox>
-                <columnConstraints>
-                    <ColumnConstraints />
-                    <ColumnConstraints />
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints />
-                    <RowConstraints />
-                </rowConstraints>
-            </GridPane>
-        </VBox>
+                    <VBox spacing="8" style="-fx-background-color: white; -fx-border-color: #e74c3c; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                        <Label text="Menor Distancia" textFill="#e74c3c">
+                            <font><Font name="Segoe UI Bold" size="16.0" /></font>
+                        </Label>
+                        <Label text="(Distancia más corta)" textFill="#7f8c8d">
+                            <font><Font size="11.0" /></font>
+                        </Label>
+                        <Separator />
+                        <HBox spacing="5">
+                            <Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblCosto3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblDistancia3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblTiempo3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblTransbordos3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                    </VBox>
+
+
+                    <VBox spacing="8" style="-fx-background-color: white; -fx-border-color: #f39c12; -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                        <Label text="Menor Tiempo" textFill="#f39c12">
+                            <font><Font name="Segoe UI Bold" size="16.0" /></font>
+                        </Label>
+                        <Label text="(Tiempo mínimo)" textFill="#7f8c8d">
+                            <font><Font size="11.0" /></font>
+                        </Label>
+                        <Separator />
+                        <HBox spacing="5">
+                            <Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblCosto4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblDistancia4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblTiempo4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label>
+                            <Label fx:id="lblTransbordos4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label>
+                        </HBox>
+                    </VBox>
+                    <columnConstraints>
+                        <ColumnConstraints />
+                        <ColumnConstraints />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                    </rowConstraints>
+                </GridPane>
+            </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>

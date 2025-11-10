@@ -3,113 +3,133 @@ package Controller;
 import DataBase.ParadaDAO;
 import DataBase.RutaDAO;
 import Model.Parada;
-import Model.RedParada;
 import Model.Ruta;
 import Utilities.paths;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Side;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
-import javafx.scene.image.ImageView;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class Principal {
+public class Principal implements Initializable {
 
-    @FXML
-    private Button btnListados;
+    // --- Nuevos componentes de la barra lateral ---
+    @FXML private VBox sidebar;
+    @FXML private Button btnCrearParada;
+    @FXML private Button btnCrearRuta;
+    @FXML private Button btnListadoParada;
+    @FXML private Button btnListadoRuta;
+    @FXML private Button btnCalcularRutas;
+    @FXML private Button btnAnalisisInteractivo;
+    @FXML private Button btnPlanificadorRed;
 
-    @FXML
-    private Button btnRegistros;
+    // --- Componentes de las Tablas ---
+    @FXML private TableView<Parada> TableParada;
+    @FXML private TableView<Ruta> TableRuta;
+    @FXML private TableColumn<Ruta, String> colDestino;
+    @FXML private TableColumn<Ruta, Float> colDistancia;
+    @FXML private TableColumn<Parada, String> colNombre;
+    @FXML private TableColumn<Ruta, String> colOrigen;
+    @FXML private TableColumn<Ruta, Float> colPrecio;
+    @FXML private TableColumn<Parada, String> colTipoTransporte;
 
-    @FXML
-    private ImageView imgMapa;
-
-    @FXML
-    private MenuItem itemParada;
-
-    @FXML
-    private MenuItem itemRuta;
-
-    @FXML
-    private ContextMenu menuRegistros;
-
-    @FXML
-    private TableView<Parada> TableParada;
-
-    @FXML
-    private TableView<Ruta> TableRuta;
-
-    @FXML
-    private TableColumn<Ruta, String> colDestino;
-
-    @FXML
-    private TableColumn<Ruta, Float> colDistancia;
-
-    @FXML
-    private TableColumn<Parada, String> colNombre;
-
-    @FXML
-    private TableColumn<Ruta, String> colOrigen;
-
-    @FXML
-    private TableColumn<Ruta, Float> colPrecio;
-
-    @FXML
-    private Button btnCalculadora;
-
-    @FXML
-    private TableColumn<Parada, String> colTipoTransporte;
-
-    @FXML
-    private MenuItem itemListadoParada;
-
-    @FXML
-    private MenuItem itemListadoRuta;
-
-    @FXML
-    private ContextMenu MenuListados;
+    // Atributos para la animación
+    private final double collapsedWidth = 60.0;
+    private final double expandedWidth = 200.0;
+    private final List<Button> sidebarButtons = new ArrayList<>();
 
 
     public Principal() {
-        //debe ir asi
+
     }
 
-    @FXML
-    void initialize() {
-        btnRegistros.setOnAction(e -> {
-            menuRegistros.show(btnRegistros, Side.BOTTOM, 0, 0);
-        });
-        btnListados.setOnAction(Event -> {
-            MenuListados.show(btnListados, Side.BOTTOM, 0, 0);
-        });
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        colOrigen.setCellValueFactory(cellData -> {
-            Ruta ruta = cellData.getValue();
-            return new SimpleStringProperty(ruta.getOrigen().getNombre());
-        });
-        colDestino.setCellValueFactory(cellData -> {
-            Ruta ruta = cellData.getValue();
-            return new SimpleStringProperty(ruta.getDestino().getNombre());
-        });
+        setupSidebarAnimation();
+
+        colOrigen.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOrigen().getNombre()));
+        colDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDestino().getNombre()));
         colDistancia.setCellValueFactory(new PropertyValueFactory<>("distancia"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("costo"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colTipoTransporte.setCellValueFactory(new PropertyValueFactory<>("tipoTransporte"));
+
+
         cargarTablas();
+    }
+
+    private void setupSidebarAnimation() {
+        sidebarButtons.addAll(List.of(btnCrearParada, btnCrearRuta, btnListadoParada, btnListadoRuta, btnCalcularRutas, btnAnalisisInteractivo, btnPlanificadorRed));;
+
+        // Ocultar texto de los botones al inicio
+        for (Button button : sidebarButtons) {
+            button.setText("");
+        }
+
+        Timeline expandAnimation = new Timeline(new KeyFrame(Duration.millis(300), new KeyValue(sidebar.prefWidthProperty(), expandedWidth)));
+        Timeline collapseAnimation = new Timeline(new KeyFrame(Duration.millis(300), new KeyValue(sidebar.prefWidthProperty(), collapsedWidth)));
+
+        sidebar.setOnMouseEntered(event -> {
+            expandAnimation.play();
+            // Asignar texto a cada botón al expandir
+            btnCrearParada.setText("Crear Parada");
+            btnCrearRuta.setText("Crear Ruta");
+            btnListadoParada.setText("Listado Paradas");
+            btnListadoRuta.setText("Listado Rutas");
+            btnCalcularRutas.setText("Calcular Rutas");
+            btnAnalisisInteractivo.setText("Análisis Interactivo");
+            btnPlanificadorRed.setText("Planificador de Red");
+        });
+
+//            En caso de error
+//        if(btnAnalisisInteractivo != null) btnAnalisisInteractivo.setText("Análisis Interactivo");
+//        if(btnPlanificadorRed != null) btnPlanificadorRed.setText("Planificador de Red");
+
+        sidebar.setOnMouseExited(event -> {
+            collapseAnimation.play();
+            // Ocultar texto al colapsar
+            for (Button button : sidebarButtons) {
+                button.setText("");
+            }
+        });
+    }
+
+
+    public void cargarTablas() {
+        TableParada.getItems().clear();
+        TableParada.getItems().setAll(ParadaDAO.getInstance().obtenerParadas().values());
+        TableParada.refresh();
+
+        TableRuta.getItems().clear();
+        List<Ruta> todasLasRutas = new ArrayList<>();
+        for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
+            todasLasRutas.addAll(lista);
+        }
+        TableRuta.getItems().setAll(todasLasRutas);
+        TableRuta.refresh();
     }
 
     @FXML
@@ -119,7 +139,7 @@ public class Principal {
             AnchorPane root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Registro de Parada");
-            Stage ownerStage = (Stage) btnRegistros.getScene().getWindow();
+            Stage ownerStage = (Stage) sidebar.getScene().getWindow();
             stage.initOwner(ownerStage);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setScene(new Scene(root));
@@ -138,7 +158,7 @@ public class Principal {
             AnchorPane root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Registro de Ruta");
-            Stage ownerStage = (Stage) btnRegistros.getScene().getWindow();
+            Stage ownerStage = (Stage) sidebar.getScene().getWindow();
             stage.initOwner(ownerStage);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setScene(new Scene(root));
@@ -149,29 +169,15 @@ public class Principal {
             e.printStackTrace();
         }
     }
-    public void cargarTablas(){
-        TableParada.getItems().clear();
-        TableParada.getItems().setAll(ParadaDAO.getInstance().obtenerParadas().values());
-        TableParada.refresh();
 
-        TableRuta.getItems().clear();
-        List<Ruta> todasLasRutas = new ArrayList<>();
-
-        for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
-            todasLasRutas.addAll(lista);
-        }
-
-        TableRuta.getItems().setAll(todasLasRutas);
-        TableRuta.refresh();
-    }
     @FXML
     void listarParada(ActionEvent event) {
-        try{
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.LISTADO_PARADA));
             AnchorPane root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Listado de Paradas");
-            Stage ownerStage = (Stage) btnListados.getScene().getWindow();
+            Stage ownerStage = (Stage) sidebar.getScene().getWindow();
             stage.initOwner(ownerStage);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setScene(new Scene(root));
@@ -185,39 +191,70 @@ public class Principal {
 
     @FXML
     void listarRutas(ActionEvent event) {
-        try{
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.LISTADO_RUTA));
             AnchorPane root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Listado de Rutas");
-            Stage ownerStage = (Stage) btnListados.getScene().getWindow();
+            Stage ownerStage = (Stage) sidebar.getScene().getWindow();
             stage.initOwner(ownerStage);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
             stage.setOnHidden(e -> cargarTablas());
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-        @FXML
-        void abrirCalculadora(ActionEvent event) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.NUEVA_CALCULADORA_V2));
-                BorderPane root = loader.load();
-
-                Stage stage = new Stage();
-                stage.setTitle("Calculadora de Rutas - Vista Múltiple");
-                Stage ownerStage = (Stage) btnCalculadora.getScene().getWindow();
-                stage.initOwner(ownerStage);
-                stage.initModality(Modality.WINDOW_MODAL);
-                stage.setScene(new Scene(root));
-                stage.setResizable(false);
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    @FXML
+    void abrirAnalisisInteractivo(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.FLOYD_CONTROL_VISUAL));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Análisis Interactivo de Rutas (Floyd-Warshall)");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Error al abrir la vista de Análisis Interactivo:");
+            e.printStackTrace();
         }
+    }
+
+    @FXML
+    void abrirPlanificadorRed(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.KRUSCAL_CONTROL_VISUAL));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Planificador de Red Óptima (MST)");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Error al abrir la vista del Planificador de Red:");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void abrirCalculadora(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.NUEVA_CALCULADORA_V2));
+            BorderPane root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Calculadora de Rutas - Vista Múltiple");
+            Stage ownerStage = (Stage) sidebar.getScene().getWindow();
+            stage.initOwner(ownerStage);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

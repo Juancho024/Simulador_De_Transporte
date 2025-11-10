@@ -69,3 +69,16 @@
     -fx-border-radius: 0;
     -fx-border-width: 0;
 }
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 0 20; /* Alinea el icono a la izquierda */
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #007AFF; /* Un color de realce al pasar el ratón */
+}

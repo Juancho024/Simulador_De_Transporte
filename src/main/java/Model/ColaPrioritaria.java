@@ -18,7 +18,7 @@ public class ColaPrioritaria {
     public float getKm() {
         return km;
     }
-    public void setKm(int km) {
+    public void setKm(float km) {
         this.km = km;
     }
 }
