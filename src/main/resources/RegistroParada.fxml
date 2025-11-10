@@ -43,8 +43,8 @@
       </Label>
       <ComboBox fx:id="cbxTipoTransporte" layoutX="288.0" layoutY="217.0" prefHeight="25.0" prefWidth="285.0" />
       <TextField fx:id="txtNombre" layoutX="288.0" layoutY="257.0" prefHeight="25.0" prefWidth="285.0" />
-      <Spinner fx:id="spnLatitud" layoutX="206.0" layoutY="293.0" prefHeight="25.0" prefWidth="134.0" />
-      <Spinner fx:id="spnLongitud" layoutX="431.0" layoutY="293.0" prefHeight="25.0" prefWidth="141.0" />
+      <Spinner fx:id="spnLatitud" editable="true" layoutX="206.0" layoutY="293.0" prefHeight="25.0" prefWidth="134.0" />
+      <Spinner fx:id="spnLongitud" editable="true" layoutX="431.0" layoutY="293.0" prefHeight="25.0" prefWidth="141.0" />
       <Button fx:id="btnCancelar" layoutX="402.0" layoutY="337.0" mnemonicParsing="false" onAction="#Cancelar" prefHeight="29.0" prefWidth="118.0" style="-fx-background-color: red;" text="Cancelar" textFill="WHITE">
          <font>
             <Font name="Segoe UI Bold" size="16.0" />

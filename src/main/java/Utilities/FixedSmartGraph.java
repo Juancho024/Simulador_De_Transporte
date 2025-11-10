@@ -11,7 +11,7 @@ public class FixedSmartGraph {
             for (Object vertexObj : graphView.getSmartVertices()) {
                 SmartGraphVertexNode<?> node = (SmartGraphVertexNode<?>) vertexObj;
 
-                // 🔒 Bloquear cualquier acción de mouse (click, arrastre, hover)
+                // Bloquear cualquier acción de mouse (click, arrastre, hover)
                 node.setOnMousePressed(e -> e.consume());
                 node.setOnMouseDragged(e -> e.consume());
                 node.setOnMouseReleased(e -> e.consume());

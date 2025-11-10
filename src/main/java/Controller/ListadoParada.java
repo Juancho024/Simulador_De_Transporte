@@ -160,12 +160,12 @@ public class ListadoParada implements Initializable {
                 alertCampos.showAndWait();
                 return;
             }
-            if ((spnLatitud.getValue() >= 0 && spnLatitud.getValue() <= 550) &&
-                    (spnLongitud.getValue() >= 0 && spnLongitud.getValue() <= 900)){
+            if (spnLatitud.getValue() < 0 || spnLatitud.getValue() > 550 ||
+                    spnLongitud.getValue() < 0 || spnLongitud.getValue() > 900){
                 Alert alertCampos = new Alert(Alert.AlertType.ERROR);
                 alertCampos.setTitle("Error de validación");
                 alertCampos.setHeaderText("Valores fuera de rango");
-                alertCampos.setContentText("La latitud y longitud deben estar entre -100 y 100. Por favor, ingresa valores válidos.");
+                alertCampos.setContentText("La latitud debe ir de 0 a 550 y la longitud de 0 a 900. Por favor, ingresa valores dentro de estos rangos.");
                 alertCampos.showAndWait();
                 return;
             }
@@ -181,8 +181,8 @@ public class ListadoParada implements Initializable {
                 Parada parada = tableParada.getItems().get(index);
                 parada.setNombre(txtNombre.getText());
                 parada.setTipoTransporte(cbxTipoTransporte.getValue());
-                parada.setPosiciony(Integer.parseInt(spnLatitud.getValue().toString()));
-                parada.setPosicionx(Integer.parseInt(spnLongitud.getValue().toString()));
+                parada.setPosiciony(Double.parseDouble(spnLatitud.getValue().toString()));
+                parada.setPosicionx(Double.parseDouble(spnLongitud.getValue().toString()));
                 parada.setIcono(iconoBytes);
 
                 ParadaDAO.getInstance().actualizarParada(parada);
@@ -218,8 +218,6 @@ public class ListadoParada implements Initializable {
     void cancelarModificacion(ActionEvent event) {
         paneModificacion.setVisible(false);
         panePrincipal.setVisible(true);
-        //Pruebas
-//        tableParada.getSelectionModel().clearSelection();
         limpiarCampos();
     }
 
