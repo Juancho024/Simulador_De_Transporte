@@ -3,9 +3,7 @@ package Controller;
 import DataBase.ParadaDAO;
 import DataBase.RutaDAO;
 import Model.Parada;
-import Model.RedParada;
 import Utilities.paths;
-import com.sun.tools.javac.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -94,10 +92,10 @@ public class ListadoParada implements Initializable {
     private ComboBox<String> cbxTipoTransporte;
 
     @FXML
-    private Spinner<Integer> spnLatitud;
+    private Spinner<Double> spnLatitud;
 
     @FXML
-    private Spinner<Integer> spnLongitud;
+    private Spinner<Double> spnLongitud;
 
     @FXML
     private TextField txtNombre;
@@ -162,8 +160,8 @@ public class ListadoParada implements Initializable {
                 alertCampos.showAndWait();
                 return;
             }
-            if(spnLatitud.getValue() < -100 || spnLatitud.getValue() > 100 ||
-                    spnLongitud.getValue() < -100 || spnLongitud.getValue() > 100){
+            if ((spnLatitud.getValue() >= 0 && spnLatitud.getValue() <= 550) &&
+                    (spnLongitud.getValue() >= 0 && spnLongitud.getValue() <= 900)){
                 Alert alertCampos = new Alert(Alert.AlertType.ERROR);
                 alertCampos.setTitle("Error de validación");
                 alertCampos.setHeaderText("Valores fuera de rango");
@@ -306,11 +304,11 @@ public class ListadoParada implements Initializable {
         colLongitud.setCellValueFactory(new PropertyValueFactory<>("posicionx"));
 
         spnLatitud.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(-100, 100, 0)
+                new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 550, 0)
         );
 
         spnLongitud.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(-100, 100, 0)
+                new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 900, 0)
         );
 
         cargarTablas();

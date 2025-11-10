@@ -1,7 +1,6 @@
 package DataBase;
 
 import Model.Parada;
-import Model.Ruta;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -24,8 +23,8 @@ public class ParadaDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, parada.getNombre());
             preparedStatement.setString(2, parada.getTipoTransporte());
-            preparedStatement.setInt(3, parada.getPosicionx());
-            preparedStatement.setInt(4, parada.getPosiciony());
+            preparedStatement.setDouble(3, parada.getPosicionx());
+            preparedStatement.setDouble(4, parada.getPosiciony());
             preparedStatement.setBytes(5, parada.getIcono()); //CONDICIONAL != NULL
 //            parada.getIcono().length
 //            preparedStatement.setBytes(6, new byte[]);
@@ -65,8 +64,8 @@ public class ParadaDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, parada.getNombre());
             preparedStatement.setString(2, parada.getTipoTransporte());
-            preparedStatement.setInt(3, parada.getPosicionx());
-            preparedStatement.setInt(4, parada.getPosiciony());
+            preparedStatement.setDouble(3, parada.getPosicionx());
+            preparedStatement.setDouble(4, parada.getPosiciony());
             preparedStatement.setBytes(5, parada.getIcono());
             preparedStatement.setLong(6, parada.getId());
             preparedStatement.executeUpdate();

@@ -2,28 +2,30 @@ package Controller;
 
 import DataBase.ParadaDAO;
 import DataBase.RutaDAO;
+import Model.GrafoInfo;
 import Model.Parada;
-import Model.RedParada;
 import Model.Ruta;
 import Utilities.paths;
 import com.brunomnsilva.smartgraph.graph.Graph;
 import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
-import com.brunomnsilva.smartgraph.graph.Vertex;
 import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Side;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -32,6 +34,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javafx.scene.image.ImageView;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -95,8 +98,8 @@ public class Principal {
     @FXML
     private Pane paneGrafos;
 
-    private SmartGraphPanel<String, String> graphView;
-    private Graph<String, String> graph;
+    private SmartGraphPanel<String, GrafoInfo> graphView;
+    private Graph<String, GrafoInfo> graph;
 
     public Principal() {
         //debe ir asi
@@ -143,10 +146,7 @@ public class Principal {
             }
         });
     }
-    /**
-     * Construye el grafo usando tus DAOs y coloca el SmartGraphPanel dentro de paneGrafos.
-     * Si ya existe un graphView previo lo reemplaza.
-     */
+
     private void buildAndShowGraphInPane() {
         try {
             // 0) Eliminar vista anterior si existe
@@ -161,8 +161,6 @@ public class Principal {
 
             // Estructuras auxiliares
             Set<String> addedVertices = new HashSet<>();
-            Map<String, Integer> pairCount = new HashMap<>(); // cuenta por par origen->destino
-            int globalEdgeCounter = 0;
 
             // 2) Insertar Paradas (ParadaDAO)
             Collection<Parada> paradas = ParadaDAO.getInstance().obtenerParadas().values();
@@ -176,11 +174,14 @@ public class Principal {
                 }
             }
 
+
             // 3) Insertar aristas (RutaDAO)
+            int contador = 1;
             Map<?, LinkedList<Ruta>> rutasMap = RutaDAO.getInstancia().obtenerRutas();
             for (LinkedList<Ruta> lista : rutasMap.values()) {
                 for (Ruta r : lista) {
                     try {
+                        //Revisar que los datos esten guardados y el nombre
                         String origen = r.getOrigen() != null ? r.getOrigen().getNombre() : null;
                         String destino = r.getDestino() != null ? r.getDestino().getNombre() : null;
                         if (origen == null || destino == null) continue;
@@ -195,24 +196,15 @@ public class Principal {
                             addedVertices.add(destino);
                         }
 
-                        // Generar ID/etiqueta única para la arista pero mostrar la distancia
-                        String pairKey = origen + "->" + destino;
-                        int countForPair = pairCount.getOrDefault(pairKey, 0);
-                        pairCount.put(pairKey, countForPair + 1);
-
-                        // Mostrar distancia en la etiqueta pero añadir sufijo global para unicidad
-                        String distanciaStr = String.valueOf(r.getDistancia());
-                        String edgeElement = distanciaStr + (countForPair > 0 ? ("#" + countForPair) : "");
-                        // Asegurar unicidad global con contador
-                        edgeElement = edgeElement + "." + (globalEdgeCounter++);
-
-                        // Insertar la arista (si por cualquier motivo hay duplicado capturamos la excepción y seguimos)
-                        try {
-                            graph.insertEdge(origen, destino, "KM : " + edgeElement);
-                        } catch (com.brunomnsilva.smartgraph.graph.InvalidEdgeException iee) {
-                            System.out.println("Aviso: arista duplicada omitida: " + edgeElement + " (" + origen + "->" + destino + ")");
-                            // continuar con la siguiente arista
-                        }
+                        //Etiqueta de la distancia y ruta
+                        String distanciaLabel = "Ruta #" + (contador++) + "\nDistancia: " + String.format("%.2f km", r.getDistancia());
+                        String edgeId = String.valueOf(r.getId());
+                        GrafoInfo ei = new GrafoInfo(edgeId, distanciaLabel);
+                        graph.insertEdge(origen, destino, ei);
+//                        try{
+//                        } catch (com.brunomnsilva.smartgraph.graph.InvalidEdgeException iee) {
+//                            System.out.println("Aviso: arista duplicada omitida (id): " + ei.getId());
+//                        }
 
                     } catch (Exception inner) {
                         inner.printStackTrace();
@@ -220,8 +212,16 @@ public class Principal {
                 }
             }
 
-            // 4) Crear SmartGraphPanel con layout
-            SmartPlacementStrategy initialPlacement = new SmartCircularSortedPlacementStrategy();
+            // Crear un mapa con las posiciones guardadas en las paradas
+            Map<String, Point2D> posiciones = new HashMap<>();
+
+            for (Parada p : paradas) {
+                // Suponiendo que Parada tiene getX() y getY()
+                posiciones.put(p.getNombre(), new Point2D(p.getPosicionx(), p.getPosiciony()));
+            }
+
+            // Usar la estrategia personalizada que usa coordenadas fijas
+            SmartPlacementStrategy initialPlacement = new Utilities.SmartFixedPlacementStrategy(posiciones);
             graphView = new SmartGraphPanel<>(graph, initialPlacement);
 
             // 5) Ajuste de tamaño
@@ -251,50 +251,6 @@ public class Principal {
         }
     }
 
-//    // Llama a este método pasando el id de la arista (ej. "e0")
-//    private void highlightEdgeById(String edgeId) {
-//        if (edgeId == null || graphView == null) return;
-//
-//        // Buscamos todas las etiquetas de arista y comparamos su texto
-//        // SmartGraph usa la clase .smart-edge-label para los textos de arista
-//        Set<Node> edgeLabels = graphView.lookupAll(".smart-edge-label");
-//        for (Node labelNode : edgeLabels) {
-//            if (!(labelNode instanceof Text)) continue;
-//            Text t = (Text) labelNode;
-//            if (edgeId.equals(t.getText())) {
-//                // Encontramos la etiqueta; su ancestro directo suele ser el grupo que contiene la arista
-//                Parent parent = t.getParent();
-//                if (parent != null) {
-//                    // Intentamos añadir la clase 'highlighted' al nodo que contiene la línea de la arista
-//                    // Dependiendo de la versión de SmartGraph, esto puede necesitar adaptaciones.
-//                    parent.getStyleClass().add("highlighted");
-//                    // También añadir directamente a los hijos con clase .smart-edge
-//                    for (Node child : parent.getChildrenUnmodifiable()) {
-//                        if (child.getStyleClass().contains("smart-edge")) {
-//                            child.getStyleClass().add("highlighted");
-//                        }
-//                    }
-//                }
-//                // Si quieres solo 1 coincidencia, puedes break aquí
-//                // break;
-//            }
-//        }
-//    }
-//    // helper simple: comprobar existencia de vértice (GraphEdgeList no expone containsVertex directamente)
-//    // Si tu Graph ofrece containsVertex usa ese; aquí iteramos para mayor compatibilidad.
-//    private boolean containsVertex(Graph<String, String> g, String v) {
-//        try {
-//            // GraphEdgeList tiene iteradores; intentamos recorrer vertices vía toString de la API general.
-//            // Si la implementación tiene otro método, reemplaza por g.containsVertex(v).
-//            for (Vertex<String> vertex : g.vertices()) {
-//                if (vertex.equals(v)) return true;
-//            }
-//        } catch (Exception ex) {
-//            // fallback: intentar insertar y capturar excepción (no ideal)
-//        }
-//        return false;
-//    }
-
     @FXML
     void crearParada(ActionEvent event) {
         try {
@@ -308,7 +264,10 @@ public class Principal {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
-            stage.setOnHidden(e -> cargarTablas());
+            stage.setOnHidden(e -> {
+                cargarTablas();              // Actualiza las tablas
+                buildAndShowGraphInPane();   // Vuelve a construir y mostrar el grafo actualizado
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -327,12 +286,16 @@ public class Principal {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
-            stage.setOnHidden(e -> cargarTablas());
+            stage.setOnHidden(e -> {
+                cargarTablas();              // Actualiza las tablas
+                buildAndShowGraphInPane();   // Vuelve a construir y mostrar el grafo actualizado
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public void cargarTablas(){
+
+    public void cargarTablas() {
         TableParada.getItems().clear();
         TableParada.getItems().setAll(ParadaDAO.getInstance().obtenerParadas().values());
         TableParada.refresh();
@@ -347,9 +310,10 @@ public class Principal {
         TableRuta.getItems().setAll(todasLasRutas);
         TableRuta.refresh();
     }
+
     @FXML
     void listarParada(ActionEvent event) {
-        try{
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.LISTADO_PARADA));
             AnchorPane root = loader.load();
             Stage stage = new Stage();
@@ -360,7 +324,10 @@ public class Principal {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
-            stage.setOnHidden(e -> cargarTablas());
+            stage.setOnHidden(e -> {
+                cargarTablas();              // Actualiza las tablas
+                buildAndShowGraphInPane();   // Vuelve a construir y mostrar el grafo actualizado
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -368,7 +335,7 @@ public class Principal {
 
     @FXML
     void listarRutas(ActionEvent event) {
-        try{
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.LISTADO_RUTA));
             AnchorPane root = loader.load();
             Stage stage = new Stage();
@@ -379,28 +346,35 @@ public class Principal {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
-            stage.setOnHidden(e -> cargarTablas());
-        } catch (Exception e){
+            stage.setOnHidden(e -> {
+                cargarTablas();              // Actualiza las tablas
+                buildAndShowGraphInPane();   // Vuelve a construir y mostrar el grafo actualizado
+            });
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-        @FXML
-        void abrirCalculadora(ActionEvent event) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.NUEVA_CALCULADORA_V2));
-                BorderPane root = loader.load();
+    @FXML
+    void abrirCalculadora(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.NUEVA_CALCULADORA_V2));
+            BorderPane root = loader.load();
 
-                Stage stage = new Stage();
-                stage.setTitle("Calculadora de Rutas - Vista Múltiple");
-                Stage ownerStage = (Stage) btnCalculadora.getScene().getWindow();
-                stage.initOwner(ownerStage);
-                stage.initModality(Modality.WINDOW_MODAL);
-                stage.setScene(new Scene(root));
-                stage.setResizable(false);
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Stage stage = new Stage();
+            stage.setTitle("Calculadora de Rutas - Vista Múltiple");
+            Stage ownerStage = (Stage) btnCalculadora.getScene().getWindow();
+            stage.initOwner(ownerStage);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+            stage.setOnHidden(e -> {
+                cargarTablas();              // Actualiza las tablas
+                buildAndShowGraphInPane();   // Vuelve a construir y mostrar el grafo actualizado
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 }
