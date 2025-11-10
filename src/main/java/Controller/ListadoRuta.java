@@ -13,11 +13,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -113,6 +116,15 @@ public class ListadoRuta implements Initializable {
 
     @FXML
     private TextField txtBuscarRuta;
+
+    @FXML
+    private Pane paneAccidente;
+
+    @FXML
+    private Pane paneHuelga;
+
+    @FXML
+    private Pane paneRetrasado;
 
     @FXML
     void buscarRuta() {
@@ -278,6 +290,9 @@ public class ListadoRuta implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         btnModificar.setDisable(true);
         btnEliminar.setDisable(true);
+        paneAccidente.setVisible(false);
+        paneHuelga.setVisible(false);
+        paneRetrasado.setVisible(false);
         colOrigen.setCellValueFactory(cellData -> {
             Ruta ruta = cellData.getValue();
             return new SimpleStringProperty(ruta.getOrigen().getNombre());
@@ -291,6 +306,34 @@ public class ListadoRuta implements Initializable {
         colTiempo.setCellValueFactory(new PropertyValueFactory<>("tiempoRecorrido"));
         colTransbordo.setCellValueFactory(new PropertyValueFactory<>("numTransbordos"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("posibleEvento"));
+        colEstado.setCellFactory(column -> new TableCell<Ruta, String>() {
+            private final Circle statusCircle = new Circle(5);
+
+            @Override
+            protected void updateItem(String estado, boolean empty) {
+                super.updateItem(estado, empty);
+
+                if (empty || estado == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    if (estado.equalsIgnoreCase("Normales")) {
+                        statusCircle.setFill(Color.web("#66BB6A")); // Verde bonito
+                    } else if(estado.equalsIgnoreCase("Huelga")) {
+                        statusCircle.setFill(Color.web("#FFA726")); // Naranja bonito
+                    } else if (estado.equalsIgnoreCase("Retraso")) {
+                        statusCircle.setFill(Color.web("#EF5350")); // Rojo bonito
+                    } else {
+                        statusCircle.setFill(Color.GRAY); //Gris
+                    }
+
+                    // Centrar el círculo en la celda
+                    setAlignment(Pos.CENTER);
+                    setGraphic(statusCircle);
+                    setText(null); // No mostrar texto (solo el gráfico)
+                }
+            }
+        });
 
         cargarTablas();
         spnDistanciaMod.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1));
@@ -327,6 +370,20 @@ public class ListadoRuta implements Initializable {
 
     private void cargarCampos() {
         Ruta ruta = tableRuta.getSelectionModel().getSelectedItem();
+        if(ruta.getPosibleEvento().equals("Normales")){
+            paneAccidente.setVisible(false);
+            paneHuelga.setVisible(false);
+            paneRetrasado.setVisible(true); //Normales
+        } else if (ruta.getPosibleEvento().equals("Accidente")) {
+            paneAccidente.setVisible(true);
+            paneHuelga.setVisible(false);
+            paneRetrasado.setVisible(false);
+        } else if (ruta.getPosibleEvento().equals("Huelga")) {
+            paneAccidente.setVisible(false);
+            paneHuelga.setVisible(true);
+            paneRetrasado.setVisible(false);
+        }
+
         lbDestino.setText(" " + ruta.getDestino().getNombre());
         lbOrigen.setText(" " + ruta.getOrigen().getNombre());
         lbDistancia.setText(" " + String.valueOf(ruta.getDistancia()));
@@ -362,4 +419,5 @@ public class ListadoRuta implements Initializable {
             cbxOrigenMod.setItems(FXCollections.observableArrayList("No hay ninguna Parada Registrada."));
         }
     }
+
 }

@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,7 @@ public class RegistroRuta implements Initializable {
 
     @FXML
     void registrarRuta(ActionEvent event) {
+        String posibleEvento = crearPosibleEvento();
         String origen = cbxOrigen.getValue();
         String destino = cbxDestino.getValue();
         double costo = spnCosto.getValue();
@@ -116,6 +118,23 @@ public class RegistroRuta implements Initializable {
             alert.showAndWait();
         }
         limpiarCampos();
+    }
+
+    private String crearPosibleEvento() {
+        Random random = new Random();
+        int posibilidad = random.nextInt(4);
+
+        switch (posibilidad){
+            case 0:
+                return "Normales";
+            case 1:
+                return "Accidente";
+            case 2:
+                return "Huelga";
+            case 3:
+                return "Inundaciones";
+        }
+        return "Normales";
     }
 
     private void limpiarCampos() {

@@ -110,7 +110,6 @@ public class Principal {
             MenuListados.show(btnListados, Side.BOTTOM, 0, 0);
         });
 
-
         colOrigen.setCellValueFactory(cellData -> {
             Ruta ruta = cellData.getValue();
             return new SimpleStringProperty(ruta.getOrigen().getNombre());
@@ -119,6 +118,7 @@ public class Principal {
             Ruta ruta = cellData.getValue();
             return new SimpleStringProperty(ruta.getDestino().getNombre());
         });
+
         colDistancia.setCellValueFactory(new PropertyValueFactory<>("distancia"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("costo"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
