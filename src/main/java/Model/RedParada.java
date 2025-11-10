@@ -22,26 +22,11 @@ public class RedParada {
         }
         return instance;
     }
-//
+
     public HashMap<Long, LinkedList<Ruta>> getRutas() { return rutas; }
     public void setRutas(HashMap<Long, LinkedList<Ruta>> rutas) { this.rutas = rutas; }
     public HashMap<Long, Parada> getLugar() { return lugar; }
     public void setLugar(HashMap<Long, Parada> lugar) { this.lugar = lugar; }
-//
-//
-//    public void agregarRuta(Ruta ruta) {
-//        String origen = ruta.getOrigen().getNombre();
-//        rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(ruta);
-//    }
-//    public Parada buscarParadaPorNombre(String origen) {
-//        return lugar.get(origen);
-//    }
-//    public void agregarParada(Parada nuevaParada) {
-//        String nombre = nuevaParada.getNombre();
-//        lugar.put(nombre, nuevaParada);
-//        rutas.putIfAbsent(nombre, new LinkedList<>());
-//    }
-//    public boolean existeRutaIgual(Ruta nuevaRuta) { /* ... sin cambios ... */ return false; }
 
     public void recargarGrafo() {
         this.rutas = RutaDAO.getInstancia().obtenerRutas();
@@ -232,38 +217,12 @@ public class RedParada {
         return null;
     }
 
-
-//    private void dijkstra(String inicio, String fin) {  }
-//    public void bellmanFord(String inicio) {  }
-//    private void floydWarshall() {  }
-//
-//
-//    public void mostrarGrafo() { }
-//    public static void main(String[] args) {  }
-//    class DisjointSet {  }
     private List<Ruta> getAllRutas() {
         List<Ruta> allRutas = new LinkedList<>();
         for (LinkedList<Ruta> listaRutas : rutas.values()) {
             allRutas.addAll(listaRutas);
         }
         return allRutas;
-    }
-    public void mostrarArbolExpansionMinima() {  }
-    private void kruskal() {  }
-    private HashMap<String, LinkedList<Ruta>> getGrafoNoDirigido() {  return null; }
-    private void prim() { }
-
-
-    static class ColaPrioritaria {
-        private Long id;
-        private float km;
-
-        public ColaPrioritaria(Long id, float km) {
-            this.id = id;
-            this.km = km;
-        }
-        public Long getId() { return id; }
-        public float getKm() { return km; }
     }
 
     public ResultadoRuta calcularRutaMenorTiempo(Long origen_id, Long destino_id) {

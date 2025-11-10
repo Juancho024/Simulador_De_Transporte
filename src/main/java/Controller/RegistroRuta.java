@@ -3,7 +3,6 @@ package Controller;
 import DataBase.ParadaDAO;
 import DataBase.RutaDAO;
 import Model.Parada;
-import Model.RedParada;
 import Model.Ruta;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -13,10 +12,8 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -32,27 +29,6 @@ public class RegistroRuta implements Initializable {
 
     @FXML
     private ComboBox<String> cbxOrigen;
-
-    @FXML
-    private Label lbId;
-
-    @FXML
-    private Label lbId1;
-
-    @FXML
-    private Label lbId11;
-
-    @FXML
-    private Label lbId111;
-
-    @FXML
-    private Label lbId1111;
-
-    @FXML
-    private Label lbId11111;
-
-    @FXML
-    private Label lbPrincipal;
 
     @FXML
     private Spinner<Double> spnCosto;
@@ -100,7 +76,7 @@ public class RegistroRuta implements Initializable {
             alert.showAndWait();
             return;
         }
-        if (RutaDAO.getInstancia().existeRutaIgual(new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, (int) transbordo, "Normales"))) {
+        if (RutaDAO.getInstancia().existeRutaIgual(new Ruta(auxOrigen, auxDestino, (int) distancia, (float) tiempo, (float) costo, transbordo, "Normales"))) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Ruta existente");
