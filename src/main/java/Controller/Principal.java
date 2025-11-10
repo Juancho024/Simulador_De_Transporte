@@ -5,31 +5,26 @@ import DataBase.RutaDAO;
 import Model.GrafoInfo;
 import Model.Parada;
 import Model.Ruta;
+import Utilities.FixedSmartGraph;
 import Utilities.paths;
 import com.brunomnsilva.smartgraph.graph.Graph;
 import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
-import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
-import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
-import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
+import com.brunomnsilva.smartgraph.graphview.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
-import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
+import javafx.scene.paint.ImagePattern;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -241,11 +236,63 @@ public class Principal {
             Platform.runLater(() -> {
                 try {
                     graphView.init();
+                    Platform.runLater(() -> {
+                        try {
+                            Platform.runLater(() -> {
+                                aplicarIconosParadas(graphView);
+                                FixedSmartGraph.lockNodes(graphView);
+
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             });
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void aplicarIconosParadas(SmartGraphPanel<String, GrafoInfo> graphView) {
+        try {
+            // Obtener todas las paradas
+            Map<Long, Parada> mapaOriginal = ParadaDAO.getInstance().obtenerParadas();
+
+            // Crear un mapa auxiliar por nombre
+            Map<String, Parada> mapaPorNombre = new HashMap<>();
+            for (Parada p : mapaOriginal.values()) {
+                mapaPorNombre.put(p.getNombre(), p);
+            }
+
+            for (var vertexNode : graphView.getSmartVertices()) {
+                String nombre = vertexNode.getUnderlyingVertex().element();
+                Parada parada = mapaPorNombre.get(nombre);
+
+                if (parada != null && parada.getIcono() != null) {
+                    byte[] iconoBytes = parada.getIcono();
+                    try {
+                        Image img = new Image(new java.io.ByteArrayInputStream(iconoBytes));
+
+                        // Obtener shape interno
+                        var shapeField = vertexNode.getClass().getDeclaredField("shapeProxy");
+                        shapeField.setAccessible(true);
+                        Object shapeProxy = shapeField.get(vertexNode);
+
+                        var getShape = shapeProxy.getClass().getDeclaredMethod("getShape");
+                        getShape.setAccessible(true);
+                        javafx.scene.shape.Shape shape = (javafx.scene.shape.Shape) getShape.invoke(shapeProxy);
+
+                        shape.setFill(new ImagePattern(img));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

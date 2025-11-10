@@ -28,7 +28,7 @@ This should help you understand which styles you can apply to each type of eleme
 }
 
 .vertex:hover { /* pseudo-classes also work */
-    /*-fx-cursor: default; */ /* You can use this style to override the hand/move cursors while hovering. */
+    /*-fx-cursor: default;*/
     -fx-stroke-width: 4;
 }
 
