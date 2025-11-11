@@ -16,6 +16,7 @@ This should help you understand which styles you can apply to each type of eleme
 
 .graph {
     -fx-background-color:  #2B333F;
+    -fx-background-radius: 30;
     /* you can use -fx-background-image to set a background image */
 }
 

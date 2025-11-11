@@ -257,6 +257,7 @@ public class Principal implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Análisis Interactivo de Rutas (Floyd-Warshall)");
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.show();
             stage.setOnHidden(e -> {
 //                cargarTablas();
@@ -276,6 +277,7 @@ public class Principal implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Planificador de Red Óptima (MST)");
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.show();
             stage.setOnHidden(e -> {
 //                cargarTablas();
