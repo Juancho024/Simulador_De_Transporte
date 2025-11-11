@@ -3,10 +3,9 @@ package Controller;
 import DataBase.ParadaDAO;
 import DataBase.RutaDAO;
 import Model.Parada;
-import Model.RedParada;
 import Model.Ruta;
 import Utilities.paths;
-import javafx.application.Platform;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -35,9 +34,6 @@ public class ListadoRuta implements Initializable {
 
     @FXML
     private Pane PanePrincipal;
-
-    @FXML
-    private Button btnCancelarMod;
 
     @FXML
     private Button btnEliminar;

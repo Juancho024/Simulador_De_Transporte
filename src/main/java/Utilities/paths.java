@@ -9,4 +9,5 @@ public class paths {
     public static final String NUEVA_CALCULADORA_V2 = "../CalculadoraRutas.fxml";
     public static final String FLOYD_CONTROL_VISUAL = "../FloydWarshallView.fxml";
     public static final String KRUSCAL_CONTROL_VISUAL = "../KruscalView.fxml";
+    public static final String SMART_GRAPH = "../css/smartgraph.css";
 }
