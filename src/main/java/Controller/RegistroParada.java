@@ -54,10 +54,10 @@ public class RegistroParada implements Initializable {
     private Label lbTelefono111;
 
     @FXML
-    private Spinner<Integer> spnLatitud;
+    private Spinner<Double> spnLatitud;
 
     @FXML
-    private Spinner<Integer> spnLongitud;
+    private Spinner<Double> spnLongitud;
 
     @FXML
     private TextField txtNombre;
@@ -110,8 +110,8 @@ public class RegistroParada implements Initializable {
     void registrarParada(ActionEvent event) {
         String tipoTransporte = cbxTipoTransporte.getValue();
         String nombre = txtNombre.getText();
-        int latitud = spnLatitud.getValue();
-        int longitud = spnLongitud.getValue();
+        double latitud = spnLatitud.getValue();
+        double longitud = spnLongitud.getValue();
 
         if(cbxTipoTransporte.getValue() == null|| txtNombre.getText().isEmpty() || latitud == 0 || longitud == 0){
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -145,8 +145,8 @@ public class RegistroParada implements Initializable {
         txtNombre.setText("");
         iconoBytes = null;
         ImgIcono.setImage(null);
-        spnLatitud.getValueFactory().setValue(0);
-        spnLongitud.getValueFactory().setValue(0);
+        spnLatitud.getValueFactory().setValue(0.0);
+        spnLongitud.getValueFactory().setValue(0.0);
         imgIconoDefault.setVisible(true);
     }
 
@@ -157,9 +157,9 @@ public class RegistroParada implements Initializable {
     }
 
     private void configurarSpinnersandCombox() {
-        SpinnerValueFactory<Integer> Latitud = new SpinnerValueFactory.IntegerSpinnerValueFactory(-90, 90, 0, 1);
+        SpinnerValueFactory<Double> Latitud = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 550, 0, 1);
         spnLatitud.setValueFactory(Latitud);
-        SpinnerValueFactory<Integer> Longitud = new SpinnerValueFactory.IntegerSpinnerValueFactory(-180, 180, 0, 1);
+        SpinnerValueFactory<Double> Longitud = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 900, 0, 1);
         spnLongitud.setValueFactory(Longitud);
         cbxTipoTransporte.getItems().addAll("Bus","Tren","Metro","Tranvía","Ferry");
     }

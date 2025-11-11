@@ -4,11 +4,11 @@ public class Parada {
     private long id;
     private String nombre;
     private String tipoTransporte;
-    private int posicionx;
-    private int posiciony;
+    private double posicionx;
+    private double posiciony;
     private byte[] icono; //cambiar  BYTE
 
-    public Parada(String nombre, String tipoTransporte, int posiciony, int posicionx, byte[] icono) {
+    public Parada(String nombre, String tipoTransporte, double posicionx, double posiciony, byte[] icono) {
         this.nombre = nombre;
         this.posiciony = posiciony;
         this.posicionx = posicionx;
@@ -40,19 +40,19 @@ public class Parada {
         this.tipoTransporte = tipoTransporte;
     }
 
-    public int getPosicionx() {
+    public double getPosicionx() {
         return posicionx;
     }
 
-    public void setPosicionx(int posicionx) {
+    public void setPosicionx(double posicionx) {
         this.posicionx = posicionx;
     }
 
-    public int getPosiciony() {
+    public double getPosiciony() {
         return posiciony;
     }
 
-    public void setPosiciony(int posiciony) {
+    public void setPosiciony(double posiciony) {
         this.posiciony = posiciony;
     }
 

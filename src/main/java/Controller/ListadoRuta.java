@@ -13,11 +13,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -49,19 +52,19 @@ public class ListadoRuta implements Initializable {
     private Button btnRegistrar;
 
     @FXML
-    private TableColumn<Ruta, Double> colCosto;
+    private TableColumn<Ruta, Float> colCosto;
 
     @FXML
     private TableColumn<Ruta, String> colDestino;
 
     @FXML
-    private TableColumn<Ruta, Double> colDistancia;
+    private TableColumn<Ruta, Float> colDistancia;
 
     @FXML
     private TableColumn<Ruta, String> colOrigen;
 
     @FXML
-    private TableColumn<Ruta, Double> colTiempo;
+    private TableColumn<Ruta, Float> colTiempo;
 
     @FXML
     private TableColumn<Ruta, Integer> colTransbordo;
@@ -113,6 +116,15 @@ public class ListadoRuta implements Initializable {
 
     @FXML
     private TextField txtBuscarRuta;
+
+    @FXML
+    private Pane paneAccidente;
+
+    @FXML
+    private Pane paneHuelga;
+
+    @FXML
+    private Pane paneRetrasado;
 
     @FXML
     void buscarRuta() {
@@ -278,6 +290,9 @@ public class ListadoRuta implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         btnModificar.setDisable(true);
         btnEliminar.setDisable(true);
+        paneAccidente.setVisible(false);
+        paneHuelga.setVisible(false);
+        paneRetrasado.setVisible(false);
         colOrigen.setCellValueFactory(cellData -> {
             Ruta ruta = cellData.getValue();
             return new SimpleStringProperty(ruta.getOrigen().getNombre());
@@ -287,10 +302,83 @@ public class ListadoRuta implements Initializable {
             return new SimpleStringProperty(ruta.getDestino().getNombre());
         });
         colDistancia.setCellValueFactory(new PropertyValueFactory<>("Distancia"));
+        colDistancia.setCellFactory(column -> {
+            return new TableCell<Ruta, Float>() {
+                @Override
+                protected void updateItem(Float distancia, boolean empty) {
+                    super.updateItem(distancia, empty);
+
+                    if (empty || distancia == null) {
+                        setText(null);
+                    } else {
+                        String textoDistancia = String.format("%.2f km", distancia);
+                        setText(textoDistancia);
+                    }
+                }
+            };
+        });
         colCosto.setCellValueFactory(new PropertyValueFactory<>("Costo"));
+        colCosto.setCellFactory(column -> {
+            return new TableCell<Ruta, Float>() {
+                @Override
+                protected void updateItem(Float costo, boolean empty) {
+                    super.updateItem(costo, empty);
+
+                    if (empty || costo == null) {
+                        setText(null);
+                    } else {
+                        String textoCosto = String.format("$%.2f", costo);
+                        setText(textoCosto);
+                    }
+                }
+            };
+        });
         colTiempo.setCellValueFactory(new PropertyValueFactory<>("tiempoRecorrido"));
+        colTiempo.setCellFactory(column -> {
+            return new TableCell<Ruta, Float>() {
+                @Override
+                protected void updateItem(Float tiempo, boolean empty) {
+                    super.updateItem(tiempo, empty);
+
+                    if (empty || tiempo == null) {
+                        setText(null);
+                    } else {
+                        String textoTiempo = String.format("%.2f min", tiempo);
+                        setText(textoTiempo);
+                    }
+                }
+            };
+        });
         colTransbordo.setCellValueFactory(new PropertyValueFactory<>("numTransbordos"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("posibleEvento"));
+        colEstado.setCellFactory(column -> new TableCell<Ruta, String>() {
+            private final Circle statusCircle = new Circle(5);
+
+            @Override
+            protected void updateItem(String estado, boolean empty) {
+                super.updateItem(estado, empty);
+
+                if (empty || estado == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    if (estado.equalsIgnoreCase("Normales")) {
+                        statusCircle.setFill(Color.web("#66BB6A")); // Verde bonito
+                    } else if(estado.equalsIgnoreCase("Huelga")) {
+                        statusCircle.setFill(Color.web("#FFA726")); // Naranja bonito
+                    } else if (estado.equalsIgnoreCase("Retraso")) {
+                        statusCircle.setFill(Color.web("#EF5350")); // Rojo bonito
+                    } else {
+                        statusCircle.setFill(Color.GRAY); //Gris
+                    }
+
+                    // Centrar el círculo en la celda
+                    setAlignment(Pos.CENTER);
+                    setGraphic(statusCircle);
+                    setText(null); // No mostrar texto (solo el gráfico)
+                }
+            }
+        });
 
         cargarTablas();
         spnDistanciaMod.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1));
@@ -327,11 +415,28 @@ public class ListadoRuta implements Initializable {
 
     private void cargarCampos() {
         Ruta ruta = tableRuta.getSelectionModel().getSelectedItem();
+        if(ruta.getPosibleEvento().equals("Normales")){
+            paneAccidente.setVisible(false);
+            paneHuelga.setVisible(false);
+            paneRetrasado.setVisible(true); //Normales
+        } else if (ruta.getPosibleEvento().equals("Accidente")) {
+            paneAccidente.setVisible(true);
+            paneHuelga.setVisible(false);
+            paneRetrasado.setVisible(false);
+        } else if (ruta.getPosibleEvento().equals("Huelga")) {
+            paneAccidente.setVisible(false);
+            paneHuelga.setVisible(true);
+            paneRetrasado.setVisible(false);
+        }
+
         lbDestino.setText(" " + ruta.getDestino().getNombre());
         lbOrigen.setText(" " + ruta.getOrigen().getNombre());
-        lbDistancia.setText(" " + String.valueOf(ruta.getDistancia()));
-        lbCosto.setText(" " + String.valueOf(ruta.getCosto()));
-        lbTiempo.setText(" " + String.valueOf(ruta.getTiempoRecorrido()));
+        float distancia = ruta.getDistancia();
+        lbDistancia.setText(" %.2f km".formatted(distancia));
+        float costo = ruta.getCosto();
+        lbCosto.setText(" $%.2f".formatted(costo));
+        float tiempo = ruta.getTiempoRecorrido();
+        lbTiempo.setText(" %.2f min".formatted(tiempo));
         lbTransbordo.setText(" " + String.valueOf(ruta.getNumTransbordos()));
     }
 
@@ -362,4 +467,5 @@ public class ListadoRuta implements Initializable {
             cbxOrigenMod.setItems(FXCollections.observableArrayList("No hay ninguna Parada Registrada."));
         }
     }
+
 }
