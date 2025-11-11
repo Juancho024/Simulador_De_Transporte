@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import org.kordamp.ikonli.javafx.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="690.0" prefWidth="1360.0" style="-fx-background-color: #20252D;" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Principal">
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<AnchorPane prefHeight="690.0" prefWidth="1360.0" style="-fx-background-color: #20252D;" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Principal">
     <children>
         <!-- 1. Barra lateral, posicionada a la izquierda del todo -->
         <VBox fx:id="sidebar" prefHeight="690.0" prefWidth="60.0" style="-fx-background-color: #2B333F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -59,34 +60,6 @@
             </children>
         </VBox>
 
-        <Pane fx:id="mapPane" layoutX="237.0" layoutY="14.0" prefHeight="334.0" prefWidth="1146.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;" />
-
-        <TableView fx:id="TableParada" layoutX="889.0" layoutY="430.0" prefHeight="265.0" prefWidth="359.0" style="-fx-background-color: lightgrey;">
-            <columns>
-                <TableColumn fx:id="colTipoTransporte" prefWidth="148.0" text="Tipo de Transporte" />
-                <TableColumn fx:id="colNombre" prefWidth="210.0" text="Nombre" />
-            </columns>
-        </TableView>
-
-        <TableView fx:id="TableRuta" layoutX="320.0" layoutY="430.0" prefHeight="265.0" prefWidth="359.0" style="-fx-border-color: #34495e; -fx-background-color: lightgrey;" styleClass="rounded-table">
-            <columns>
-                <TableColumn fx:id="colOrigen" prefWidth="97.0" text="Origen" />
-                <TableColumn fx:id="colDestino" prefWidth="106.0" text="Destino" />
-                <TableColumn fx:id="colDistancia" prefWidth="76.0" text="Distancia" />
-                <TableColumn fx:id="colPrecio" prefWidth="79.0" text="Precio" />
-            </columns>
-        </TableView>
-
-        <Label fx:id="lbPrincipal" alignment="CENTER" layoutX="889.0" layoutY="389.0" prefWidth="359.0" text="Listado de Paradas" textFill="WHITE">
-            <font>
-                <Font name="Segoe UI Bold" size="24.0" />
-            </font>
-        </Label>
-
-        <Label fx:id="lbPrincipal1" alignment="CENTER" layoutX="320.0" layoutY="389.0" prefWidth="359.0" text="Listado de Rutas" textAlignment="CENTER" textFill="#fff8f8">
-            <font>
-                <Font name="Segoe UI Bold" size="24.0" />
-            </font>
-        </Label>
+        <Pane fx:id="paneGrafos" layoutX="227.0" layoutY="125.0" prefHeight="537.0" prefWidth="1109.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;" />
     </children>
 </AnchorPane>

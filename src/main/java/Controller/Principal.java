@@ -2,12 +2,16 @@ package Controller;
 
 import DataBase.ParadaDAO;
 import DataBase.RutaDAO;
+import Model.GrafoInfo;
 import Model.Parada;
 import Model.Ruta;
 import Utilities.paths;
+import com.brunomnsilva.smartgraph.graph.Graph;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +25,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -46,19 +51,25 @@ public class Principal implements Initializable {
     @FXML private Button btnPlanificadorRed;
 
     // --- Componentes de las Tablas ---
-    @FXML private TableView<Parada> TableParada;
-    @FXML private TableView<Ruta> TableRuta;
-    @FXML private TableColumn<Ruta, String> colDestino;
-    @FXML private TableColumn<Ruta, Float> colDistancia;
-    @FXML private TableColumn<Parada, String> colNombre;
-    @FXML private TableColumn<Ruta, String> colOrigen;
-    @FXML private TableColumn<Ruta, Float> colPrecio;
-    @FXML private TableColumn<Parada, String> colTipoTransporte;
+//    @FXML private TableView<Parada> TableParada;
+//    @FXML private TableView<Ruta> TableRuta;
+//    @FXML private TableColumn<Ruta, String> colDestino;
+//    @FXML private TableColumn<Ruta, Float> colDistancia;
+//    @FXML private TableColumn<Parada, String> colNombre;
+//    @FXML private TableColumn<Ruta, String> colOrigen;
+//    @FXML private TableColumn<Ruta, Float> colPrecio;
+//    @FXML private TableColumn<Parada, String> colTipoTransporte;
+    @FXML
+    private Pane paneGrafos;
 
     // Atributos para la animación
     private final double collapsedWidth = 60.0;
     private final double expandedWidth = 200.0;
     private final List<Button> sidebarButtons = new ArrayList<>();
+
+    private SmartGraphPanel<String, GrafoInfo> graphView;
+    private Graph<String, GrafoInfo> graph;
+    MostrarGrafos aux = new MostrarGrafos();
 
 
     public Principal() {
@@ -70,15 +81,33 @@ public class Principal implements Initializable {
 
         setupSidebarAnimation();
 
-        colOrigen.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOrigen().getNombre()));
-        colDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDestino().getNombre()));
-        colDistancia.setCellValueFactory(new PropertyValueFactory<>("distancia"));
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("costo"));
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colTipoTransporte.setCellValueFactory(new PropertyValueFactory<>("tipoTransporte"));
+//        colOrigen.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOrigen().getNombre()));
+//        colDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDestino().getNombre()));
+//        colDistancia.setCellValueFactory(new PropertyValueFactory<>("distancia"));
+//        colPrecio.setCellValueFactory(new PropertyValueFactory<>("costo"));
+//        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+//        colTipoTransporte.setCellValueFactory(new PropertyValueFactory<>("tipoTransporte"));
 
 
-        cargarTablas();
+//        cargarTablas();
+        // Preparar la inserción del SmartGraphPanel cuando la escena/ventana estén visibles.
+        // Esto evita llamar graphView.init() antes de que SmartGraph haya creado sus vistas.
+        paneGrafos.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
+                    if (newWindow != null) {
+                        // Cuando la ventana esté mostrada, construir el grafo y llamar a init.
+                        newWindow.showingProperty().addListener((obsShowing, wasShowing, isShowing) -> {
+                            if (isShowing) {
+                                Platform.runLater(() -> {
+                                    aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 
     private void setupSidebarAnimation() {
@@ -118,19 +147,19 @@ public class Principal implements Initializable {
     }
 
 
-    public void cargarTablas() {
-        TableParada.getItems().clear();
-        TableParada.getItems().setAll(ParadaDAO.getInstance().obtenerParadas().values());
-        TableParada.refresh();
-
-        TableRuta.getItems().clear();
-        List<Ruta> todasLasRutas = new ArrayList<>();
-        for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
-            todasLasRutas.addAll(lista);
-        }
-        TableRuta.getItems().setAll(todasLasRutas);
-        TableRuta.refresh();
-    }
+//    public void cargarTablas() {
+//        TableParada.getItems().clear();
+//        TableParada.getItems().setAll(ParadaDAO.getInstance().obtenerParadas().values());
+//        TableParada.refresh();
+//
+//        TableRuta.getItems().clear();
+//        List<Ruta> todasLasRutas = new ArrayList<>();
+//        for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
+//            todasLasRutas.addAll(lista);
+//        }
+//        TableRuta.getItems().setAll(todasLasRutas);
+//        TableRuta.refresh();
+//    }
 
     @FXML
     void crearParada(ActionEvent event) {
@@ -145,7 +174,10 @@ public class Principal implements Initializable {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
-            stage.setOnHidden(e -> cargarTablas());
+            stage.setOnHidden(e -> {
+//                cargarTablas();
+                aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -164,7 +196,10 @@ public class Principal implements Initializable {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
-            stage.setOnHidden(e -> cargarTablas());
+            stage.setOnHidden(e -> {
+//                cargarTablas();
+                aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -183,7 +218,10 @@ public class Principal implements Initializable {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
-            stage.setOnHidden(e -> cargarTablas());
+            stage.setOnHidden(e -> {
+//                cargarTablas();
+                aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -202,7 +240,10 @@ public class Principal implements Initializable {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
-            stage.setOnHidden(e -> cargarTablas());
+            stage.setOnHidden(e -> {
+//                cargarTablas();
+                aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -217,6 +258,10 @@ public class Principal implements Initializable {
             stage.setTitle("Análisis Interactivo de Rutas (Floyd-Warshall)");
             stage.setScene(new Scene(root));
             stage.show();
+            stage.setOnHidden(e -> {
+//                cargarTablas();
+                aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
+            });
         } catch (IOException e) {
             System.err.println("Error al abrir la vista de Análisis Interactivo:");
             e.printStackTrace();
@@ -232,6 +277,10 @@ public class Principal implements Initializable {
             stage.setTitle("Planificador de Red Óptima (MST)");
             stage.setScene(new Scene(root));
             stage.show();
+            stage.setOnHidden(e -> {
+//                cargarTablas();
+                aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
+            });
         } catch (IOException e) {
             System.err.println("Error al abrir la vista del Planificador de Red:");
             e.printStackTrace();
@@ -251,6 +300,10 @@ public class Principal implements Initializable {
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();
+            stage.setOnHidden(e -> {
+//                cargarTablas();
+                aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
