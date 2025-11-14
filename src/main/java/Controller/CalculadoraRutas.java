@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class CalculadoraRutas {
@@ -48,11 +49,9 @@ public class CalculadoraRutas {
     @FXML private Label lblTiempo4;
     @FXML private Label lblTransbordos4;
 
-    // Panel para el grafo (si se usa en el futuro)
     @FXML private AnchorPane paneGrafo;
 
     private RedParada redParada;
-
 
     @FXML
     void initialize() {
@@ -61,96 +60,92 @@ public class CalculadoraRutas {
         limpiarTodosLosPaneles();
     }
 
-
     private void cargarComboBoxes() {
-        // Obtiene la lista de nombres de las paradas y la ordena alfabéticamente
-//        var nombresParadas = redParada.getLugar().keySet().stream().sorted().collect(Collectors.toList());
-//        cbOrigen.getItems().setAll(nombresParadas);
-//        cbDestino.getItems().setAll(nombresParadas);
-        //Cambio para base de datos
+        // En caso de error de BBDD, se previene un NullPointerException
         HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
         if (paradas != null && !paradas.isEmpty()) {
-            java.util.List<String> nombresParadas = paradas.values().stream()
+            List<String> nombresParadas = paradas.values().stream()
                     .map(Parada::getNombre)
+                    .sorted()
                     .collect(Collectors.toList());
 
             cbDestino.setItems(FXCollections.observableArrayList(nombresParadas));
             cbOrigen.setItems(FXCollections.observableArrayList(nombresParadas));
         } else {
-            cbDestino.setItems(FXCollections.observableArrayList("No hay ninguna Parada Registrada."));
-            cbOrigen.setItems(FXCollections.observableArrayList("No hay ninguna Parada Registrada."));
+            // Manejo de caso donde no se cargan paradas
+            cbDestino.setItems(FXCollections.observableArrayList("No hay paradas"));
+            cbOrigen.setItems(FXCollections.observableArrayList("No hay paradas"));
+            mostrarAlerta("Error de Carga", "No se pudieron cargar las paradas desde la base de datos.");
         }
     }
 
     @FXML
     void buscarRutas() {
-        Long origen = buscarParadaIdPorNombre(cbOrigen.getValue());
-        Long destino = buscarParadaIdPorNombre(cbDestino.getValue());
+        String nombreOrigen = cbOrigen.getValue();
+        String nombreDestino = cbDestino.getValue();
 
-
-        if (origen == null || destino == null) {
+        if (nombreOrigen == null || nombreDestino == null) {
             mostrarAlerta("Error de Selección", "Debe seleccionar una parada de origen y una de destino.");
             return;
         }
-        if (origen.equals(destino)) {
+
+        Long origenId = buscarParadaIdPorNombre(nombreOrigen);
+        Long destinoId = buscarParadaIdPorNombre(nombreDestino);
+
+        if (origenId == null || destinoId == null) {
+            mostrarAlerta("Error Interno", "No se pudo encontrar el ID para la parada seleccionada.");
+            return;
+        }
+
+        if (origenId.equals(destinoId)) {
             mostrarAlerta("Error de Selección", "La parada de origen no puede ser la misma que la de destino.");
             return;
         }
 
-        // Limpiar los resultados anteriores
         limpiarTodosLosPaneles();
-        RedParada.getInstance().mostrarRutaSimplePorConsola(origen, destino);
 
-        ResultadoRuta resultadoEficiente = redParada.calcularRutaMasEficiente(origen, destino);
+        // Calcular y mostrar resultados para los 4 paneles
+        ResultadoRuta resultadoEficiente = redParada.calcularRutaMasEficiente(origenId, destinoId);
         actualizarPanel(resultadoEficiente, lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1);
 
-
-        ResultadoRuta resultadoMenorCosto = redParada.calcularRutaMenorCosto(origen, destino);
+        ResultadoRuta resultadoMenorCosto = redParada.calcularRutaMenorCosto(origenId, destinoId);
         actualizarPanel(resultadoMenorCosto, lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2);
 
-
-        ResultadoRuta resultadoMenorDistancia = redParada.calcularRutaMenorDistancia(origen, destino);
+        ResultadoRuta resultadoMenorDistancia = redParada.calcularRutaMenorDistancia(origenId, destinoId);
         actualizarPanel(resultadoMenorDistancia, lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3);
 
-
-        ResultadoRuta resultadoMenorTiempo = redParada.calcularRutaMenorTiempo(origen, destino);
+        ResultadoRuta resultadoMenorTiempo = redParada.calcularRutaMenorTiempo(origenId, destinoId);
         actualizarPanel(resultadoMenorTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4);
     }
 
-    private Long buscarParadaIdPorNombre(String value) {
-        for (var entrada : redParada.getLugar().entrySet()) {
-            if (entrada.getValue().getNombre().equals(value)) {
-                return entrada.getKey();
-            }
-        }
-        return null;
+    private Long buscarParadaIdPorNombre(String nombre) {
+        if (nombre == null) return null;
+
+        HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
+        if (paradas == null) return null;
+
+        return paradas.values().stream()
+                .filter(p -> nombre.equals(p.getNombre()))
+                .map(Parada::getId)
+                .findFirst()
+                .orElse(null);
     }
 
-    /**
-     * @param resultado El objeto ResultadoRuta que contiene los datos.
-     * @param costoLabel La etiqueta para mostrar el costo.
-     * @param distanciaLabel La etiqueta para mostrar la distancia.
-     * @param tiempoLabel La etiqueta para mostrar el tiempo.
-     * @param transbordosLabel La etiqueta para mostrar los transbordos.
-     */
     private void actualizarPanel(ResultadoRuta resultado, Label costoLabel, Label distanciaLabel, Label tiempoLabel, Label transbordosLabel) {
-        if (resultado.esAlcanzable()) {
+        if (resultado != null && resultado.esAlcanzable()) {
             costoLabel.setText(String.format("$%.2f", resultado.getCostoTotal()));
             distanciaLabel.setText(String.format("%.2f km", resultado.getDistanciaTotal()));
             tiempoLabel.setText(String.format("%.2f min", resultado.getTiempoTotal()));
             transbordosLabel.setText(String.valueOf(resultado.getTransbordosTotales()));
         } else {
-
-            costoLabel.setText(resultado.getMensajeError());
+            String mensajeError = (resultado != null) ? resultado.getMensajeError() : "No calculada";
+            costoLabel.setText(mensajeError);
             distanciaLabel.setText("--");
             tiempoLabel.setText("--");
             transbordosLabel.setText("--");
         }
     }
 
-    /**
-     * Restablece todas las etiquetas de resultados a su estado inicial.
-     */
     private void limpiarTodosLosPaneles() {
         String valorPorDefecto = "--";
         // Panel 1
