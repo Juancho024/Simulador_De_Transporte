@@ -10,12 +10,6 @@ public class Ruta {
     private int numTransbordos;
     private String posibleEvento;
 
-//    public Ruta(Parada origen, Parada destino, int distancia) {
-//        this.origen = origen;
-//        this.destino = destino;
-//        this.distancia = distancia;
-//    }
-
     public Ruta(Parada origen, Parada destino, float distancia, float tiempoRecorrido, float costo, int numTransbordos, String posibleEvento) {
         this.origen = origen;
         this.destino = destino;

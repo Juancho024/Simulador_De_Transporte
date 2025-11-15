@@ -75,14 +75,4 @@ public class Parada {
     public int hashCode() {
         return Long.hashCode(id);
     }
-//    @Override
-//    public String toString() {
-//        return "Parada{" +
-//                "id=" + id +
-//                ", nombre='" + nombre + '\'' +
-//                ", tipoTransporte='" + tipoTransporte + '\'' +
-//                ", posicionX=" + posicionx +
-//                ", posicionY=" + posiciony +
-//                '}';
-//    }
 }
