@@ -48,7 +48,13 @@ public class ParadaDAO {
                 String tipoTransporte = resultSet.getString("tipoTransporte");
                 int posicionx = resultSet.getInt("posicionx");
                 int posiciony = resultSet.getInt("posiciony");
-                byte[] icono = resultSet.getBytes("icono");
+                byte[] icono;
+                if(resultSet.getBytes("icono")!= null){
+                    icono = resultSet.getBytes("icono");
+                } else {
+                    icono = new  byte[]{};
+                }
+//                byte[] icono = resultSet.getBytes("icono");
                 Parada parada = new Parada(nombre, tipoTransporte, posicionx, posiciony, icono);
                 parada.setId(resultSet.getLong("id"));
                 paradas.put(parada.getId(), parada);

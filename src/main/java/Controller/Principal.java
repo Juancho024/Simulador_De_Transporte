@@ -92,22 +92,22 @@ public class Principal implements Initializable {
 //        cargarTablas();
         // Preparar la inserción del SmartGraphPanel cuando la escena/ventana estén visibles.
         // Esto evita llamar graphView.init() antes de que SmartGraph haya creado sus vistas.
-        paneGrafos.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
-            if (newScene != null) {
-                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
-                    if (newWindow != null) {
-                        // Cuando la ventana esté mostrada, construir el grafo y llamar a init.
-                        newWindow.showingProperty().addListener((obsShowing, wasShowing, isShowing) -> {
-                            if (isShowing) {
-                                Platform.runLater(() -> {
-                                    aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
+//        paneGrafos.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
+//            if (newScene != null) {
+//                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
+//                    if (newWindow != null) {
+//                        // Cuando la ventana esté mostrada, construir el grafo y llamar a init.
+//                        newWindow.showingProperty().addListener((obsShowing, wasShowing, isShowing) -> {
+//                            if (isShowing) {
+//                                Platform.runLater(() -> {
+//                                    aux.buildAndShowGraphInPane(paneGrafos, graphView, graph);
+//                                });
+//                            }
+//                        });
+//                    }
+//                });
+//            }
+//        });
     }
 
     private void setupSidebarAnimation() {
