@@ -25,9 +25,11 @@ public class ParadaDAO {
             preparedStatement.setString(2, parada.getTipoTransporte());
             preparedStatement.setDouble(3, parada.getPosicionx());
             preparedStatement.setDouble(4, parada.getPosiciony());
-            preparedStatement.setBytes(5, parada.getIcono()); //CONDICIONAL != NULL
-//            parada.getIcono().length
-//            preparedStatement.setBytes(6, new byte[]);
+            if(parada.getIcono() != null){
+                preparedStatement.setBytes(5, parada.getIcono());
+            } else {
+                preparedStatement.setBytes(5, new  byte[]{});
+            }
             preparedStatement.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -46,7 +48,12 @@ public class ParadaDAO {
                 String tipoTransporte = resultSet.getString("tipoTransporte");
                 int posicionx = resultSet.getInt("posicionx");
                 int posiciony = resultSet.getInt("posiciony");
-                byte[] icono = resultSet.getBytes("icono");
+                byte[] icono;
+                if(resultSet.getBytes("icono") != null){
+                    icono = resultSet.getBytes("icono");
+                } else {
+                    icono = new  byte[]{};
+                }
                 Parada parada = new Parada(nombre, tipoTransporte, posicionx, posiciony, icono);
                 parada.setId(resultSet.getLong("id"));
                 paradas.put(parada.getId(), parada);
