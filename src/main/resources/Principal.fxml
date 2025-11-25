@@ -2,11 +2,86 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
 <AnchorPane prefHeight="690.0" prefWidth="1360.0" style="-fx-background-color: #20252D;" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Principal">
     <children>
+      <Pane fx:id="paneGrafos1" layoutX="78.0" layoutY="261.0" prefHeight="401.0" prefWidth="327.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;">
+         <children>
+            <Separator layoutY="73.0" prefWidth="327.0" />
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="75.0" layoutY="22.0" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="Leyenda" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Bold" size="25.0" />
+               </font>
+            </Label>
+            <VBox alignment="CENTER_LEFT" layoutX="118.0" layoutY="120.0" prefHeight="155.0" prefWidth="177.0" spacing="30.0">
+               <children>
+                  <Label contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="Estacion de Tren" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="Estacion del Metro" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="Estacion de Bus" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="Estacion de Tranvia" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="Estacion de Ferry" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="120.0" prefHeight="235.0" prefWidth="81.0" spacing="30.0">
+               <children>
+                  <Label fx:id="totalTren" contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="0" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="totalMetro" contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="0" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="totalBus" contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="0" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="totalTranvia" contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="0" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="totalFerry" contentDisplay="CENTER" prefHeight="23.0" prefWidth="177.0" style="-fx-text-fill: white;" text="0" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </Pane>
+      <ImageView fx:id="imgLogo" fitHeight="216.0" fitWidth="327.0" layoutX="78.0" layoutY="33.0" pickOnBounds="true" smooth="false">
+         <image>
+            <Image url="@iconos/principallogo.png" />
+         </image>
+      </ImageView>
         <!-- 1. Barra lateral, posicionada a la izquierda del todo -->
         <VBox fx:id="sidebar" prefHeight="690.0" prefWidth="60.0" style="-fx-background-color: #2B333F;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
@@ -58,6 +133,6 @@
             </children>
         </VBox>
 
-        <Pane fx:id="paneGrafos" layoutX="420.0" layoutY="75.0" prefHeight="587.0" prefWidth="911.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;" />
+        <Pane fx:id="paneGrafos" layoutX="422.0" layoutY="67.0" prefHeight="587.0" prefWidth="911.0" style="-fx-background-color: #2B333F; -fx-border-radius: 15; -fx-background-radius: 15;" />
     </children>
 </AnchorPane>

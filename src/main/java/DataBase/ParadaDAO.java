@@ -37,6 +37,7 @@ public class ParadaDAO {
         }
     }
 
+
     public HashMap<Long, Parada> obtenerParadas() {
         HashMap<Long, Parada> paradas = new HashMap<>();
         final String sql = "SELECT * FROM parada";
@@ -78,6 +79,19 @@ public class ParadaDAO {
             preparedStatement.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
+        }
+    }
+    public boolean validarParadaByCoordenada(int x, int y){
+        final String sql = "SELECT * FROM parada WHERE posicionx = ? AND posiciony = ?";
+        try(Connection connection = DataBaseConnection.getConnection()){
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, x);
+            preparedStatement.setInt(2, y);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
     public Parada buscarParadaByName(String name){

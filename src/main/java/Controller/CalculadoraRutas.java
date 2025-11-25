@@ -2,9 +2,10 @@ package Controller;
 
 import DataBase.ParadaDAO;
 import DataBase.RutaDAO;
-import Model.Parada;
-import Model.RedParada;
-import Model.ResultadoRuta;
+import Model.*;
+import com.brunomnsilva.smartgraph.graph.Graph;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -51,21 +52,45 @@ public class CalculadoraRutas {
     @FXML private Label lblTransbordos4;
 
     @FXML private AnchorPane paneGrafo;
-    @FXML
-    private Label lbEvento;
+    @FXML private Label lbEvento1;
+    @FXML private Label lbEvento2;
+    @FXML private Label lbEvento3;
+    @FXML private Label lbEvento4;
 
     private RedParada redParada;
     private static final double PROBABILIDAD_EVENTO = 0.20; // 20% de probabilidad
-    private static final double FACTOR_AUMENTO_COSTO = 1.30; // 30% más caro
-    private static final double FACTOR_AUMENTO_TIEMPO = 1.50; // 50% más tiempo
-    private static final double FACTOR_AUMENTO_DISTANCIA = 1.10; // 10% más distancia
+    private static final double FACTOR_AUMENTO_COSTO = 1.30; // 30% + caro
+    private static final double FACTOR_AUMENTO_TIEMPO = 1.50; // 50% + tiempo
+    private static final double FACTOR_AUMENTO_DISTANCIA = 1.10; // 10% + distancia
 
+    private SmartGraphPanel<String, GrafoInfo> graphView;
+    private Graph<String, GrafoInfo> graph;
+    MostrarGrafos aux = new MostrarGrafos();
 
     @FXML
     void initialize() {
         this.redParada = RedParada.getInstance();
         cargarComboBoxes();
         limpiarTodosLosPaneles();
+
+        //Mostrar grafos
+        paneGrafo.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
+                    if (newWindow != null) {
+                        // Cuando la ventana esté mostrada, construir el grafo y llamar a init.
+                        newWindow.showingProperty().addListener((obsShowing, wasShowing, isShowing) -> {
+                            if (isShowing) {
+                                Platform.runLater(() -> {
+                                    aux.buildAndShowGraphInPane(paneGrafo, graphView, graph);
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
     }
 
     private String simularEventoAleatorio() {
@@ -137,19 +162,35 @@ public class CalculadoraRutas {
             evento = simularEventoAleatorio();
             if (evento != null) {
                 if(evento.contains("Choque")){
-                    lbEvento.setText("Choque");
+                    lbEvento1.setText("Choque");
+                    lbEvento2.setText("Choque");
+                    lbEvento3.setText("Choque");
+                    lbEvento4.setText("Choque");
+
                 } else if(evento.contains("Huelga")){
-                    lbEvento.setText("Huelga");
+                    lbEvento1.setText("Huelga");
+                    lbEvento2.setText("Huelga");
+                    lbEvento3.setText("Huelga");
+                    lbEvento4.setText("Huelga");
                 } else if(evento.contains("Obras")){
-                    lbEvento.setText("Obras");
+                    lbEvento1.setText("Obras");
+                    lbEvento2.setText("Obras");
+                    lbEvento3.setText("Obras");
+                    lbEvento4.setText("Obras");
                 }
 
                 mostrarAlerta("¡Alerta de Evento!", evento + "\nLos Costos de las Rutas serán penalizados.");
             } else {
-                lbEvento.setText("Ruta Normal");
+                lbEvento1.setText("Normal");
+                lbEvento2.setText("Normal");
+                lbEvento3.setText("Normal");
+                lbEvento4.setText("Normal");
             }
         } else {
-            lbEvento.setText("--");
+            lbEvento1.setText("--");
+            lbEvento2.setText("--");
+            lbEvento3.setText("--");
+            lbEvento4.setText("--");
         }
 
         // Calcular y mostrar resultados para los 4 paneles
@@ -157,6 +198,19 @@ public class CalculadoraRutas {
         actualizarPanel(resultadoMenorCosto, lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2, evento != null);
         actualizarPanel(resultadoMenorDistancia, lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3, evento != null);
         actualizarPanel(resultadoMenorTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4, evento != null);
+
+        List<Ruta> rutaAResaltar = null;
+        if (resultadoEficiente != null && resultadoEficiente.esAlcanzable()) {
+            rutaAResaltar = resultadoEficiente.getRuta();
+        }
+        aux.buildAndShowGraphInPane(paneGrafo, graphView, graph);
+        if (rutaAResaltar != null) {
+            List<Ruta> finalRutaAResaltar = rutaAResaltar;
+            Platform.runLater(() -> {
+                aux.resaltarRuta(graphView, finalRutaAResaltar);
+            });
+        }
+
     }
 
     private Long buscarParadaIdPorNombre(String nombre) {
@@ -206,22 +260,25 @@ public class CalculadoraRutas {
         lblDistancia1.setText(valorPorDefecto);
         lblTiempo1.setText(valorPorDefecto);
         lblTransbordos1.setText(valorPorDefecto);
-        lbEvento.setText(valorPorDefecto);
+        lbEvento1.setText(valorPorDefecto);
         // Panel 2
         lblCosto2.setText(valorPorDefecto);
         lblDistancia2.setText(valorPorDefecto);
         lblTiempo2.setText(valorPorDefecto);
         lblTransbordos2.setText(valorPorDefecto);
+        lbEvento2.setText(valorPorDefecto);
         // Panel 3
         lblCosto3.setText(valorPorDefecto);
         lblDistancia3.setText(valorPorDefecto);
         lblTiempo3.setText(valorPorDefecto);
         lblTransbordos3.setText(valorPorDefecto);
+        lbEvento3.setText(valorPorDefecto);
         // Panel 4
         lblCosto4.setText(valorPorDefecto);
         lblDistancia4.setText(valorPorDefecto);
         lblTiempo4.setText(valorPorDefecto);
         lblTransbordos4.setText(valorPorDefecto);
+        lbEvento4.setText(valorPorDefecto);
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {

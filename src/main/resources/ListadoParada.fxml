@@ -3,7 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -61,20 +60,14 @@
                </font>
             </Label>
             <TextField fx:id="txtNombre" layoutX="39.0" layoutY="302.0" prefHeight="29.0" prefWidth="358.0" />
-            <Label layoutX="41.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Longitud:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI Bold" size="18.0" />
-               </font>
-            </Label>
-            <Label layoutX="227.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Latitud:" textAlignment="CENTER" textFill="WHITE">
+            <Label layoutX="41.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Ubicación:" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
             </Label>
             <ComboBox fx:id="cbxTipoTransporte" layoutX="39.0" layoutY="217.0" prefHeight="29.0" prefWidth="358.0" />
-            <Spinner fx:id="spnLongitud" editable="true" layoutX="39.0" layoutY="388.0" prefHeight="29.0" prefWidth="140.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <Spinner fx:id="spnLatitud" editable="true" layoutX="222.0" layoutY="388.0" prefHeight="29.0" prefWidth="177.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             <Button fx:id="btnIcono" layoutX="276.0" layoutY="157.0" mnemonicParsing="false" onAction="#agregarIcono" prefHeight="25.0" prefWidth="99.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5; -fx-background-radius: 15; -fx-border-radius: 15;" text="Agregar Icono" />
+            <ComboBox fx:id="cbxUbicacion" layoutX="39.0" layoutY="387.0" prefHeight="29.0" prefWidth="358.0" />
             </children>
         </Pane>
       <Pane fx:id="panePrincipal" layoutX="837.0" layoutY="116.0" prefHeight="537.0" prefWidth="443.0" style="-fx-background-color: #2B333F; -fx-background-radius: 15;">
@@ -117,20 +110,14 @@
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
             </Label>
-            <Label layoutX="41.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Longitud:" textAlignment="CENTER" textFill="WHITE">
-               <font>
-                  <Font name="Segoe UI Bold" size="18.0" />
-               </font>
-            </Label>
-            <Label layoutX="227.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Latitud:" textAlignment="CENTER" textFill="WHITE">
+            <Label layoutX="41.0" layoutY="356.0" prefHeight="23.0" prefWidth="98.0" text="Ubicación:" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
             </Label>
             <Label fx:id="lbTipoTransporte" layoutX="38.0" layoutY="220.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             <Label fx:id="lbNombre" layoutX="39.0" layoutY="305.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <Label fx:id="lbLongitud" layoutX="38.0" layoutY="391.0" prefHeight="29.0" prefWidth="160.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
-            <Label fx:id="lbLatitud" layoutX="227.0" layoutY="391.0" prefHeight="29.0" prefWidth="177.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
+            <Label fx:id="lbUbicacion" layoutX="38.0" layoutY="391.0" prefHeight="29.0" prefWidth="367.0" style="-fx-background-color: #2B333F; -fx-text-fill: white; -fx-border-color: #3D4856; -fx-border-width: 1.5;" />
             <ImageView fx:id="imgFondo" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
@@ -157,8 +144,7 @@
         <columns>
           <TableColumn fx:id="colTipoTransporte" prefWidth="207.0" text="Tipo de Transporte" />
           <TableColumn fx:id="colNombre" minWidth="0.0" prefWidth="246.0" text="Nombre" />
-            <TableColumn fx:id="colLongitud" minWidth="0.0" prefWidth="151.0" text="Longitud" />
-            <TableColumn fx:id="colLatitud" minWidth="0.0" prefWidth="174.0" text="Latitud" />
+            <TableColumn fx:id="colUbicacion" minWidth="0.0" prefWidth="325.0" text="Ubicación" />
         </columns>
       </TableView>
     </children>

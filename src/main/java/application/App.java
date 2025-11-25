@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -19,9 +20,11 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(paths.PRINCIPAL));
         AnchorPane pane = (AnchorPane) loader.load(); //Cualquier cosa
+        Image icon = new Image(getClass().getResourceAsStream("/iconos/LogoCuadrado.png"));
 
         Scene scene = new Scene(pane);
         stage.setTitle("Simulador de Transporte de Ruta");
+        stage.getIcons().add(icon);
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();

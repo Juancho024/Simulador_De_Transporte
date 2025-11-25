@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.Queue;
+
 public class GrafoInfo {
     private final String id;
     private final String label;
@@ -33,4 +35,6 @@ public class GrafoInfo {
     public String toString() {
         return label;
     }
+
+
 }

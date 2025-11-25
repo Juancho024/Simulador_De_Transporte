@@ -149,8 +149,6 @@ public class ListadoRuta implements Initializable {
     void cancelarModificacion(ActionEvent event) {
         PaneModificar.setVisible(false);
         PanePrincipal.setVisible(true);
-//Pruebas
-//        tableRuta.getSelectionModel().clearSelection();
         limpiarCampos();
     }
 
@@ -163,6 +161,15 @@ public class ListadoRuta implements Initializable {
         lbCosto.setText("");
         lbTiempo.setText("");
         lbTransbordo.setText("");
+        paneRetrasado.setVisible(false);
+        paneHuelga.setVisible(false);
+        paneAccidente.setVisible(false);
+        if (!tableRuta.getItems().isEmpty()) {
+            tableRuta.getSelectionModel().selectFirst();
+            cargarCampos();
+            btnModificar.setDisable(false);
+            btnEliminar.setDisable(false);
+        }
     }
 
     @FXML
@@ -394,6 +401,12 @@ public class ListadoRuta implements Initializable {
                 btnEliminar.setDisable(true);
             }
         });
+        if (!tableRuta.getItems().isEmpty()) {
+            tableRuta.getSelectionModel().selectFirst();
+            cargarCampos();
+            btnModificar.setDisable(false);
+            btnEliminar.setDisable(false);
+        }
 
     }
 
