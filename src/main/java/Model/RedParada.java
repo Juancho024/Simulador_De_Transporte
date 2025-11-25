@@ -459,4 +459,27 @@ public class RedParada {
         }
         System.out.println("=========================================");
     }
+    public List<Ruta> obtenerRutaEficienteComoListaRuta(Long origen_id, Long destino_id) {
+        ResultadoRuta resultado = calcularRutaMasEficiente(origen_id, destino_id);
+        if (resultado == null || !resultado.esAlcanzable() || resultado.getRuta() == null || resultado.getRuta().isEmpty()) {
+            return Collections.emptyList();
+        }
+        LinkedList<String> rutaNodos = (LinkedList<String>) resultado.getRuta();
+
+        List<Ruta> rutaCompleta = new ArrayList<>();
+        for (int i = 0; i < rutaNodos.size() - 1; i++) {
+            String origen = rutaNodos.get(i);
+            String destino = rutaNodos.get(i + 1);
+
+            Ruta rutaSegmento = encontrarRutaDirecta(origen, destino);
+
+            if (rutaSegmento != null) {
+                rutaCompleta.add(rutaSegmento);
+            } else {
+                System.err.println("Error interno al reconstruir: No se encontró segmento de ruta " + origen + " -> " + destino);
+                return Collections.emptyList();
+            }
+        }
+        return rutaCompleta;
+    }
 }

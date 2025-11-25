@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ResultadoRuta {
 
-    private final List<Ruta> ruta;
+    private final List<String> ruta;
     private final double costoTotal;
     private final double distanciaTotal;
     private final double tiempoTotal;
@@ -14,7 +14,7 @@ public class ResultadoRuta {
     private final String mensajeError;
 
     // Constructor para una ruta exitosa
-    public ResultadoRuta(List<Ruta> ruta, double costoTotal, double distanciaTotal, double tiempoTotal, int transbordosTotales) {
+    public ResultadoRuta(List<String> ruta, double costoTotal, double distanciaTotal, double tiempoTotal, int transbordosTotales) {
         this.ruta = ruta;
         this.costoTotal = costoTotal;
         this.distanciaTotal = distanciaTotal;
@@ -55,4 +55,7 @@ public class ResultadoRuta {
                 ", Transbordos: " + transbordosTotales;
     }
 
+    public List<String> getRuta() {
+        return  ruta;
+    }
 }

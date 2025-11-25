@@ -113,15 +113,24 @@ This should help you understand which styles you can apply to each type of eleme
     -fx-stroke-width: 2px;
 }
 
-/* Estilo para las rutas resaltadas */
-.edge.ruta-resaltada > .edge-shape {
-    -fx-stroke: #33FF33; /* Verde brillante */
-    -fx-stroke-width: 4px; /* Más grueso */
-    -fx-stroke-dash-array: none; /* Línea sólida */
+.vertex.ruta-resaltada {
+    -fx-stroke: #00AAFF; /* Borde azul brillante */
+    -fx-stroke-width: 5px; /* Hazlo más visible */
+    /* Puedes cambiar el color de relleno si quieres */
+    -fx-fill: #B1DFF7; /* Mantiene el color de relleno por defecto o cámbialo */
 }
 
-/* Estilo para las paradas resaltadas */
-.vertex.ruta-resaltada > .shape {
-    -fx-stroke: #00AAFF; /* Borde azul */
-    -fx-stroke-width: 3px;
+/* Aplicar estilo directamente al nodo SmartEdge cuando tiene la clase ruta-resaltada */
+.edge.ruta-resaltada {
+    -fx-stroke: #33FF33; /* Verde brillante */
+    -fx-stroke-width: 4px;
+    -fx-stroke-dash-array: none; /* Línea sólida */
+    -fx-opacity: 1.0; /* Asegura que no sea transparente */
+}
+
+/* También debes aplicar el estilo a la flecha para que coincida si es un digrafo */
+.edge.ruta-resaltada .arrow {
+    -fx-fill: #33FF33;
+    -fx-stroke: #33FF33;
+    -fx-stroke-width: 1px;
 }

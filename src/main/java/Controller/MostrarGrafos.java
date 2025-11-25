@@ -27,10 +27,6 @@ public class MostrarGrafos {
     }
 
     public void buildAndShowGraphInPane(Pane paneGrafos, SmartGraphPanel<String, GrafoInfo> graphView, Graph<String, GrafoInfo> graph) {
-        // Borra la parada resaltada
-        graphView.getSmartVertices().forEach(v -> v.removeStyleClass("ruta-resaltada"));
-        //Borra la ruta resaltada
-        graphView.getSmartEdges().forEach(e -> e.removeStyleClass("ruta-resaltada"));
         try {
             // 0) Eliminar vista anterior si existe
             if (graphView != null) {
@@ -146,6 +142,7 @@ public class MostrarGrafos {
     //Funcion para resaltar ruta
     public void resaltarRuta(SmartGraphPanel<String, GrafoInfo> graphView, List<Ruta> rutaEncontrada) {
 
+        System.out.printf("Hola");
         if (graphView == null || rutaEncontrada == null) {
             return;
         }
@@ -189,6 +186,7 @@ public class MostrarGrafos {
                 e.addStyleClass("ruta-resaltada");
             }
         });
+        System.out.printf("Hola2");
     }
 
     private void aplicarIconosParadas(SmartGraphPanel<String, GrafoInfo> graphView) {

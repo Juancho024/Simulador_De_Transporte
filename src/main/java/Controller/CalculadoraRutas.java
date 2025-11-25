@@ -74,22 +74,22 @@ public class CalculadoraRutas {
         limpiarTodosLosPaneles();
 
         //Mostrar grafos
-        paneGrafo.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
-            if (newScene != null) {
-                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
-                    if (newWindow != null) {
-                        // Cuando la ventana esté mostrada, construir el grafo y llamar a init.
-                        newWindow.showingProperty().addListener((obsShowing, wasShowing, isShowing) -> {
-                            if (isShowing) {
-                                Platform.runLater(() -> {
-                                    aux.buildAndShowGraphInPane(paneGrafo, graphView, graph);
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
+//        paneGrafo.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
+//            if (newScene != null) {
+//                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
+//                    if (newWindow != null) {
+//                        // Cuando la ventana esté mostrada, construir el grafo y llamar a init.
+//                        newWindow.showingProperty().addListener((obsShowing, wasShowing, isShowing) -> {
+//                            if (isShowing) {
+//                                Platform.runLater(() -> {
+//                                    aux.buildAndShowGraphInPane(paneGrafo, graphView, graph);
+//                                });
+//                            }
+//                        });
+//                    }
+//                });
+//            }
+//        });
 
     }
 
@@ -199,17 +199,13 @@ public class CalculadoraRutas {
         actualizarPanel(resultadoMenorDistancia, lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3, evento != null);
         actualizarPanel(resultadoMenorTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4, evento != null);
 
-        List<Ruta> rutaAResaltar = null;
-        if (resultadoEficiente != null && resultadoEficiente.esAlcanzable()) {
-            rutaAResaltar = resultadoEficiente.getRuta();
-        }
-        aux.buildAndShowGraphInPane(paneGrafo, graphView, graph);
-        if (rutaAResaltar != null) {
-            List<Ruta> finalRutaAResaltar = rutaAResaltar;
-            Platform.runLater(() -> {
-                aux.resaltarRuta(graphView, finalRutaAResaltar);
-            });
-        }
+//        List<Ruta> rutaParaResaltar = redParada.obtenerRutaEficienteComoListaRuta(origenId, destinoId);
+//
+//        if (!rutaParaResaltar.isEmpty()) {
+//            Platform.runLater(() -> {
+//                aux.resaltarRuta(graphView, rutaParaResaltar);
+//            });
+//        }
 
     }
 
