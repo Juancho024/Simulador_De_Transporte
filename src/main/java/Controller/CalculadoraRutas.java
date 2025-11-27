@@ -157,14 +157,14 @@ public class CalculadoraRutas {
         llenarColumnaDetalle(segundaRuta, lblDetCosto2, lblDetTiempo2, lblDetTransb2, lvRutaSecundaria);
 
         // Configurar Estados (Simulación)
-        lblEstadoPrincipal.setText("✅ A TIEMPO");
+        lblEstadoPrincipal.setText(" A TIEMPO");
         lblEstadoPrincipal.setStyle("-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 3; -fx-background-radius: 3;");
 
         if (segundaRuta.esAlcanzable()) {
-            lblEstadoSecundaria.setText("⚠ POSIBLE RETRASO");
+            lblEstadoSecundaria.setText(" POSIBLE RETRASO");
             lblEstadoSecundaria.setStyle("-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 3; -fx-background-radius: 3;");
         } else {
-            lblEstadoSecundaria.setText("⛔ NO DISPONIBLE");
+            lblEstadoSecundaria.setText(" NO DISPONIBLE");
             lblEstadoSecundaria.setStyle("-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 3; -fx-background-radius: 3;");
         }
 
@@ -197,15 +197,13 @@ public class CalculadoraRutas {
         panelResultados.setVisible(true);
         panelResultados.setManaged(true);
 
-        // Opcional: Al volver, limpiamos la roja y dejamos solo la amarilla (original)
+        // Opcional: Al volver, limpiamos la roja y dejamos solo la amarilla
         if (resEficiente != null && resEficiente.esAlcanzable()) {
             grupoRutas.getChildren().clear();
             dibujarRutaEnMapa(resEficiente, COLOR_RUTA_MEJOR, 4.0);
         }
     }
 
-    // --------------------------------------------------------
-    // MÉTODOS GRÁFICOS (MAPA)
     // --------------------------------------------------------
 
     private void dibujarGrafoBase() {
@@ -265,9 +263,7 @@ public class CalculadoraRutas {
         if (idD != null && uiNodes.containsKey(idD)) uiNodes.get(idD).setColor(COLOR_NODO_SELECCIONADO);
     }
 
-    // --------------------------------------------------------
-    // UTILIDADES VARIAS
-    // --------------------------------------------------------
+  //-------------------------------------------------------
 
     private void cargarComboBoxes() {
         HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
