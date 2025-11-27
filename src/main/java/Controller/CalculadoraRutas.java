@@ -1,71 +1,69 @@
 package Controller;
 
 import DataBase.ParadaDAO;
-import DataBase.RutaDAO;
-import Model.*;
-import com.brunomnsilva.smartgraph.graph.Graph;
-import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
-import javafx.application.Platform;
+import Model.Parada;
+import Model.RedParada;
+import Model.ResultadoRuta;
+import Model.Ruta;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.Group;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CalculadoraRutas {
 
-    // --- Componentes FXML de la Interfaz ---
-
-    // Controles de Selección
+    // --- FXML: Controles Principales ---
     @FXML private ComboBox<String> cbOrigen;
     @FXML private ComboBox<String> cbDestino;
     @FXML private Button btnBuscar;
-
-    // Panel 1: Mejor Ruta (Dijkstra Eficiente)
-    @FXML private Label lblCosto1;
-    @FXML private Label lblDistancia1;
-    @FXML private Label lblTiempo1;
-    @FXML private Label lblTransbordos1;
-
-    // Panel 2: Menor Costo (Bellman-Ford)
-    @FXML private Label lblCosto2;
-    @FXML private Label lblDistancia2;
-    @FXML private Label lblTiempo2;
-    @FXML private Label lblTransbordos2;
-
-    // Panel 3: Menor Distancia (Dijkstra Distancia)
-    @FXML private Label lblCosto3;
-    @FXML private Label lblDistancia3;
-    @FXML private Label lblTiempo3;
-    @FXML private Label lblTransbordos3;
-
-    // Panel 4: Menor Tiempo (Pendiente)
-    @FXML private Label lblCosto4;
-    @FXML private Label lblDistancia4;
-    @FXML private Label lblTiempo4;
-    @FXML private Label lblTransbordos4;
-
     @FXML private AnchorPane paneGrafo;
-    @FXML private Label lbEvento1;
-    @FXML private Label lbEvento2;
-    @FXML private Label lbEvento3;
-    @FXML private Label lbEvento4;
 
+    // --- FXML: Paneles Intercambiables ---
+    @FXML private VBox panelResultados; // Panel con las 4 tarjetas
+    @FXML private VBox panelDetalles;   // Panel comparativo (izq/der)
+
+    // --- FXML: Etiquetas Tarjetas (Resumen) ---
+    @FXML private Label lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1;
+    @FXML private Label lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2;
+    @FXML private Label lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3;
+    @FXML private Label lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4;
+
+    // --- FXML: Panel Detalles (Columna Izquierda - Principal) ---
+    @FXML private Label lblEstadoPrincipal;
+    @FXML private Label lblDetCosto1, lblDetTiempo1, lblDetTransb1;
+    @FXML private ListView<String> lvRutaPrincipal;
+
+    // --- FXML: Panel Detalles (Columna Derecha - Alternativa) ---
+    @FXML private Label lblEstadoSecundaria;
+    @FXML private Label lblDetCosto2, lblDetTiempo2, lblDetTransb2;
+    @FXML private ListView<String> lvRutaSecundaria;
+
+    // --- Lógica y Modelo ---
     private RedParada redParada;
-    private static final double PROBABILIDAD_EVENTO = 0.20; // 20% de probabilidad
-    private static final double FACTOR_AUMENTO_COSTO = 1.30; // 30% + caro
-    private static final double FACTOR_AUMENTO_TIEMPO = 1.50; // 50% + tiempo
-    private static final double FACTOR_AUMENTO_DISTANCIA = 1.10; // 10% + distancia
+    private ResultadoRuta resEficiente, resCosto, resDistancia, resTiempo;
 
-    private SmartGraphPanel<String, GrafoInfo> graphView;
-    private Graph<String, GrafoInfo> graph;
-    MostrarGrafos aux = new MostrarGrafos();
+    // --- Visualización (Mapa) ---
+    private Map<Long, NodeUI> uiNodes = new HashMap<>();
+    private Group grupoRutas = new Group(); // Capa para dibujar líneas encima del mapa base
+
+    // Definición de Colores
+    private static final Color COLOR_NODO_NORMAL = Color.DODGERBLUE;
+    private static final Color COLOR_NODO_SELECCIONADO = Color.LIMEGREEN;
+    private static final Color COLOR_RUTA_MEJOR = Color.GOLD;      // Amarilla
+    private static final Color COLOR_RUTA_SEGUNDA = Color.RED;     // Roja
 
     @FXML
     void initialize() {
@@ -73,208 +71,225 @@ public class CalculadoraRutas {
         cargarComboBoxes();
         limpiarTodosLosPaneles();
 
-        //Mostrar grafos
-//        paneGrafo.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
-//            if (newScene != null) {
-//                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
-//                    if (newWindow != null) {
-//                        // Cuando la ventana esté mostrada, construir el grafo y llamar a init.
-//                        newWindow.showingProperty().addListener((obsShowing, wasShowing, isShowing) -> {
-//                            if (isShowing) {
-//                                Platform.runLater(() -> {
-//                                    aux.buildAndShowGraphInPane(paneGrafo, graphView, graph);
-//                                });
-//                            }
-//                        });
-//                    }
-//                });
-//            }
-//        });
+        // Configurar mapa inicial
+        paneGrafo.getChildren().add(grupoRutas);
+        dibujarGrafoBase();
 
+        // Listeners para cambiar color de nodos al seleccionar origen/destino
+        cbOrigen.valueProperty().addListener((obs, oldVal, newVal) -> actualizarColoresNodos());
+        cbDestino.valueProperty().addListener((obs, oldVal, newVal) -> actualizarColoresNodos());
     }
 
-    private String simularEventoAleatorio() {
-        if (Math.random() < PROBABILIDAD_EVENTO) {
-            // Tipos de eventos posibles
-            String[] eventos = {"Hubo un choque en la Ruta", "Se encuentra una Huelga", "Se estan realizando Obras"};
-            int indice = (int) (Math.random() * eventos.length);
-            return eventos[indice] + " (Ruta con Retraso)";
-        }
-        return null;
-    }
-
-    private void cargarComboBoxes() {
-        // En caso de error de BBDD, se previene un NullPointerException
-        HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
-        if (paradas != null && !paradas.isEmpty()) {
-            List<String> nombresParadas = paradas.values().stream()
-                    .map(Parada::getNombre)
-                    .sorted()
-                    .collect(Collectors.toList());
-
-            cbDestino.setItems(FXCollections.observableArrayList(nombresParadas));
-            cbOrigen.setItems(FXCollections.observableArrayList(nombresParadas));
-        } else {
-            // Manejo de caso donde no se cargan paradas
-            cbDestino.setItems(FXCollections.observableArrayList("No hay paradas"));
-            cbOrigen.setItems(FXCollections.observableArrayList("No hay paradas"));
-            mostrarAlerta("Error de Carga", "No se pudieron cargar las paradas desde la base de datos.");
-        }
-    }
+    // --------------------------------------------------------
+    // MÉTODOS DE BÚSQUEDA (Lógica Principal)
+    // --------------------------------------------------------
 
     @FXML
     void buscarRutas() {
         String nombreOrigen = cbOrigen.getValue();
         String nombreDestino = cbDestino.getValue();
 
-        if (nombreOrigen == null || nombreDestino == null) {
-            mostrarAlerta("Error de Selección", "Debe seleccionar una parada de origen y una de destino.");
+        if (nombreOrigen == null || nombreDestino == null || nombreOrigen.equals(nombreDestino)) {
+            mostrarAlerta("Datos inválidos", "Seleccione un origen y un destino diferentes.");
             return;
         }
 
         Long origenId = buscarParadaIdPorNombre(nombreOrigen);
         Long destinoId = buscarParadaIdPorNombre(nombreDestino);
 
-        if (origenId == null || destinoId == null) {
-            mostrarAlerta("Error Interno", "No se pudo encontrar el ID para la parada seleccionada.");
-            return;
-        }
+        // 1. Limpiar estado anterior
+        grupoRutas.getChildren().clear();
+        volverAResultados();
 
-        if (origenId.equals(destinoId)) {
-            mostrarAlerta("Error de Selección", "La parada de origen no puede ser la misma que la de destino.");
-            return;
-        }
+        // 2. Calcular las 4 variantes
+        resEficiente = redParada.calcularRutaMasEficiente(origenId, destinoId);
+        actualizarTarjetaResumen(resEficiente, lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1);
 
-        limpiarTodosLosPaneles();
-        ResultadoRuta resultadoEficiente = redParada.calcularRutaMasEficiente(origenId, destinoId);
-        ResultadoRuta resultadoMenorCosto = redParada.calcularRutaMenorCosto(origenId, destinoId);
-        ResultadoRuta resultadoMenorDistancia = redParada.calcularRutaMenorDistancia(origenId, destinoId);
-        ResultadoRuta resultadoMenorTiempo = redParada.calcularRutaMenorTiempo(origenId, destinoId);
+        resCosto = redParada.calcularRutaMenorCosto(origenId, destinoId);
+        actualizarTarjetaResumen(resCosto, lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2);
 
-        //Logico evento
-        String evento = null;
-        boolean algunaRutaAlcanzable = (resultadoEficiente != null && resultadoEficiente.esAlcanzable()) ||
-                (resultadoMenorCosto != null && resultadoMenorCosto.esAlcanzable()) ||
-                (resultadoMenorDistancia != null && resultadoMenorDistancia.esAlcanzable()) ||
-                (resultadoMenorTiempo != null && resultadoMenorTiempo.esAlcanzable());
+        resDistancia = redParada.calcularRutaMenorDistancia(origenId, destinoId);
+        actualizarTarjetaResumen(resDistancia, lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3);
 
-        if(algunaRutaAlcanzable) {
-            evento = simularEventoAleatorio();
-            if (evento != null) {
-                if(evento.contains("Choque")){
-                    lbEvento1.setText("Choque");
-                    lbEvento2.setText("Choque");
-                    lbEvento3.setText("Choque");
-                    lbEvento4.setText("Choque");
+        resTiempo = redParada.calcularRutaMenorTiempo(origenId, destinoId);
+        actualizarTarjetaResumen(resTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4);
 
-                } else if(evento.contains("Huelga")){
-                    lbEvento1.setText("Huelga");
-                    lbEvento2.setText("Huelga");
-                    lbEvento3.setText("Huelga");
-                    lbEvento4.setText("Huelga");
-                } else if(evento.contains("Obras")){
-                    lbEvento1.setText("Obras");
-                    lbEvento2.setText("Obras");
-                    lbEvento3.setText("Obras");
-                    lbEvento4.setText("Obras");
-                }
+        // 3. Dibujar Inmediatamente la mejor ruta (Eficiente) en Amarillo
+        dibujarRutaEnMapa(resEficiente, COLOR_RUTA_MEJOR, 4.0);
+    }
 
-                mostrarAlerta("¡Alerta de Evento!", evento + "\nLos Costos de las Rutas serán penalizados.");
-            } else {
-                lbEvento1.setText("Normal");
-                lbEvento2.setText("Normal");
-                lbEvento3.setText("Normal");
-                lbEvento4.setText("Normal");
-            }
+    private void actualizarTarjetaResumen(ResultadoRuta res, Label c, Label d, Label t, Label tr) {
+        if (res != null && res.esAlcanzable()) {
+            c.setText(String.format("$%.2f", res.getCostoTotal()));
+            d.setText(String.format("%.2f km", res.getDistanciaTotal()));
+            t.setText(String.format("%.0f min", res.getTiempoTotal()));
+            tr.setText(String.valueOf(res.getTransbordosTotales()));
         } else {
-            lbEvento1.setText("--");
-            lbEvento2.setText("--");
-            lbEvento3.setText("--");
-            lbEvento4.setText("--");
+            c.setText("--"); d.setText("--"); t.setText("--"); tr.setText("--");
+        }
+    }
+
+    // --------------------------------------------------------
+    // MÉTODOS DE DETALLE (Vista Comparativa)
+    // --------------------------------------------------------
+
+    @FXML void verDetallesEficiente() { cargarVistaComparativa(resEficiente, "eficiente"); }
+    @FXML void verDetallesCosto() { cargarVistaComparativa(resCosto, "costo"); }
+    @FXML void verDetallesDistancia() { cargarVistaComparativa(resDistancia, "distancia"); }
+    @FXML void verDetallesTiempo() { cargarVistaComparativa(resTiempo, "tiempo"); }
+
+    private void cargarVistaComparativa(ResultadoRuta mejorRuta, String criterio) {
+        if (mejorRuta == null || !mejorRuta.esAlcanzable()) return;
+
+        // 1. Switchear Paneles (Ocultar resultados, mostrar detalles)
+        panelResultados.setVisible(false);
+        panelResultados.setManaged(false);
+        panelDetalles.setVisible(true);
+        panelDetalles.setManaged(true);
+
+        // 2. Calcular la Segunda Mejor Ruta (Alternativa)
+        Long idOrigen = buscarParadaIdPorNombre(cbOrigen.getValue());
+        Long idDestino = buscarParadaIdPorNombre(cbDestino.getValue());
+        ResultadoRuta segundaRuta = redParada.calcularSegundaMejorRuta(idOrigen, idDestino, criterio);
+
+        // 3. Llenar Datos Visuales
+        llenarColumnaDetalle(mejorRuta, lblDetCosto1, lblDetTiempo1, lblDetTransb1, lvRutaPrincipal);
+        llenarColumnaDetalle(segundaRuta, lblDetCosto2, lblDetTiempo2, lblDetTransb2, lvRutaSecundaria);
+
+        // Configurar Estados (Simulación)
+        lblEstadoPrincipal.setText("✅ A TIEMPO");
+        lblEstadoPrincipal.setStyle("-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 3; -fx-background-radius: 3;");
+
+        if (segundaRuta.esAlcanzable()) {
+            lblEstadoSecundaria.setText("⚠ POSIBLE RETRASO");
+            lblEstadoSecundaria.setStyle("-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 3; -fx-background-radius: 3;");
+        } else {
+            lblEstadoSecundaria.setText("⛔ NO DISPONIBLE");
+            lblEstadoSecundaria.setStyle("-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 3; -fx-background-radius: 3;");
         }
 
-        // Calcular y mostrar resultados para los 4 paneles
-        actualizarPanel(resultadoEficiente, lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1, evento != null);
-        actualizarPanel(resultadoMenorCosto, lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2, evento != null);
-        actualizarPanel(resultadoMenorDistancia, lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3, evento != null);
-        actualizarPanel(resultadoMenorTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4, evento != null);
+        // 4. Dibujar en el Mapa (Comparación)
+        grupoRutas.getChildren().clear();
 
-//        List<Ruta> rutaParaResaltar = redParada.obtenerRutaEficienteComoListaRuta(origenId, destinoId);
-//
-//        if (!rutaParaResaltar.isEmpty()) {
-//            Platform.runLater(() -> {
-//                aux.resaltarRuta(graphView, rutaParaResaltar);
-//            });
-//        }
+        // Dibujamos primero la alternativa (roja) para que quede al fondo
+        dibujarRutaEnMapa(segundaRuta, COLOR_RUTA_SEGUNDA, 2.5);
 
+        // Dibujamos encima la principal (amarilla) para que resalte
+        dibujarRutaEnMapa(mejorRuta, COLOR_RUTA_MEJOR, 4.0);
+    }
+
+    private void llenarColumnaDetalle(ResultadoRuta res, Label costo, Label tiempo, Label transb, ListView<String> lista) {
+        if (res != null && res.esAlcanzable()) {
+            costo.setText(String.format("$%.2f", res.getCostoTotal()));
+            tiempo.setText(String.format("%.1f min", res.getTiempoTotal()));
+            transb.setText(String.valueOf(res.getTransbordosTotales()));
+            lista.getItems().setAll(res.getRuta());
+        } else {
+            costo.setText("--"); tiempo.setText("--"); transb.setText("--");
+            lista.getItems().setAll("No disponible");
+        }
+    }
+
+    @FXML
+    void volverAResultados() {
+        panelDetalles.setVisible(false);
+        panelDetalles.setManaged(false);
+        panelResultados.setVisible(true);
+        panelResultados.setManaged(true);
+
+        // Opcional: Al volver, limpiamos la roja y dejamos solo la amarilla (original)
+        if (resEficiente != null && resEficiente.esAlcanzable()) {
+            grupoRutas.getChildren().clear();
+            dibujarRutaEnMapa(resEficiente, COLOR_RUTA_MEJOR, 4.0);
+        }
+    }
+
+    // --------------------------------------------------------
+    // MÉTODOS GRÁFICOS (MAPA)
+    // --------------------------------------------------------
+
+    private void dibujarGrafoBase() {
+        paneGrafo.getChildren().clear();
+        uiNodes.clear();
+
+        // 1. Líneas Base (Gris)
+        for (Ruta ruta : redParada.getAllRutas()) {
+            Parada o = ruta.getOrigen();
+            Parada d = ruta.getDestino();
+            Line linea = new Line(o.getPosicionx(), o.getPosiciony(), d.getPosicionx(), d.getPosiciony());
+            linea.setStroke(Color.GRAY);
+            linea.setStrokeWidth(0.5);
+            paneGrafo.getChildren().add(linea);
+        }
+
+        // 2. Nodos
+        for (Parada p : redParada.getLugar().values()) {
+            NodeUI nodo = new NodeUI(p);
+            uiNodes.put(p.getId(), nodo);
+            paneGrafo.getChildren().addAll(nodo.getCircle(), nodo.getLabel());
+        }
+
+        // 3. Capa de Rutas Dinámicas
+        paneGrafo.getChildren().add(grupoRutas);
+        grupoRutas.toBack();
+    }
+
+    private void dibujarRutaEnMapa(ResultadoRuta res, Color color, double grosor) {
+        if (res == null || !res.esAlcanzable()) return;
+
+        List<String> nodos = res.getRuta();
+        for (int i = 0; i < nodos.size() - 1; i++) {
+            Long id1 = buscarParadaIdPorNombre(nodos.get(i));
+            Long id2 = buscarParadaIdPorNombre(nodos.get(i+1));
+
+            if (id1 != null && id2 != null) {
+                NodeUI n1 = uiNodes.get(id1);
+                NodeUI n2 = uiNodes.get(id2);
+
+                Line linea = new Line(n1.x, n1.y, n2.x, n2.y);
+                linea.setStroke(color);
+                linea.setStrokeWidth(grosor);
+                linea.setOpacity(0.8);
+                grupoRutas.getChildren().add(linea);
+            }
+        }
+    }
+
+    private void actualizarColoresNodos() {
+        uiNodes.values().forEach(n -> n.setColor(COLOR_NODO_NORMAL));
+
+        Long idO = buscarParadaIdPorNombre(cbOrigen.getValue());
+        if (idO != null && uiNodes.containsKey(idO)) uiNodes.get(idO).setColor(COLOR_NODO_SELECCIONADO);
+
+        Long idD = buscarParadaIdPorNombre(cbDestino.getValue());
+        if (idD != null && uiNodes.containsKey(idD)) uiNodes.get(idD).setColor(COLOR_NODO_SELECCIONADO);
+    }
+
+    // --------------------------------------------------------
+    // UTILIDADES VARIAS
+    // --------------------------------------------------------
+
+    private void cargarComboBoxes() {
+        HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
+        if (paradas != null && !paradas.isEmpty()) {
+            List<String> nombres = paradas.values().stream()
+                    .map(Parada::getNombre).sorted().collect(Collectors.toList());
+            cbOrigen.setItems(FXCollections.observableArrayList(nombres));
+            cbDestino.setItems(FXCollections.observableArrayList(nombres));
+        }
     }
 
     private Long buscarParadaIdPorNombre(String nombre) {
         if (nombre == null) return null;
-
-        HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
-        if (paradas == null) return null;
-
-        return paradas.values().stream()
+        return ParadaDAO.getInstance().obtenerParadas().values().stream()
                 .filter(p -> nombre.equals(p.getNombre()))
-                .map(Parada::getId)
-                .findFirst()
-                .orElse(null);
-    }
-
-    private void actualizarPanel(ResultadoRuta resultado, Label costoLabel, Label distanciaLabel, Label tiempoLabel, Label transbordosLabel, boolean eventoOcurrido) {
-        if (resultado != null && resultado.esAlcanzable()) {
-            double costo = resultado.getCostoTotal();
-            double distancia = resultado.getDistanciaTotal();
-            double tiempo = resultado.getTiempoTotal();
-
-            if (eventoOcurrido) {
-                // Aplicar penalización
-                costo *= FACTOR_AUMENTO_COSTO;
-                distancia *= FACTOR_AUMENTO_DISTANCIA;
-                tiempo *= FACTOR_AUMENTO_TIEMPO;
-            }
-
-            costoLabel.setText(String.format("$%.2f", costo));
-            distanciaLabel.setText(String.format("%.2f km", distancia));
-            tiempoLabel.setText(String.format("%.2f min", tiempo));
-            transbordosLabel.setText(String.valueOf(resultado.getTransbordosTotales()));
-        } else {
-            String mensajeError = (resultado != null) ? resultado.getMensajeError() : "No calculada";
-            costoLabel.setText(mensajeError);
-            distanciaLabel.setText("--");
-            tiempoLabel.setText("--");
-            transbordosLabel.setText("--");
-        }
+                .map(Parada::getId).findFirst().orElse(null);
     }
 
     private void limpiarTodosLosPaneles() {
-        String valorPorDefecto = "--";
-
-        // Panel 1
-        lblCosto1.setText(valorPorDefecto);
-        lblDistancia1.setText(valorPorDefecto);
-        lblTiempo1.setText(valorPorDefecto);
-        lblTransbordos1.setText(valorPorDefecto);
-        lbEvento1.setText(valorPorDefecto);
-        // Panel 2
-        lblCosto2.setText(valorPorDefecto);
-        lblDistancia2.setText(valorPorDefecto);
-        lblTiempo2.setText(valorPorDefecto);
-        lblTransbordos2.setText(valorPorDefecto);
-        lbEvento2.setText(valorPorDefecto);
-        // Panel 3
-        lblCosto3.setText(valorPorDefecto);
-        lblDistancia3.setText(valorPorDefecto);
-        lblTiempo3.setText(valorPorDefecto);
-        lblTransbordos3.setText(valorPorDefecto);
-        lbEvento3.setText(valorPorDefecto);
-        // Panel 4
-        lblCosto4.setText(valorPorDefecto);
-        lblDistancia4.setText(valorPorDefecto);
-        lblTiempo4.setText(valorPorDefecto);
-        lblTransbordos4.setText(valorPorDefecto);
-        lbEvento4.setText(valorPorDefecto);
+        Label[] labels = {lblCosto1, lblDistancia1, lblCosto2, lblDistancia2,
+                lblCosto3, lblDistancia3, lblCosto4, lblDistancia4};
+        for (Label l : labels) if(l != null) l.setText("--");
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
@@ -283,5 +298,28 @@ public class CalculadoraRutas {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    // Clase interna visual
+    private static class NodeUI {
+        Circle circle;
+        Text label;
+        double x, y;
+
+        public NodeUI(Parada p) {
+            this.x = p.getPosicionx();
+            this.y = p.getPosiciony();
+            this.circle = new Circle(x, y, 6, COLOR_NODO_NORMAL);
+            this.circle.setStroke(Color.WHITE);
+            this.circle.setStrokeWidth(1.5);
+
+            this.label = new Text(x + 8, y - 5, p.getNombre());
+            this.label.setFill(Color.WHITE);
+            this.label.setFont(Font.font("Segoe UI", FontWeight.NORMAL, 10));
+        }
+
+        public Circle getCircle() { return circle; }
+        public Text getLabel() { return label; }
+        public void setColor(Color c) { this.circle.setFill(c); }
     }
 }
