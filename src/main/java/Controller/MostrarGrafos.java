@@ -26,9 +26,10 @@ public class MostrarGrafos {
 
     }
 
+    //Funcion para crear los grafos con libreria Smartgraph
     public void buildAndShowGraphInPane(Pane paneGrafos, SmartGraphPanel<String, GrafoInfo> graphView, Graph<String, GrafoInfo> graph) {
         try {
-            // 0) Eliminar vista anterior si existe
+            //0) Eliminar vista anterior si existe
             if (graphView != null) {
                 paneGrafos.getChildren().remove(graphView);
                 graphView = null;
@@ -41,7 +42,7 @@ public class MostrarGrafos {
             // Estructuras auxiliares
             Set<String> addedVertices = new HashSet<>();
 
-            // 2) Insertar Paradas (ParadaDAO)
+            // 2) Insertar Paradas de db (ParadaDAO)
             Collection<Parada> paradas = ParadaDAO.getInstance().obtenerParadas().values();
             for (Parada p : paradas) {
                 if (p != null && p.getNombre() != null) {
@@ -54,7 +55,7 @@ public class MostrarGrafos {
             }
 
 
-            // 3) Insertar aristas (RutaDAO)
+            // 3) Insertar ruta de db (RutaDAO)
             int contador = 1;
             Map<?, LinkedList<Ruta>> rutasMap = RutaDAO.getInstancia().obtenerRutas();
             for (LinkedList<Ruta> lista : rutasMap.values()) {
@@ -65,7 +66,7 @@ public class MostrarGrafos {
                         String destino = r.getDestino() != null ? r.getDestino().getNombre() : null;
                         if (origen == null || destino == null) continue;
 
-                        // Asegurar vértices en grafo
+                        // Asegurar vertices en grafo
                         if (!addedVertices.contains(origen)) {
                             graph.insertVertex(origen);
                             addedVertices.add(origen);
@@ -113,7 +114,7 @@ public class MostrarGrafos {
             paneGrafos.getChildren().clear();
             paneGrafos.getChildren().add(graphView);
 
-            // 8) Inicializar la vista (debe hacerse después de que la Stage sea visible)
+            // 8) Inicializar la vista (debe hacerse despues de que la Stage sea visible)
             SmartGraphPanel<String, GrafoInfo> finalGraphView = graphView;
             Platform.runLater(() -> {
                 try {
@@ -139,7 +140,7 @@ public class MostrarGrafos {
         }
     }
 
-    //Funcion para resaltar ruta
+    //Funcion para resaltar ruta (Prueba) - no funcionado
     public void resaltarRuta(SmartGraphPanel<String, GrafoInfo> graphView, List<Ruta> rutaEncontrada) {
 
         System.out.printf("Hola");
@@ -200,6 +201,7 @@ public class MostrarGrafos {
                 mapaPorNombre.put(p.getNombre(), p);
             }
 
+            //realizar el proceso para cargar la img
             for (var vertexNode : graphView.getSmartVertices()) {
                 String nombre = vertexNode.getUnderlyingVertex().element();
                 Parada parada = mapaPorNombre.get(nombre);

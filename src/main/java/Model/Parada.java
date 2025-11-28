@@ -6,7 +6,7 @@ public class Parada {
     private String tipoTransporte;
     private double posicionx;
     private double posiciony;
-    private byte[] icono; //cambiar  BYTE
+    private byte[] icono;
 
     public Parada(String nombre, String tipoTransporte, double posicionx, double posiciony, byte[] icono) {
         this.nombre = nombre;
@@ -75,14 +75,4 @@ public class Parada {
     public int hashCode() {
         return Long.hashCode(id);
     }
-//    @Override
-//    public String toString() {
-//        return "Parada{" +
-//                "id=" + id +
-//                ", nombre='" + nombre + '\'' +
-//                ", tipoTransporte='" + tipoTransporte + '\'' +
-//                ", posicionX=" + posicionx +
-//                ", posicionY=" + posiciony +
-//                '}';
-//    }
 }

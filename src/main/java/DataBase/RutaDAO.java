@@ -18,10 +18,13 @@ public class RutaDAO {
         return instancia;
     }
 
+    //Funcion para guardar la ruta en db
     public void guardarRuta(Ruta ruta) {
         final String sql = "INSERT INTO ruta (origen_id, destino_id, distancia, tiempoRecorrido, costo, numTransbordo, \"posibleevento\") VALUES (?, ?, ?, ?, ?, ?, ?)";
 
+        //Se establece la conexion con db para guardar los datos
         try(Connection connection = DataBaseConnection.getConnection()){
+            //Se coloca cada dato en la posicion correspondiente para colocar en la table de db
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, ruta.getOrigen().getId());
             preparedStatement.setLong(2, ruta.getDestino().getId());
@@ -35,10 +38,12 @@ public class RutaDAO {
             e.printStackTrace();
         }
     }
+    //Funcion para obtener todos los datos que tengas en db
     public HashMap<Long, LinkedList<Ruta>> obtenerRutas(){
         HashMap<Long, LinkedList<Ruta>> rutas = new HashMap<>();
         final String sql = "SELECT * FROM ruta";
 
+        //Se establece la conexion con db para guardar los datos
         try(Connection connection = DataBaseConnection.getConnection()){
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -55,10 +60,10 @@ public class RutaDAO {
                 Ruta ruta = new Ruta(origen, destino, distancia, tiempoRecorrido, costo, numTransbordos, posibleEvento);
                 ruta.setId(resultSet.getLong("id"));
 
-                // Usar el ID del Origen (Parada) como clave del mapa
+                //Usar el ID del Origen (Parada) como clave del mapa
                 Long idOrigenParada = origen.getId(); // o resultSet.getLong("origen_id");
 
-                // Si la clave (ID de Origen) no existe, crea una nueva lista. Luego, añade la ruta a esa lista.
+                //Si la clave (ID de Origen) no existe, crea una nueva lista, Luego, añade la ruta a esa lista
                 rutas.computeIfAbsent(idOrigenParada, k -> new LinkedList<>()).add(ruta);
             }
         } catch (SQLException e){
@@ -67,8 +72,11 @@ public class RutaDAO {
 
         return rutas;
     }
+
+    //Funcion para actualizar cualquier cambio que se alla hecho en el contenido de ruta en db
     public void actualizarRuta(Ruta ruta){
         final String sql = "UPDATE ruta SET origen_id = ?, destino_id = ?, distancia = ?, tiempoRecorrido = ?, costo = ?, numTransbordo = ?, \"posibleevento\" = ? WHERE id = ?";
+        //Se establece la conexion con db para guardar los datos
         try(Connection connection = DataBaseConnection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, ruta.getOrigen().getId());
@@ -84,6 +92,7 @@ public class RutaDAO {
             e.printStackTrace();
         }
     }
+    //Funcion para eliminar ruta de db
     public void eliminarRuta(Long id){
         final String sql = "DELETE FROM ruta WHERE id = ?";
         try(Connection connection = DataBaseConnection.getConnection()){
@@ -95,7 +104,8 @@ public class RutaDAO {
         }
     }
 
-
+    //Funcion para obtener todos los datos de las paradas a traves de los ids guardados en
+    // la table de ruta de la db
     private Parada obtenerParadaPorId(long id) {
         final String sql = "SELECT * FROM parada WHERE id = ?";
         Parada parada = null;
@@ -119,7 +129,7 @@ public class RutaDAO {
         }
         return parada;
     }
-
+    //Funcion para buscar paradas a traves de su nombre
     public Parada buscarParadaPorNombre(String name) {
         final String sql = "SELECT * FROM parada WHERE nombre = ?";
         Parada aux = null;
@@ -142,6 +152,7 @@ public class RutaDAO {
         }
         return aux;
     }
+    //Funcion para validar que exista ruta igual y no explote por duplicado o algo asi
     public boolean existeRutaIgual(Ruta aux) {
         final String sql = "SELECT COUNT(*) AS count FROM ruta WHERE origen_id = ? AND destino_id = ?";
         boolean existe = false;
@@ -160,9 +171,10 @@ public class RutaDAO {
         }
         return existe;
     }
-
+    //Funcion para eliminar cualquier parada enlazada a la ruta borrada
     public void eliminarRutaByParada(long id) {
         final String sql = "DELETE FROM ruta WHERE origen_id = ? OR destino_id = ?";
+        //Se establece la conexion con db para guardar los datos
         try(Connection connection = DataBaseConnection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);

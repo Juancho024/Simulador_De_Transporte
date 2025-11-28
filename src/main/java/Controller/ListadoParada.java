@@ -88,7 +88,7 @@ public class ListadoParada implements Initializable {
 
     byte[] iconoBytes;
 
-
+    //Funcion para agregar icono
     @FXML
     void agregarIcono(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -102,6 +102,7 @@ public class ListadoParada implements Initializable {
 
         if (file != null) {
             try {
+                //Se crear un byte[] para guardar la img
                 iconoBytes = Files.readAllBytes(file.toPath());
                 Image img = new Image(new java.io.ByteArrayInputStream(iconoBytes));
                 imgFondoMod.setImage(img);
@@ -116,10 +117,12 @@ public class ListadoParada implements Initializable {
         }
     }
 
+    //Funcion para actualizar las paradas
     @FXML
     void ActualizarParada(ActionEvent event) {
         int index = tableParada.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
+            //Validacion para evitar perdida de data
             if(iconoBytes == null){
                 Alert alertIcono = new Alert(Alert.AlertType.ERROR);
                 alertIcono.setTitle("Error de validación");
@@ -164,6 +167,7 @@ public class ListadoParada implements Initializable {
         }
     }
 
+    //Funcion para buscar cualquier informacion de la tabla
     @FXML
     void buscarParada(ActionEvent event) {
         String criterio = txtBuscarParada.getText().toLowerCase();
@@ -172,7 +176,7 @@ public class ListadoParada implements Initializable {
         for (Parada parada : ParadaDAO.getInstance().obtenerParadas().values()) {
             Point2D punto = new Point2D(parada.getPosicionx(), parada.getPosiciony());
             String nombreUbicacion = obtenerMensajeByCoordenada(punto);
-
+            //Se convierte todos a string para buscar
             if (parada.getNombre().toLowerCase().contains(criterio) || //Buscar formar de evaluar sin acento
                     parada.getTipoTransporte().toLowerCase().contains(criterio) ||
                     (nombreUbicacion != null && nombreUbicacion.toLowerCase().contains(criterio))) {
@@ -191,6 +195,7 @@ public class ListadoParada implements Initializable {
         limpiarCampos();
     }
 
+    //Funcion para resetear todos los campos del registro
     private void limpiarCampos() {
         btnModificar.setDisable(true);
         btnEliminar.setDisable(true);

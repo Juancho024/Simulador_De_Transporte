@@ -42,15 +42,16 @@ public class RegistroRuta implements Initializable {
     @FXML
     private Spinner<Integer> spnTransbordo;
 
+    //Funcion para cancelar la creacion de ruta
     @FXML
     void Cancelar(ActionEvent event) {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();
     }
 
+    //Funcion para crear o registrar cualquier ruta, con todas sus validaciones correspondientes
     @FXML
     void registrarRuta(ActionEvent event) {
-        String posibleEvento = crearPosibleEvento();
         String origen = cbxOrigen.getValue();
         String destino = cbxDestino.getValue();
         double costo = spnCosto.getValue();
@@ -59,9 +60,11 @@ public class RegistroRuta implements Initializable {
         double tiempo = spnTiempo.getValue();
 
 
+        //Se busca la referencia de cada parada con su nombre para crear la ruta
         Parada auxOrigen = ParadaDAO.getInstance().buscarParadaByName(origen);
         Parada auxDestino = ParadaDAO.getInstance().buscarParadaByName(destino);
 
+        //Sus validaciones para que no se cree algun error
         if (auxOrigen == null || auxDestino == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -117,26 +120,11 @@ public class RegistroRuta implements Initializable {
             alert.setContentText("No se pudo registrar la ruta. Intente nuevamente.");
             alert.showAndWait();
         }
+        //Funcion para resetear todos los campos del registro
         limpiarCampos();
     }
 
-    private String crearPosibleEvento() {
-        Random random = new Random();
-        int posibilidad = random.nextInt(4);
-
-        switch (posibilidad){
-            case 0:
-                return "Normales";
-            case 1:
-                return "Accidente";
-            case 2:
-                return "Huelga";
-            case 3:
-                return "Inundaciones";
-        }
-        return "Normales";
-    }
-
+    //Funcion para resetear todos los campos del registro
     private void limpiarCampos() {
         cbxOrigen.setValue(null);
         cbxDestino.setValue(null);
@@ -151,6 +139,7 @@ public class RegistroRuta implements Initializable {
     void initialize() {
     }
 
+    //Para configurar los spinners de manera que solo pueda obtener valores logicos
     private void configurarSpinners() {
         SpinnerValueFactory<Double> Distancia = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1);
         spnDistancia.setValueFactory(Distancia);
@@ -168,9 +157,11 @@ public class RegistroRuta implements Initializable {
         cargarParadas();
     }
 
+    //Para rellenar el combobox de las paradas
     public void cargarParadas() {
         HashMap<Long, Parada> paradas = ParadaDAO.getInstance().obtenerParadas();
 
+        //Convierte todos los nombres de para a String para cargar los combox (Stream)
         if (!paradas.isEmpty()) {
             java.util.List<String> nombresParadas = paradas.values().stream()
                     .map(Parada::getNombre)

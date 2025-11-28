@@ -56,15 +56,6 @@ public class Principal implements Initializable {
     @FXML private Label totalTranvia;
     @FXML private Label totalTren;
 
-    // --- Componentes de las Tablas ---
-//    @FXML private TableView<Parada> TableParada;
-//    @FXML private TableView<Ruta> TableRuta;
-//    @FXML private TableColumn<Ruta, String> colDestino;
-//    @FXML private TableColumn<Ruta, Float> colDistancia;
-//    @FXML private TableColumn<Parada, String> colNombre;
-//    @FXML private TableColumn<Ruta, String> colOrigen;
-//    @FXML private TableColumn<Ruta, Float> colPrecio;
-//    @FXML private TableColumn<Parada, String> colTipoTransporte;
     @FXML
     private Pane paneGrafos;
 
@@ -87,22 +78,13 @@ public class Principal implements Initializable {
         calcularTotalEstaciones();
         setupSidebarAnimation();
 
-//        colOrigen.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOrigen().getNombre()));
-//        colDestino.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDestino().getNombre()));
-//        colDistancia.setCellValueFactory(new PropertyValueFactory<>("distancia"));
-//        colPrecio.setCellValueFactory(new PropertyValueFactory<>("costo"));
-//        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-//        colTipoTransporte.setCellValueFactory(new PropertyValueFactory<>("tipoTransporte"));
-
-
-//        cargarTablas();
-        // Preparar la inserción del SmartGraphPanel cuando la escena/ventana estén visibles.
+        // Preparar la insercion del SmartGraphPanel cuando la escena/ventana estén visibles.
         // Esto evita llamar graphView.init() antes de que SmartGraph haya creado sus vistas.
         paneGrafos.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
             if (newScene != null) {
                 newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
                     if (newWindow != null) {
-                        // Cuando la ventana esté mostrada, construir el grafo y llamar a init.
+                        // Cuando la ventana este mostrada, construir el grafo y llamar a init.
                         newWindow.showingProperty().addListener((obsShowing, wasShowing, isShowing) -> {
                             if (isShowing) {
                                 Platform.runLater(() -> {

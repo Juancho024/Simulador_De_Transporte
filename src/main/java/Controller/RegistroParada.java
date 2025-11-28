@@ -74,12 +74,16 @@ public class RegistroParada implements Initializable {
     @FXML
     private ComboBox<String> cbxUbicacion;
 
+    //Funcion para cancelar el registro de parada
     @FXML
     void Cancelar(ActionEvent event) {
         Stage stage = (Stage) btnCancelar.getScene().getWindow();
         stage.close();
     }
 
+    //Funcion para realizar todos el proceso
+    // necesario para agregar los iconos, como abrir en ruta predeterminada del equipo
+    // y colocarlo en byte[] para guarda la img
     @FXML
     void agregarIcono(ActionEvent event) {
         imgIconoDefault.setVisible(false);
@@ -109,13 +113,14 @@ public class RegistroParada implements Initializable {
         }
     }
 
-
+    //Funcion para registrar las paradas
     @FXML
     void registrarParada(ActionEvent event) throws IOException {
         String tipoTransporte = cbxTipoTransporte.getValue();
         String nombre = txtNombre.getText();
         String mensaje = cbxUbicacion.getValue();
 
+        //Validaciones necesarias para evitar errores futuros
         if(cbxTipoTransporte.getValue() == null|| txtNombre.getText().isEmpty() || cbxUbicacion.getValue() == null){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error de validación");
@@ -155,6 +160,7 @@ public class RegistroParada implements Initializable {
         }
     }
 
+    //Funcion para resetear todos los campos del registro
     private void limpiarCampos() {
         cbxTipoTransporte.setValue(null);
         txtNombre.setText("");
@@ -169,6 +175,7 @@ public class RegistroParada implements Initializable {
         iconoBytes = null;
     }
 
+    //Funcion para configurar todos los spinners y combox
     private void configurarSpinnersandCombox() {
         cbxTipoTransporte.getItems().addAll("Bus","Tren","Metro","Tranvía","Ferry");
         cbxUbicacion.getItems().addAll("Avenida Estrella Sadhala, Esquina PUCMM",
@@ -225,6 +232,8 @@ public class RegistroParada implements Initializable {
                 "Ensanche Libertad, Calle 2",
                 "Ensanche Bolívar, Calle 3");
     }
+    //Funcion para validar la posicion en pantalla que se va a colocar los nodos,
+    // segun la ubicacion que des
     public Point2D colocarParadaByUbicacion(String mensaje){
         String[] Rutas = {"Avenida Estrella Sadhala, Esquina PUCMM",
                 "Avenida 27 de Febrero",
@@ -343,6 +352,7 @@ public class RegistroParada implements Initializable {
         }
         return null;
     }
+    //Funcion para en caso de que el usario no ponga img, se coloque una img por default
     public static byte[] imageToBytes(Image image) throws IOException {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         ByteArrayOutputStream output = new ByteArrayOutputStream();

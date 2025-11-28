@@ -122,11 +122,13 @@ public class ListadoRuta implements Initializable {
     @FXML
     private Pane paneRetrasado;
 
+    //Funcion para buscar la ruta o cualquier informacion de la ruta
     @FXML
     void buscarRuta() {
         String cosaBuscada = txtBuscarRuta.getText().toLowerCase();
         List<Ruta> rutasFiltradas = new ArrayList<>();
 
+        //todos se convierte en string para buscar con mas facilidad
         for (LinkedList<Ruta> lista : RutaDAO.getInstancia().obtenerRutas().values()) {
             for (Ruta ruta : lista) {
                 if (ruta.getOrigen().getNombre().toLowerCase().contains(cosaBuscada) ||
@@ -145,6 +147,7 @@ public class ListadoRuta implements Initializable {
         tableRuta.refresh();
     }
 
+    //Funcion para cancelar la modificacion y regresar al panel principal
     @FXML
     void cancelarModificacion(ActionEvent event) {
         PaneModificar.setVisible(false);
@@ -152,6 +155,7 @@ public class ListadoRuta implements Initializable {
         limpiarCampos();
     }
 
+    //Funcion para resetear todos los campos del registro
     private void limpiarCampos() {
         btnModificar.setDisable(true);
         btnEliminar.setDisable(true);
@@ -172,6 +176,7 @@ public class ListadoRuta implements Initializable {
         }
     }
 
+    //Funcion para eliminar ruta
     @FXML
     void eliminarRuta(ActionEvent event) {
         int index = tableRuta.getSelectionModel().getSelectedIndex();
@@ -185,6 +190,7 @@ public class ListadoRuta implements Initializable {
             if (result.isEmpty() || result.get() != ButtonType.OK) {
                 return;
             } else {
+                //Se toma el index de la tabla, para buscar la ruta y borrarla de db
                 Ruta ruta = tableRuta.getItems().get(index);
                 RutaDAO.getInstancia().eliminarRuta(ruta.getId());
                 tableRuta.getItems().remove(index);
@@ -193,17 +199,20 @@ public class ListadoRuta implements Initializable {
             }
         }
     }
-
+    //Funcion para activar el panel de modificacion
     @FXML
     void modificarRuta(ActionEvent event) {
         PanePrincipal.setVisible(false);
         PaneModificar.setVisible(true);
     }
 
+    //Funcion para realizar las modificaciones
     @FXML
     void realizarModificacion(ActionEvent event) {
         int index = tableRuta.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
+            //todas las validaciones necesaria para evitar desbordamiento y perdida de data, se realizar
+            // la busqueda de table con index
             if(cbxDestinoMod.getValue().equals(cbxOrigenMod.getValue())){
                 Alert alertError = new Alert(Alert.AlertType.ERROR);
                 alertError.setTitle("Error");
@@ -269,7 +278,7 @@ public class ListadoRuta implements Initializable {
             }
         }
     }
-
+    //Funcion para llamar la ventana (stage) registrar ruta
     @FXML
     void registrarRuta(ActionEvent event) {
         try {

@@ -33,6 +33,7 @@ public class RedParada {
     public HashMap<Long, Parada> getLugar() { return lugar; }
     public void setLugar(HashMap<Long, Parada> lugar) { this.lugar = lugar; }
 
+    //Precargar la informacion de la db en caso de que el controlador falle
     public void recargarGrafo() {
         this.rutas = RutaDAO.getInstancia().obtenerRutas();
         this.lugar = ParadaDAO.getInstance().obtenerParadas();
