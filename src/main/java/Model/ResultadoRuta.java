@@ -13,10 +13,9 @@ public class ResultadoRuta {
     private final boolean esAlcanzable;
     private final String mensajeError;
     private String evento;
-    private final double factorEvento;
 
     // Constructor para una ruta exitosa
-    public ResultadoRuta(List<String> ruta, double factorEvento, double costoTotal, double distanciaTotal, double tiempoTotal, int transbordosTotales, String evento) {
+    public ResultadoRuta(List<String> ruta, double costoTotal, double distanciaTotal, double tiempoTotal, int transbordosTotales, String evento) {
         this.ruta = ruta;
         this.costoTotal = costoTotal;
         this.distanciaTotal = distanciaTotal;
@@ -25,7 +24,6 @@ public class ResultadoRuta {
         this.esAlcanzable = true;
         this.mensajeError = "";
         this.evento = evento;
-        this.factorEvento = factorEvento;
     }
 
     // Constructor para un resultado no exitoso (ruta no encontrada o error)
@@ -38,7 +36,6 @@ public class ResultadoRuta {
         this.esAlcanzable = false;
         this.mensajeError = mensajeError;
         this.evento = "--";
-        this.factorEvento = 0.0;
     }
 
     // Getters
@@ -50,7 +47,6 @@ public class ResultadoRuta {
     public String getMensajeError() { return mensajeError; }
     public String getEvento() {return evento;}
     public void setEvento(String evento) {this.evento = evento; }
-    public double getFactorEvento() {return factorEvento;}
 
     @Override
     public String toString() {

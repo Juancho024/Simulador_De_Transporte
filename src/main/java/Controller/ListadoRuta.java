@@ -276,6 +276,7 @@ public class ListadoRuta implements Initializable {
                 PanePrincipal.setVisible(true);
                 cargarCampos();
             }
+
         }
     }
     //Funcion para llamar la ventana (stage) registrar ruta

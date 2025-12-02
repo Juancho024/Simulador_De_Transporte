@@ -54,32 +54,12 @@ public class RedParada {
     }
 
     // ==========================================
-    //       MÉTODOS DE CÁLCULO DE RUTAS
-    // ==========================================
-
-    public ResultadoRuta calcularRutaMasEficiente(Long origen_id, Long destino_id) {
-        return dijkstraGeneral(origen_id, destino_id, "eficiente",0.0);
-    }
-
-    public ResultadoRuta calcularRutaMenorDistancia(Long origen_id, Long destino_id) {
-        return dijkstraGeneral(origen_id, destino_id, "distancia",0.0);
-    }
-
-    public ResultadoRuta calcularRutaMenorTiempo(Long origen_id, Long destino_id) {
-        return dijkstraGeneral(origen_id, destino_id, "tiempo", 0.0);
-    }
-
-    public ResultadoRuta calcularRutaMenorCosto(Long origen_id, Long destino_id) {
-        return dijkstraGeneral(origen_id, destino_id, "costo", 0.0);
-    }
-
-    // ==========================================
     //       SEGUNDA MEJOR RUTA (NUEVO)
     // ==========================================
 
     public ResultadoRuta calcularSegundaMejorRuta(Long origenId, Long destinoId, String criterio) {
         // 1. Obtener la mejor ruta actual
-        ResultadoRuta mejorRuta = dijkstraGeneral(origenId, destinoId, criterio, 0.0);
+        ResultadoRuta mejorRuta = dijkstraGeneral(origenId, destinoId, criterio, Evento.NORMAL, "normal");
 
         if (!mejorRuta.esAlcanzable() || mejorRuta.getRuta().size() < 2) {
             return new ResultadoRuta("No existe ruta alternativa.");
@@ -100,7 +80,7 @@ public class RedParada {
             Ruta aristaRemovida = eliminarAristaTemporal(uId, nombreV);
 
             // Calcular nueva ruta sin esa arista
-            ResultadoRuta candidata = dijkstraGeneral(origenId, destinoId, criterio, 0.0);
+            ResultadoRuta candidata = dijkstraGeneral(origenId, destinoId, criterio, Evento.NORMAL, "normal");
 
             // Restaurar arista
             if (aristaRemovida != null) {
@@ -210,48 +190,6 @@ public class RedParada {
             }
         }
     }
-
-    // ==========================================
-    //             ALGORITMO DE PRIM
-    // ==========================================
-
-    public List<Ruta> calcularMstPrim(Long inicioId) {
-        if (!lugar.containsKey(inicioId)) {
-            System.err.println("Error en Prim: La parada de inicio no existe.");
-            return new ArrayList<>();
-        }
-        recargarGrafo();
-        List<Ruta> mst = new ArrayList<>();
-        Set<Long> visitados = new HashSet<>();
-        PriorityQueue<Ruta> pq = new PriorityQueue<>(Comparator.comparing(Ruta::getCosto));
-
-        visitados.add(inicioId);
-        if (rutas.containsKey(inicioId)) {
-            pq.addAll(rutas.get(inicioId));
-        }
-
-        while (!pq.isEmpty() && visitados.size() < lugar.size()) {
-            Ruta rutaMasBarata = pq.poll();
-            Long destino = rutaMasBarata.getDestino().getId();
-
-            if (visitados.contains(destino)) {
-                continue;
-            }
-
-            mst.add(rutaMasBarata);
-            visitados.add(destino);
-
-            if (rutas.containsKey(destino)) {
-                for (Ruta rutaAdyacente : rutas.get(destino)) {
-                    if (!visitados.contains(rutaAdyacente.getDestino().getId())) {
-                        pq.add(rutaAdyacente);
-                    }
-                }
-            }
-        }
-        return mst;
-    }
-
     // ==========================================
     //          FLOYD-WARSHALL (RESTITUIDO)
     // ==========================================
@@ -331,14 +269,13 @@ public class RedParada {
             rutaNodos.add(lugar.get(actualId).getNombre());
         }
 
-        return calcularDetallesRuta(rutaNodos, 0.0, "normal");
+        return calcularDetallesRuta(rutaNodos, "normal");
     }
 
     // ==========================================
     //           DIJKSTRA GENERAL (CORE)
     // ==========================================
-
-    private ResultadoRuta dijkstraGeneral(Long origin_id, Long destino_id, String criterio, double factorAumento, String evento) {
+    private ResultadoRuta dijkstraGeneral(Long origin_id, Long destino_id, String criterio, Evento evento, String tipoEvento) {
         if (!lugar.containsKey(origin_id) || !lugar.containsKey(destino_id)) {
             return new ResultadoRuta("El lugar de inicio o fin no existe.");
         }
@@ -374,12 +311,26 @@ public class RedParada {
                         pesoArista = arista.getCosto();
                         break;
                     default: // "eficiente"
+                        // Combinamos atributos para la heurística eficiente
                         pesoArista = arista.getDistancia() + arista.getCosto() + arista.getTiempoRecorrido() + arista.getNumTransbordos();
                         break;
                 }
-                if (factorAumento > 0.0) {
-                    if (!criterio.equals("eficiente")) {
-                        pesoArista *= (1.0f + (float)factorAumento);
+
+                // Aplicar factor según el evento y según el criterio solicitado (SOLO AQUÍ)
+                if (evento != null && evento != Evento.NORMAL) {
+                    switch (criterio) {
+                        case "distancia":
+                            pesoArista *= 1.0f + (float) evento.factorDistancia;
+                            break;
+                        case "tiempo":
+                            pesoArista *= 1.0f + (float) evento.factorTiempo;
+                            break;
+                        case "costo":
+                            pesoArista *= 1.0f + (float) evento.factorCosto;
+                            break;
+                        default: // eficiente
+                            pesoArista *= 1.0f + (float) evento.factorEficiente;
+                            break;
                     }
                 }
 
@@ -396,7 +347,7 @@ public class RedParada {
         }
 
         LinkedList<String> rutaNodos = reconstruirRutaNombres(previo, destino_id);
-        return calcularDetallesRuta(rutaNodos, factorAumento, evento);
+        return calcularDetallesRuta(rutaNodos, tipoEvento);
     }
 
     // ==========================================
@@ -419,10 +370,16 @@ public class RedParada {
         return ruta;
     }
 
-    private ResultadoRuta calcularDetallesRuta(LinkedList<String> rutaNodos, double factorAumento, String tipoEvento) {
+    private ResultadoRuta calcularDetallesRuta(LinkedList<String> rutaNodos, String tipoEvento) {
         if (rutaNodos.size() < 2) {
             return new ResultadoRuta("Ruta inválida.");
         }
+
+        Evento evento = getEventoPorNombre(tipoEvento);
+
+        double factorAumentoDistancia = evento.factorDistancia;
+        double factorAumentoTiempo = evento.factorTiempo;
+        double factorAumentoCosto = evento.factorCosto;
 
         double costoTotal = 0;
         double distanciaTotal = 0;
@@ -434,9 +391,9 @@ public class RedParada {
             String destino = rutaNodos.get(i + 1);
             Ruta rutaSegmento = encontrarRutaDirecta(origen, destino);
             if (rutaSegmento != null) {
-                double costoSegmento = rutaSegmento.getCosto() * (1.0 + factorAumento);
-                double distanciaSegmento = rutaSegmento.getDistancia() * (1.0 + factorAumento);
-                double tiempoSegmento = rutaSegmento.getTiempoRecorrido() * (1.0 + factorAumento);
+                double costoSegmento = rutaSegmento.getCosto() * (1.0 + factorAumentoCosto);
+                double distanciaSegmento = rutaSegmento.getDistancia() * (1.0 + factorAumentoDistancia);
+                double tiempoSegmento = rutaSegmento.getTiempoRecorrido() * (1.0 + factorAumentoTiempo);
 
                 costoTotal += costoSegmento;
                 distanciaTotal += distanciaSegmento;
@@ -444,7 +401,15 @@ public class RedParada {
             }
         }
 
-        return new ResultadoRuta(rutaNodos, factorAumento,costoTotal, distanciaTotal, tiempoTotal, transbordosTotales, tipoEvento);
+        return new ResultadoRuta(rutaNodos, costoTotal, distanciaTotal, tiempoTotal, transbordosTotales, tipoEvento);
+    }
+
+    private Evento getEventoPorNombre(String tipoEvento) {
+        try {
+            return Evento.valueOf(tipoEvento.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return Evento.NORMAL;
+        }
     }
 
     public Long buscarIdPorNombre(String nombreParada) {
@@ -494,27 +459,9 @@ public class RedParada {
             return peso;
         }
     }
-   //Logica de Posible evento
-   private final Random rand = new Random();
+    //Logica de Posible evento
+    private final Random rand = new Random();
 
-    private enum Evento {
-        NORMAL(0.0, 0.0, 0.0, 0.0),
-        LLUVIA(0.05, 0.15, 0.0, 0.15),   //(distancia, tiempo, costo, eficiente)
-        CHOQUE(0.10, 0.50, 0.10, 0.40), // poco costo y distancia
-        HUELGA(0.02, 0.25, 0.35, 0.30);  //poca distancia en huelga
-
-        final double factorDistancia;
-        final double factorTiempo;
-        final double factorCosto;
-        final double factorEficiente;
-
-        Evento(double factorDistancia, double factorTiempo, double factorCosto, double factorEficiente) {
-            this.factorDistancia = factorDistancia;
-            this.factorTiempo = factorTiempo;
-            this.factorCosto = factorCosto;
-            this.factorEficiente = factorEficiente;
-        }
-    }
     public Evento elegirEventoAleatorio() {
         //40% normal, 20% lluvia, 20% choque, 20% huelga
         int r = rand.nextInt(100); //100%
@@ -532,10 +479,9 @@ public class RedParada {
             return resultados;
         }
 
-        // 0) Primero verificar existencia de ruta base SIN evento (evita mostrar evento si no hay ruta)
-        ResultadoRuta base = dijkstraGeneral(origen_id, destino_id, "eficiente", 0.0);
+        ResultadoRuta base = dijkstraGeneral(origen_id, destino_id, "eficiente", Evento.NORMAL, "normal");
         if (!base.esAlcanzable()) {
-            resultados.put("error", new ResultadoRuta("No hay ruta disponible."));
+            resultados.put("Error!", new ResultadoRuta("No hay ruta disponible."));
             return resultados;
         }
 
@@ -549,24 +495,80 @@ public class RedParada {
             alert.setTitle("Ocurrió un evento");
             String mensaje = String.format(
                     "La red de transporte fue afectada por: %s.\nEsto puede alterar las rutas de %s a %s.\n",
-                    evento, nombreOrigen, nombreDestino
+                    evento.name(), nombreOrigen, nombreDestino
             );
             alert.setContentText(mensaje);
             alert.showAndWait();
         }
 
-
-        double factorEficiente = evento.factorEficiente;
-        double factorDistancia = evento.factorDistancia;
-        double factorTiempo = evento.factorTiempo;
-        double factorCosto = evento.factorCosto;
-
         resultados.put("evento", new ResultadoRuta(evento.name()));
-        resultados.put("eficiente", dijkstraGeneral(origen_id, destino_id, "eficiente", factorEficiente));
-        resultados.put("distancia", dijkstraGeneral(origen_id, destino_id, "distancia", factorDistancia));
-        resultados.put("tiempo", dijkstraGeneral(origen_id, destino_id, "tiempo", factorTiempo));
-        resultados.put("costo", dijkstraGeneral(origen_id, destino_id, "costo", factorCosto));
+        resultados.put("eficiente", dijkstraGeneral(origen_id, destino_id, "eficiente", evento, evento.name()));
+        resultados.put("distancia", dijkstraGeneral(origen_id, destino_id, "distancia", evento, evento.name()));
+        resultados.put("tiempo", dijkstraGeneral(origen_id, destino_id, "tiempo", evento, evento.name()));
+        resultados.put("costo", dijkstraGeneral(origen_id, destino_id, "costo", evento, evento.name()));
 
         return resultados;
     }
+
+
+    // ==========================================
+    //       MÉTODOS DE CÁLCULO DE RUTAS
+    // ==========================================
+
+    public ResultadoRuta calcularRutaMasEficiente(Long origen_id, Long destino_id) {
+        return dijkstraGeneral(origen_id, destino_id, "eficiente", Evento.NORMAL, "normal");
+    }
+
+    public ResultadoRuta calcularRutaMenorDistancia(Long origen_id, Long destino_id) {
+        return dijkstraGeneral(origen_id, destino_id, "distancia", Evento.NORMAL, "normal");
+    }
+
+    public ResultadoRuta calcularRutaMenorTiempo(Long origen_id, Long destino_id) {
+        return dijkstraGeneral(origen_id, destino_id, "tiempo", Evento.NORMAL, "normal");
+    }
+
+    public ResultadoRuta calcularRutaMenorCosto(Long origen_id, Long destino_id) {
+        return dijkstraGeneral(origen_id, destino_id, "costo", Evento.NORMAL, "normal");
+    }
+    // ==========================================
+    //             ALGORITMO DE PRIM
+    // ==========================================
+
+    public List<Ruta> calcularMstPrim(Long inicioId) {
+        if (!lugar.containsKey(inicioId)) {
+            System.err.println("Error en Prim: La parada de inicio no existe.");
+            return new ArrayList<>();
+        }
+        recargarGrafo();
+        List<Ruta> mst = new ArrayList<>();
+        Set<Long> visitados = new HashSet<>();
+        PriorityQueue<Ruta> pq = new PriorityQueue<>(Comparator.comparing(Ruta::getCosto));
+
+        visitados.add(inicioId);
+        if (rutas.containsKey(inicioId)) {
+            pq.addAll(rutas.get(inicioId));
+        }
+
+        while (!pq.isEmpty() && visitados.size() < lugar.size()) {
+            Ruta rutaMasBarata = pq.poll();
+            Long destino = rutaMasBarata.getDestino().getId();
+
+            if (visitados.contains(destino)) {
+                continue;
+            }
+
+            mst.add(rutaMasBarata);
+            visitados.add(destino);
+
+            if (rutas.containsKey(destino)) {
+                for (Ruta rutaAdyacente : rutas.get(destino)) {
+                    if (!visitados.contains(rutaAdyacente.getDestino().getId())) {
+                        pq.add(rutaAdyacente);
+                    }
+                }
+            }
+        }
+        return mst;
+    }
+
 }
