@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,132 +14,301 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="697.0" prefWidth="900.0" style="-fx-background-color: #34495e;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CalculadoraRutas">
+<BorderPane prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CalculadoraRutas">
 
-    <!-- 🔹 Sección superior -->
-    <top>
-        <VBox prefHeight="282.0" prefWidth="900.0">
-            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-            <Label text="Visualización del Grafo" textFill="#ecf0f1">
-                <font><Font name="Segoe UI Bold" size="18.0" /></font>
-            </Label>
-            <AnchorPane fx:id="paneGrafo" prefHeight="250.0" style="-fx-background-color: #325170; -fx-border-color: #bdc3c7; -fx-border-width: 2;">
-                <Label layoutX="350.0" layoutY="110.0" text="[Mapa del grafo aquí]" textFill="#95a5a6">
-                    <font><Font size="16.0" /></font>
-                </Label>
-            </AnchorPane>
-        </VBox>
-    </top>
-
-    <!-- 🔹 Sección central con scroll -->
     <center>
-        <VBox spacing="15">
-            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-
-            <!-- 🔸 Fila de selección de origen/destino -->
-            <HBox alignment="CENTER_LEFT" spacing="15">
-                <Label text="Origen:" textFill="#ecf0f1">
-                    <font><Font name="Segoe UI" size="14.0" /></font>
-                </Label>
-                <ComboBox fx:id="cbOrigen" prefWidth="200.0" promptText="Seleccione parada origen" />
-
-                <Label text="Destino:" textFill="#ecf0f1">
-                    <font><Font name="Segoe UI" size="14.0" /></font>
-                </Label>
-                <ComboBox fx:id="cbDestino" prefWidth="200.0" promptText="Seleccione parada destino" />
-
-                <Button fx:id="btnBuscar" onAction="#buscarRutas" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #27ae60;" text="Buscar" textFill="WHITE">
-                    <font><Font name="Segoe UI Bold" size="14.0" /></font>
-                </Button>
-            </HBox>
-
-            <Separator />
-
-            <!-- 🔸 Scroll SOLO para los cuadros -->
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="318.0" prefWidth="880.0" style="-fx-background-color: transparent; -fx-background: transparent;" vbarPolicy="AS_NEEDED">
-
-                <!-- ✅ Aquí está la corrección -->
-                <GridPane hgap="15" vgap="15">
-                    <padding>
-                        <Insets bottom="10" left="10" right="10" top="10" />
-                    </padding>
-
-                    <columnConstraints>
-                        <ColumnConstraints percentWidth="50" />
-                        <ColumnConstraints percentWidth="50" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints />
-                        <RowConstraints />
-                    </rowConstraints>
-
-                    <!-- 🔷 Cuadro 1 -->
-                    <VBox prefHeight="182.0" prefWidth="402.0" spacing="8" style="-fx-background-color: white; -fx-border-color: #3498db;                                  -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                        <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-                        <Label text="Mejor Ruta" textFill="#3498db">
-                            <font><Font name="Segoe UI Bold" size="16.0" /></font>
-                        </Label>
-                        <Label text="(Dijkstra - Ruta más eficiente)" textFill="#7f8c8d">
-                            <font><Font size="11.0" /></font>
-                        </Label>
-                        <Separator />
-                        <HBox spacing="5"><Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblCosto1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblDistancia1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblTiempo1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblTransbordos1" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                    </VBox>
-
-                    <!-- 🔷 Cuadro 2 -->
-                    <VBox prefHeight="181.0" prefWidth="408.0" spacing="8" style="-fx-background-color: white; -fx-border-color: #27ae60;                                  -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-                        <Label text="Menor Costo" textFill="#27ae60">
-                            <font><Font name="Segoe UI Bold" size="16.0" /></font>
-                        </Label>
-                        <Label text="(Bellman-Ford)" textFill="#7f8c8d">
-                            <font><Font size="11.0" /></font>
-                        </Label>
-                        <Separator />
-                        <HBox spacing="5"><Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblCosto2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblDistancia2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblTiempo2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblTransbordos2" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                    </VBox>
-
-                    <!-- 🔷 Cuadro 3 -->
-                    <VBox spacing="8" style="-fx-background-color: white; -fx-border-color: #e74c3c;                                  -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                        <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-                        <Label text="Menor Distancia" textFill="#e74c3c">
-                            <font><Font name="Segoe UI Bold" size="16.0" /></font>
-                        </Label>
-                        <Label text="(Distancia más corta)" textFill="#7f8c8d">
-                            <font><Font size="11.0" /></font>
-                        </Label>
-                        <Separator />
-                        <HBox spacing="5"><Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblCosto3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblDistancia3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblTiempo3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblTransbordos3" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                    </VBox>
-
-                    <!-- 🔷 Cuadro 4 -->
-                    <VBox spacing="8" style="-fx-background-color: white; -fx-border-color: #f39c12;                                  -fx-border-width: 2; -fx-border-radius: 5; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                        <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-                        <Label text="Menor Tiempo" textFill="#f39c12">
-                            <font><Font name="Segoe UI Bold" size="16.0" /></font>
-                        </Label>
-                        <Label text="(Tiempo mínimo)" textFill="#7f8c8d">
-                            <font><Font size="11.0" /></font>
-                        </Label>
-                        <Separator />
-                        <HBox spacing="5"><Label text="Costo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblCosto4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Distancia:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblDistancia4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Tiempo:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblTiempo4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                        <HBox spacing="5"><Label text="Transbordos:" textFill="#34495e"><font><Font name="Segoe UI Bold" size="12.0" /></font></Label><Label fx:id="lblTransbordos4" text="--" textFill="#2c3e50"><font><Font size="12.0" /></font></Label></HBox>
-                    </VBox>
-                </GridPane>
-            </ScrollPane>
-        </VBox>
+        <AnchorPane fx:id="paneGrafo" style="-fx-background-color: #34495e;">
+            <children>
+                <Label text="[ Mapa de Rutas ]" textFill="#95a5a6" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
+            </children>
+        </AnchorPane>
     </center>
+
+    <right>
+        <VBox prefWidth="350.0" spacing="15" style="-fx-background-color: #3E536A;">
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+
+            <VBox spacing="10">
+                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;" text="Configurar Búsqueda" />
+                <Separator style="-fx-background-color: #5D6D7E;" />
+                <Label style="-fx-text-fill: #ecf0f1; -fx-font-weight: bold;" text="Origen:" />
+                <ComboBox fx:id="cbOrigen" prefWidth="Infinity" promptText="Seleccione una parada" />
+                <Label style="-fx-text-fill: #ecf0f1; -fx-font-weight: bold;" text="Destino:">
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </Label>
+                <ComboBox fx:id="cbDestino" prefWidth="Infinity" promptText="Seleccione una parada" />
+                <Button fx:id="btnBuscar" onAction="#buscarRutas" prefWidth="Infinity" style="-fx-background-color: #e67e22; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand; -fx-background-radius: 5px; -fx-padding: 10px 16px;" text="Buscar Rutas">
+                    <VBox.margin>
+                        <Insets top="15.0" />
+                    </VBox.margin>
+                </Button>
+            </VBox>
+
+            <Separator style="-fx-background-color: #5D6D7E;" />
+
+            <VBox fx:id="panelResultados" spacing="10" VBox.vgrow="ALWAYS">
+                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;" text="Resultados de la Ruta" />
+
+                <ScrollPane fx:id="resultadoRuta" fitToWidth="true" style="-fx-background-color: transparent; -fx-hbar-policy: never;" VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox spacing="15" style="-fx-background-color: transparent;">
+
+                            <VBox style="-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 5);">
+                                <children>
+                                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="🏆 Mejor Ruta" />
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;" text="(Dijkstra Eficiente)" />
+                                    <Separator>
+                                        <VBox.margin>
+                                            <Insets bottom="10" top="5" />
+                                        </VBox.margin>
+                                    </Separator>
+                                    <GridPane hgap="10" vgap="8">
+                                        <columnConstraints>
+                                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+                                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+                                        </columnConstraints>
+                                        <rowConstraints>
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        </rowConstraints>
+                                        <children>
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Costo:" />
+                                            <Label fx:id="lblCosto1" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Distancia:" GridPane.rowIndex="1" />
+                                            <Label fx:id="lblDistancia1" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Tiempo:" GridPane.rowIndex="2" />
+                                            <Label fx:id="lblTiempo1" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Transbordos:" GridPane.rowIndex="3" />
+                                            <Label fx:id="lblTransbordos1" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: Bold; -fx-text-fill: #555555;" text="Evento:" GridPane.rowIndex="4" />
+                                            <Label fx:id="lbEvento1" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                        </children>
+                                    </GridPane>
+                                    <Button fx:id="btnDetalles1" onAction="#verDetallesEficiente" prefWidth="Infinity" style="-fx-background-color: #EAECEE; -fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 5px;" text="Ver Detalles">
+                                        <VBox.margin>
+                                            <Insets top="15.0" />
+                                        </VBox.margin>
+                                    </Button>
+                                </children>
+                            </VBox>
+
+                            <VBox style="-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 5);">
+                                <children>
+                                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="💲 Menor Costo" />
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;" text="(Bellman-Ford)" />
+                                    <Separator>
+                                        <VBox.margin>
+                                            <Insets bottom="10" top="5" />
+                                        </VBox.margin>
+                                    </Separator>
+                                    <GridPane hgap="10" vgap="8">
+                                        <columnConstraints>
+                                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+                                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+                                        </columnConstraints>
+                                        <rowConstraints>
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        </rowConstraints>
+                                        <children>
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Costo:" />
+                                            <Label fx:id="lblCosto2" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Distancia:" GridPane.rowIndex="1" />
+                                            <Label fx:id="lblDistancia2" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Tiempo:" GridPane.rowIndex="2" />
+                                            <Label fx:id="lblTiempo2" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Transbordos:" GridPane.rowIndex="3" />
+                                            <Label fx:id="lblTransbordos2" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Evento:" GridPane.rowIndex="4" />
+                                            <Label fx:id="lbEvento2" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                        </children>
+                                    </GridPane>
+                                    <Button fx:id="btnDetalles2" onAction="#verDetallesCosto" prefWidth="Infinity" style="-fx-background-color: #EAECEE; -fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 5px;" text="Ver Detalles">
+                                        <VBox.margin>
+                                            <Insets top="15.0" />
+                                        </VBox.margin>
+                                    </Button>
+                                </children>
+                            </VBox>
+
+                            <VBox style="-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 5);">
+                                <children>
+                                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="📏 Menor Distancia" />
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;" text="(Distancia más corta)" />
+                                    <Separator>
+                                        <VBox.margin>
+                                            <Insets bottom="10" top="5" />
+                                        </VBox.margin>
+                                    </Separator>
+                                    <GridPane hgap="10" vgap="8">
+                                        <columnConstraints>
+                                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+                                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+                                        </columnConstraints>
+                                        <rowConstraints>
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        </rowConstraints>
+                                        <children>
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Costo:" />
+                                            <Label fx:id="lblCosto3" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Distancia:" GridPane.rowIndex="1" />
+                                            <Label fx:id="lblDistancia3" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Tiempo:" GridPane.rowIndex="2" />
+                                            <Label fx:id="lblTiempo3" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Transbordos:" GridPane.rowIndex="3" />
+                                            <Label fx:id="lblTransbordos3" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Evento:" GridPane.rowIndex="4" />
+                                            <Label fx:id="lbEvento3" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                        </children>
+                                    </GridPane>
+                                    <Button fx:id="btnDetalles3" onAction="#verDetallesDistancia" prefWidth="Infinity" style="-fx-background-color: #EAECEE; -fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 5px;" text="Ver Detalles">
+                                        <VBox.margin>
+                                            <Insets top="15.0" />
+                                        </VBox.margin>
+                                    </Button>
+                                </children>
+                            </VBox>
+
+                            <VBox style="-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 15px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 5);">
+                                <children>
+                                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="⏱️ Menor Tiempo" />
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;" text="(Tiempo mínimo)" />
+                                    <Separator>
+                                        <VBox.margin>
+                                            <Insets bottom="10" top="5" />
+                                        </VBox.margin>
+                                    </Separator>
+                                    <GridPane hgap="10" vgap="8">
+                                        <columnConstraints>
+                                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+                                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+                                        </columnConstraints>
+                                        <rowConstraints>
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        </rowConstraints>
+                                        <children>
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Costo:" />
+                                            <Label fx:id="lblCosto4" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Distancia:" GridPane.rowIndex="1" />
+                                            <Label fx:id="lblDistancia4" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Tiempo:" GridPane.rowIndex="2" />
+                                            <Label fx:id="lblTiempo4" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Transbordos:" GridPane.rowIndex="3" />
+                                            <Label fx:id="lblTransbordos4" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" text="Evento:" GridPane.rowIndex="4" />
+                                            <Label fx:id="lbEvento4" style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;" text="--" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                        </children>
+                                    </GridPane>
+                                    <Button fx:id="btnDetalles4" onAction="#verDetallesTiempo" prefWidth="Infinity" style="-fx-background-color: #EAECEE; -fx-text-fill: #2C3E50; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 5px;" text="Ver Detalles">
+                                        <VBox.margin>
+                                            <Insets top="15.0" />
+                                        </VBox.margin>
+                                    </Button>
+                                </children>
+                            </VBox>
+
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </VBox>
+
+            <VBox fx:id="panelDetalles" managed="false" spacing="10" visible="false" VBox.vgrow="ALWAYS">
+
+                <Button maxWidth="Infinity" onAction="#volverAResultados" style="-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="⬅ Volver a Resultados" />
+
+                <HBox spacing="10" VBox.vgrow="ALWAYS">
+
+                    <VBox spacing="5" style="-fx-background-color: #2c3e50; -fx-background-radius: 5; -fx-padding: 8; -fx-border-color: #F1C40F; -fx-border-width: 2; -fx-border-radius: 5;" HBox.hgrow="ALWAYS">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-font-size: 11px;" text="⭐ MEJOR OPCIÓN" textFill="#F1C40F" />
+
+                            <Label fx:id="lblEstadoPrincipal" alignment="CENTER" maxWidth="Infinity" style="-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 9px; -fx-padding: 2; -fx-background-radius: 3;" text="A TIEMPO" />
+
+                            <GridPane hgap="5" vgap="2">
+                                <columnConstraints>
+                                    <ColumnConstraints minWidth="45" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints minHeight="12" />
+                                    <RowConstraints minHeight="12" />
+                                    <RowConstraints minHeight="12" />
+                                </rowConstraints>
+                                <children>
+                                    <Label style="-fx-font-size: 10px;" text="Costo:" textFill="#bdc3c7" />
+                                    <Label fx:id="lblDetCosto1" style="-fx-font-size: 10px;" text="--" textFill="white" GridPane.columnIndex="1" />
+
+                                    <Label style="-fx-font-size: 10px;" text="Tiempo:" textFill="#bdc3c7" GridPane.rowIndex="1" />
+                                    <Label fx:id="lblDetTiempo1" style="-fx-font-size: 10px;" text="--" textFill="white" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                    <Label style="-fx-font-size: 10px;" text="Transb.:" textFill="#bdc3c7" GridPane.rowIndex="2" />
+                                    <Label fx:id="lblDetTransb1" style="-fx-font-size: 10px;" text="--" textFill="white" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                </children>
+                            </GridPane>
+
+                            <Separator style="-fx-background-color: #7f8c8d;" />
+
+                            <Label style="-fx-font-size: 10px;" text="Ruta a seguir:" textFill="#bdc3c7" />
+                            <ListView fx:id="lvRutaPrincipal" style="-fx-control-inner-background: #34495e; -fx-font-size: 10px; -fx-background-color: transparent;" VBox.vgrow="ALWAYS" />
+                        </children>
+                    </VBox>
+
+                    <VBox spacing="5" style="-fx-background-color: #2c3e50; -fx-background-radius: 5; -fx-padding: 8; -fx-border-color: #E74C3C; -fx-border-width: 2; -fx-border-radius: 5;" HBox.hgrow="ALWAYS">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-font-size: 11px;" text="⚠ ALTERNATIVA" textFill="#E74C3C" />
+
+                            <Label fx:id="lblEstadoSecundaria" alignment="CENTER" maxWidth="Infinity" style="-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 9px; -fx-padding: 2; -fx-background-radius: 3;" text="POSIBLE RETRASO" />
+
+                            <GridPane hgap="5" vgap="2">
+                                <columnConstraints>
+                                    <ColumnConstraints minWidth="45" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints minHeight="12" />
+                                    <RowConstraints minHeight="12" />
+                                    <RowConstraints minHeight="12" />
+                                </rowConstraints>
+                                <children>
+                                    <Label style="-fx-font-size: 10px;" text="Costo:" textFill="#bdc3c7" />
+                                    <Label fx:id="lblDetCosto2" style="-fx-font-size: 10px;" text="--" textFill="white" GridPane.columnIndex="1" />
+
+                                    <Label style="-fx-font-size: 10px;" text="Tiempo:" textFill="#bdc3c7" GridPane.rowIndex="1" />
+                                    <Label fx:id="lblDetTiempo2" style="-fx-font-size: 10px;" text="--" textFill="white" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                    <Label style="-fx-font-size: 10px;" text="Transb.:" textFill="#bdc3c7" GridPane.rowIndex="2" />
+                                    <Label fx:id="lblDetTransb2" style="-fx-font-size: 10px;" text="--" textFill="white" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                </children>
+                            </GridPane>
+
+                            <Separator style="-fx-background-color: #7f8c8d;" />
+
+                            <Label style="-fx-font-size: 10px;" text="Ruta a seguir:" textFill="#bdc3c7" />
+                            <ListView fx:id="lvRutaSecundaria" style="-fx-control-inner-background: #34495e; -fx-font-size: 10px; -fx-background-color: transparent;" VBox.vgrow="ALWAYS" />
+                        </children>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+        </VBox>
+    </right>
 </BorderPane>

@@ -20,27 +20,6 @@ public class Ruta {
         this.posibleEvento = posibleEvento;
     }
 
-    private void ConsecuenciasEvento() {
-        // Lógica para manejar las consecuencias del evento
-        if(posibleEvento.equals("Accidente")) {
-            tiempoRecorrido *= 2;
-        }
-        if(posibleEvento.equals("Manifestación")) {
-            tiempoRecorrido *= 3;
-        }
-        if(posibleEvento.equals("LLuvias intensas")) {
-            costo *= 1.5;
-            tiempoRecorrido *= 2;
-        }
-        if(posibleEvento.equals("Obras viales")) {
-            tiempoRecorrido *= 2;
-            distancia *= 1.5;
-        }
-        if(posibleEvento.equals("Normales")) {
-            tiempoRecorrido /= 2;
-        }
-    }
-
     public long getId() {
         return id;
     }

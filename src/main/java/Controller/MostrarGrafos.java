@@ -8,7 +8,7 @@ import Model.Ruta;
 import Utilities.FixedSmartGraph;
 import Utilities.paths;
 import com.brunomnsilva.smartgraph.graph.Graph;
-import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
+import com.brunomnsilva.smartgraph.graph.Vertex;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
 import javafx.application.Platform;
@@ -23,11 +23,13 @@ import java.util.*;
 public class MostrarGrafos {
 
     public MostrarGrafos() {
+
     }
 
+    //Funcion para crear los grafos con libreria Smartgraph
     public void buildAndShowGraphInPane(Pane paneGrafos, SmartGraphPanel<String, GrafoInfo> graphView, Graph<String, GrafoInfo> graph) {
         try {
-            // 0) Eliminar vista anterior si existe
+            //0) Eliminar vista anterior si existe
             if (graphView != null) {
                 paneGrafos.getChildren().remove(graphView);
                 graphView = null;
@@ -35,12 +37,12 @@ public class MostrarGrafos {
             }
 
             // 1) Nuevo grafo
-            graph = new GraphEdgeList<>();
+            graph = new com.brunomnsilva.smartgraph.graph.DigraphEdgeList<>();
 
             // Estructuras auxiliares
             Set<String> addedVertices = new HashSet<>();
 
-            // 2) Insertar Paradas (ParadaDAO)
+            // 2) Insertar Paradas de db (ParadaDAO)
             Collection<Parada> paradas = ParadaDAO.getInstance().obtenerParadas().values();
             for (Parada p : paradas) {
                 if (p != null && p.getNombre() != null) {
@@ -53,7 +55,7 @@ public class MostrarGrafos {
             }
 
 
-            // 3) Insertar aristas (RutaDAO)
+            // 3) Insertar ruta de db (RutaDAO)
             int contador = 1;
             Map<?, LinkedList<Ruta>> rutasMap = RutaDAO.getInstancia().obtenerRutas();
             for (LinkedList<Ruta> lista : rutasMap.values()) {
@@ -64,7 +66,7 @@ public class MostrarGrafos {
                         String destino = r.getDestino() != null ? r.getDestino().getNombre() : null;
                         if (origen == null || destino == null) continue;
 
-                        // Asegurar vértices en grafo
+                        // Asegurar vertices en grafo
                         if (!addedVertices.contains(origen)) {
                             graph.insertVertex(origen);
                             addedVertices.add(origen);
@@ -79,10 +81,6 @@ public class MostrarGrafos {
                         String edgeId = String.valueOf(r.getId());
                         GrafoInfo ei = new GrafoInfo(edgeId, distanciaLabel);
                         graph.insertEdge(origen, destino, ei);
-//                        try{
-//                        } catch (com.brunomnsilva.smartgraph.graph.InvalidEdgeException iee) {
-//                            System.out.println("Aviso: arista duplicada omitida (id): " + ei.getId());
-//                        }
 
                     } catch (Exception inner) {
                         inner.printStackTrace();
@@ -94,7 +92,6 @@ public class MostrarGrafos {
             Map<String, Point2D> posiciones = new HashMap<>();
 
             for (Parada p : paradas) {
-                // Suponiendo que Parada tiene getX() y getY()
                 posiciones.put(p.getNombre(), new Point2D(p.getPosicionx(), p.getPosiciony()));
             }
 
@@ -102,20 +99,22 @@ public class MostrarGrafos {
             SmartPlacementStrategy initialPlacement = new Utilities.SmartFixedPlacementStrategy(posiciones);
             graphView = new SmartGraphPanel<>(graph, initialPlacement);
 
-            // 5) Ajuste de tamaño
+            // 5) Ajuste de tamano
             graphView.prefWidthProperty().bind(paneGrafos.widthProperty());
             graphView.prefHeightProperty().bind(paneGrafos.heightProperty());
 
-            // 6) Cargar CSS: comprobación / logging para depuración
+            // 6) Cargar CSS: comprobacion
             URL cssUrl = getClass().getResource(paths.SMART_GRAPH);
-            graphView.getStylesheets().add(cssUrl.toExternalForm());
+            if(cssUrl != null){
+                graphView.getStylesheets().add(cssUrl.toExternalForm());
+            }
 
 
             // 7) Añadir al pane (limpiando para evitar duplicados)
             paneGrafos.getChildren().clear();
             paneGrafos.getChildren().add(graphView);
 
-            // 8) Inicializar la vista (debe hacerse después de que la Stage sea visible)
+            // 8) Inicializar la vista (debe hacerse despues de que la Stage sea visible)
             SmartGraphPanel<String, GrafoInfo> finalGraphView = graphView;
             Platform.runLater(() -> {
                 try {
@@ -141,6 +140,56 @@ public class MostrarGrafos {
         }
     }
 
+    //Funcion para resaltar ruta (Prueba) - no funcionado
+    public void resaltarRuta(SmartGraphPanel<String, GrafoInfo> graphView, List<Ruta> rutaEncontrada) {
+
+        System.out.printf("Hola");
+        if (graphView == null || rutaEncontrada == null) {
+            return;
+        }
+
+        graphView.getSmartVertices().forEach(v -> v.removeStyleClass("ruta-resaltada"));
+        graphView.getSmartEdges().forEach(e -> e.removeStyleClass("ruta-resaltada"));
+
+        Set<String> verticesAResaltar = new HashSet<>();
+
+        for (Ruta r : rutaEncontrada) {
+            verticesAResaltar.add(r.getOrigen().getNombre());
+            verticesAResaltar.add(r.getDestino().getNombre());
+        }
+
+        graphView.getSmartVertices().forEach(v -> {
+            String nombreParada = v.getUnderlyingVertex().element();
+            if (verticesAResaltar.contains(nombreParada)) {
+                v.addStyleClass("ruta-resaltada");
+            }
+        });
+
+        graphView.getSmartEdges().forEach(e -> {
+            Vertex<String>[] vertices = e.getUnderlyingEdge().vertices();
+
+            String v1 = vertices[0].element();
+            String v2 = vertices[1].element();
+
+            boolean debeResaltarse = false;
+
+            for (Ruta r : rutaEncontrada) {
+                String origen = r.getOrigen().getNombre();
+                String destino = r.getDestino().getNombre();
+
+                if ((v1.equals(origen) && v2.equals(destino)) || (v2.equals(origen) && v1.equals(destino))) {
+                    debeResaltarse = true;
+                    break;
+                }
+            }
+
+            if (debeResaltarse) {
+                e.addStyleClass("ruta-resaltada");
+            }
+        });
+        System.out.printf("Hola2");
+    }
+
     private void aplicarIconosParadas(SmartGraphPanel<String, GrafoInfo> graphView) {
         try {
             // Obtener todas las paradas
@@ -152,6 +201,7 @@ public class MostrarGrafos {
                 mapaPorNombre.put(p.getNombre(), p);
             }
 
+            //realizar el proceso para cargar la img
             for (var vertexNode : graphView.getSmartVertices()) {
                 String nombre = vertexNode.getUnderlyingVertex().element();
                 Parada parada = mapaPorNombre.get(nombre);
@@ -181,4 +231,5 @@ public class MostrarGrafos {
             e.printStackTrace();
         }
     }
+
 }

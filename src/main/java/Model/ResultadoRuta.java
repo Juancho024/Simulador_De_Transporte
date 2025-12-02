@@ -36,7 +36,6 @@ public class ResultadoRuta {
     }
 
     // Getters
-    public List<String> getRuta() { return ruta; }
     public double getCostoTotal() { return costoTotal; }
     public double getDistanciaTotal() { return distanciaTotal; }
     public double getTiempoTotal() { return tiempoTotal; }
@@ -54,5 +53,9 @@ public class ResultadoRuta {
                 ", Distancia: " + String.format("%.2f", distanciaTotal) + " km" +
                 ", Tiempo: " + String.format("%.2f", tiempoTotal) + " min" +
                 ", Transbordos: " + transbordosTotales;
+    }
+
+    public List<String> getRuta() {
+        return  ruta;
     }
 }

@@ -81,6 +81,7 @@ This should help you understand which styles you can apply to each type of eleme
  */
 .arrow {
     -fx-stroke-dash-array: none;
+    -fx-fill: #FF0000; /* Color de la flecha */
 }
 
 /* Custom vertex class. If you use node.setStyleClass("myVertex"), any previous styling
@@ -103,4 +104,33 @@ This should help you understand which styles you can apply to each type of eleme
     -fx-stroke: red;
     -fx-opacity: 1;
     -fx-fill: transparent; /* important to keep for curved edges */
+}
+
+/* Puedes cambiar el estilo de las líneas dirigidas */
+.edge-shape-directed {
+    -fx-stroke: #FF0000;
+    -fx-stroke-dash-array: 5 5;
+    -fx-stroke-width: 2px;
+}
+
+.vertex.ruta-resaltada {
+    -fx-stroke: #00AAFF; /* Borde azul brillante */
+    -fx-stroke-width: 5px; /* Hazlo más visible */
+    /* Puedes cambiar el color de relleno si quieres */
+    -fx-fill: #B1DFF7; /* Mantiene el color de relleno por defecto o cámbialo */
+}
+
+/* Aplicar estilo directamente al nodo SmartEdge cuando tiene la clase ruta-resaltada */
+.edge.ruta-resaltada {
+    -fx-stroke: #33FF33; /* Verde brillante */
+    -fx-stroke-width: 4px;
+    -fx-stroke-dash-array: none; /* Línea sólida */
+    -fx-opacity: 1.0; /* Asegura que no sea transparente */
+}
+
+/* También debes aplicar el estilo a la flecha para que coincida si es un digrafo */
+.edge.ruta-resaltada .arrow {
+    -fx-fill: #33FF33;
+    -fx-stroke: #33FF33;
+    -fx-stroke-width: 1px;
 }

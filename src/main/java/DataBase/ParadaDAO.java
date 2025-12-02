@@ -15,10 +15,11 @@ public class ParadaDAO {
         }
         return instance;
     }
-
+    //Funcion para guardar las paradas
     public void guardarParada(Parada parada) {
+        //los "\" se utiliza para que las cosas se guarden igualitas, si tiene comilla, con comilla en la db
         final String sql = "INSERT INTO parada (\"nombre\", \"tipoTransporte\", posicionx, posiciony, icono) VALUES (?, ?, ?, ?, ?)";
-
+        //Se establece la conexion con db para guardar los datos
         try(Connection connection = DataBaseConnection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, parada.getNombre());
@@ -37,6 +38,7 @@ public class ParadaDAO {
         }
     }
 
+    //Funcion para obtener todas las paradas de db
     public HashMap<Long, Parada> obtenerParadas() {
         HashMap<Long, Parada> paradas = new HashMap<>();
         final String sql = "SELECT * FROM parada";
@@ -49,12 +51,11 @@ public class ParadaDAO {
                 int posicionx = resultSet.getInt("posicionx");
                 int posiciony = resultSet.getInt("posiciony");
                 byte[] icono;
-                if(resultSet.getBytes("icono")!= null){
+                if(resultSet.getBytes("icono") != null){
                     icono = resultSet.getBytes("icono");
                 } else {
                     icono = new  byte[]{};
                 }
-//                byte[] icono = resultSet.getBytes("icono");
                 Parada parada = new Parada(nombre, tipoTransporte, posicionx, posiciony, icono);
                 parada.setId(resultSet.getLong("id"));
                 paradas.put(parada.getId(), parada);
@@ -64,7 +65,7 @@ public class ParadaDAO {
         }
         return paradas;
     }
-
+    //Funcion para actualizar la paradas
     public void actualizarParada(Parada parada) {
         final String sql = "UPDATE parada SET nombre = ?, \"tipoTransporte\" = ?, posicionx = ?, posiciony = ?, icono = ? WHERE id = ?";
 
@@ -81,6 +82,21 @@ public class ParadaDAO {
             e.printStackTrace();
         }
     }
+    //Funcion para validar que no exista otra parada en la misma coodernada
+    public boolean validarParadaByCoordenada(int x, int y){
+        final String sql = "SELECT * FROM parada WHERE posicionx = ? AND posiciony = ?";
+        try(Connection connection = DataBaseConnection.getConnection()){
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, x);
+            preparedStatement.setInt(2, y);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    //Funcion para sacar toda la informacion de una parada a traves de su nombre
     public Parada buscarParadaByName(String name){
         final String sql = "SELECT * FROM parada WHERE nombre = ?";
         Parada aux = null;
@@ -105,6 +121,7 @@ public class ParadaDAO {
         return aux;
     }
 
+    //Funcion para eliminar parada
     public void eliminarParada(Long id) {
         final String sql = "DELETE FROM parada WHERE id = ?";
 

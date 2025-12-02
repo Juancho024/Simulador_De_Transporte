@@ -33,4 +33,6 @@ public class GrafoInfo {
     public String toString() {
         return label;
     }
+
+
 }

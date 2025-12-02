@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -29,12 +30,6 @@ import java.util.*;
 public class ListadoParada implements Initializable {
 
     @FXML
-    private Button btnActualizar;
-
-    @FXML
-    private Button btnCancelarMod;
-
-    @FXML
     private Button btnEliminar;
 
     @FXML
@@ -42,12 +37,6 @@ public class ListadoParada implements Initializable {
 
     @FXML
     private Button btnRegistrar;
-
-    @FXML
-    private TableColumn<Parada, Integer> colLatitud;
-
-    @FXML
-    private TableColumn<Parada, Integer> colLongitud;
 
     @FXML
     private TableColumn<Parada, String> colNombre;
@@ -62,16 +51,13 @@ public class ListadoParada implements Initializable {
     private ImageView imgFondoMod;
 
     @FXML
-    private Label lbLatitud;
+    private Label lbUbicacion;
 
     @FXML
-    private Label lbLongitud;
+    private ComboBox<String> cbxUbicacion;
 
     @FXML
     private Label lbNombre;
-
-    @FXML
-    private Label lbPrincipal;
 
     @FXML
     private Label lbTipoTransporte;
@@ -92,10 +78,7 @@ public class ListadoParada implements Initializable {
     private ComboBox<String> cbxTipoTransporte;
 
     @FXML
-    private Spinner<Double> spnLatitud;
-
-    @FXML
-    private Spinner<Double> spnLongitud;
+    private TableColumn<Parada, String> colUbicacion;
 
     @FXML
     private TextField txtNombre;
@@ -105,6 +88,7 @@ public class ListadoParada implements Initializable {
 
     byte[] iconoBytes;
 
+    //Funcion para agregar icono
     @FXML
     void agregarIcono(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -118,6 +102,7 @@ public class ListadoParada implements Initializable {
 
         if (file != null) {
             try {
+                //Se crear un byte[] para guardar la img
                 iconoBytes = Files.readAllBytes(file.toPath());
                 Image img = new Image(new java.io.ByteArrayInputStream(iconoBytes));
                 imgFondoMod.setImage(img);
@@ -132,10 +117,12 @@ public class ListadoParada implements Initializable {
         }
     }
 
+    //Funcion para actualizar las paradas
     @FXML
     void ActualizarParada(ActionEvent event) {
         int index = tableParada.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
+            //Validacion para evitar perdida de data
             if(iconoBytes == null){
                 Alert alertIcono = new Alert(Alert.AlertType.ERROR);
                 alertIcono.setTitle("Error de validación");
@@ -144,28 +131,11 @@ public class ListadoParada implements Initializable {
                 alertIcono.showAndWait();
                 return;
             }
-            if(cbxTipoTransporte.getValue() == null || txtNombre.getText().isEmpty()){
+            if(cbxTipoTransporte.getValue() == null ||cbxUbicacion.getValue() == null || txtNombre.getText().isEmpty()){
                 Alert alertCampos = new Alert(Alert.AlertType.ERROR);
                 alertCampos.setTitle("Error de validación");
                 alertCampos.setHeaderText("Faltan datos obligatorios");
                 alertCampos.setContentText("Por favor, completa todos los campos obligatorios antes de actualizar la parada.");
-                alertCampos.showAndWait();
-                return;
-            }
-            if(spnLatitud.getValue() == 0 || spnLongitud.getValue() == 0){
-                Alert alertCampos = new Alert(Alert.AlertType.ERROR);
-                alertCampos.setTitle("Error de validación");
-                alertCampos.setHeaderText("Faltan datos obligatorios");
-                alertCampos.setContentText("La latitud y longitud no pueden ser cero. Por favor, ingresa valores válidos.");
-                alertCampos.showAndWait();
-                return;
-            }
-            if (spnLatitud.getValue() < 0 || spnLatitud.getValue() > 550 ||
-                    spnLongitud.getValue() < 0 || spnLongitud.getValue() > 900){
-                Alert alertCampos = new Alert(Alert.AlertType.ERROR);
-                alertCampos.setTitle("Error de validación");
-                alertCampos.setHeaderText("Valores fuera de rango");
-                alertCampos.setContentText("La latitud debe ir de 0 a 550 y la longitud de 0 a 900. Por favor, ingresa valores dentro de estos rangos.");
                 alertCampos.showAndWait();
                 return;
             }
@@ -181,10 +151,11 @@ public class ListadoParada implements Initializable {
                 Parada parada = tableParada.getItems().get(index);
                 parada.setNombre(txtNombre.getText());
                 parada.setTipoTransporte(cbxTipoTransporte.getValue());
-                parada.setPosiciony(Double.parseDouble(spnLatitud.getValue().toString()));
-                parada.setPosicionx(Double.parseDouble(spnLongitud.getValue().toString()));
+                String mensaje = cbxUbicacion.getValue();
+                Point2D posicion = colocarParadaByUbicacion(mensaje);
+                parada.setPosiciony(posicion.getY());
+                parada.setPosicionx(posicion.getX());
                 parada.setIcono(iconoBytes);
-
                 ParadaDAO.getInstance().actualizarParada(parada);
                 tableParada.getItems().set(index, parada);
                 tableParada.refresh();
@@ -196,16 +167,19 @@ public class ListadoParada implements Initializable {
         }
     }
 
+    //Funcion para buscar cualquier informacion de la tabla
     @FXML
     void buscarParada(ActionEvent event) {
         String criterio = txtBuscarParada.getText().toLowerCase();
         List<Parada> paradasFiltradas = new LinkedList<>();
 
         for (Parada parada : ParadaDAO.getInstance().obtenerParadas().values()) {
+            Point2D punto = new Point2D(parada.getPosicionx(), parada.getPosiciony());
+            String nombreUbicacion = obtenerMensajeByCoordenada(punto);
+            //Se convierte todos a string para buscar
             if (parada.getNombre().toLowerCase().contains(criterio) || //Buscar formar de evaluar sin acento
                     parada.getTipoTransporte().toLowerCase().contains(criterio) ||
-                    String.valueOf(parada.getPosiciony()).contains(criterio) ||
-                    String.valueOf(parada.getPosicionx()).contains(criterio)) {
+                    (nombreUbicacion != null && nombreUbicacion.toLowerCase().contains(criterio))) {
                 paradasFiltradas.add(parada);
             }
         }
@@ -221,13 +195,21 @@ public class ListadoParada implements Initializable {
         limpiarCampos();
     }
 
+    //Funcion para resetear todos los campos del registro
     private void limpiarCampos() {
         btnModificar.setDisable(true);
         btnEliminar.setDisable(true);
         lbNombre.setText("");
         lbTipoTransporte.setText("");
-        lbLatitud.setText("");
-        lbLongitud.setText("");
+        lbUbicacion.setText("");
+        imgFondo.setImage(null);
+        imgFondoMod.setImage(null);
+        if (!tableParada.getItems().isEmpty()) {
+            tableParada.getSelectionModel().selectFirst();
+            cargarCampos();
+            btnModificar.setDisable(false);
+            btnEliminar.setDisable(false);
+        }
     }
 
     @FXML
@@ -264,8 +246,9 @@ public class ListadoParada implements Initializable {
         if (parada != null) {
             txtNombre.setText(parada.getNombre());
             cbxTipoTransporte.setValue(parada.getTipoTransporte());
-            spnLatitud.getValueFactory().setValue(parada.getPosiciony());
-            spnLongitud.getValueFactory().setValue(parada.getPosicionx());
+            Point2D punto = new Point2D(parada.getPosicionx(), parada.getPosiciony());
+            String mensaje = obtenerMensajeByCoordenada(punto);
+            cbxUbicacion.setValue(mensaje);
             iconoBytes = parada.getIcono();
             Image img = new Image(new java.io.ByteArrayInputStream(parada.getIcono()));
             imgFondoMod.setImage(img);
@@ -296,18 +279,69 @@ public class ListadoParada implements Initializable {
         btnModificar.setDisable(true);
         btnEliminar.setDisable(true);
         cbxTipoTransporte.getItems().addAll("Bus", "Tren", "Metro", "Tranvía", "Ferry");
+        cbxUbicacion.getItems().addAll("Avenida Estrella Sadhala, Esquina PUCMM",
+                "Avenida 27 de Febrero",
+                "Autopista Juan Pablo Duarte",
+                "Avenida Las Carreras",
+                "Avenida Francia",
+                "Avenida Salvador Estrella Sadhala",
+                "Avenida Hispanoamericana",
+                "Avenida Circunvalacion Norte",
+                "Avenida Circunvalacion Sur",
+                "Avenida Juan Pablo II",
+                "Avenida Fernando Valerio",
+                "Avenida Bartolome Colón",
+                "Avenida Joaquin Balaguer",
+                "Avenida Antonio Guzman",
+                "Avenida Presidente Antonio Guzmán Fernandez",
+                "Avenida Imbert",
+                "Calle El Sol",
+                "Calle Del Comercio",
+                "Calle Republica de Argentina",
+                "Calle Daniel Espinal",
+                "Calle Maimon",
+                "Calle Restauracion",
+                "Calle 30 de Marzo",
+                "Calle Fernando Bermudez",
+                "Calle Cuba",
+                "Calle Sabana Larga",
+                "Calle Del Sol, Esquina 30 de Marzo",
+                "Calle Del Sol, Esquina Restauracion",
+                "Calle Juan Goico Alix",
+                "Calle Pedro Francisco Bono",
+                "Calle Manuel de Jesús Peña y Reynoso",
+                "Calle Daniel Espinal, Esquina Francia",
+                "Calle Juan Pablo Duarte",
+                "Calle San Luis",
+                "Calle Benito Moncion",
+                "Calle Independencia",
+                "Calle Sanchez",
+                "Calle España",
+                "Carretera Luperon",
+                "Carretera Don Pedro",
+                "Carretera Jacagua",
+                "Carretera Santiago–Tamboril",
+                "Carretera Gurabo",
+                "Urbanizacion Villa Olga, Calle A",
+                "Urbanizacion Villa Olga, Calle B",
+                "Urbanizacion Jardines del Rey, Calle 1",
+                "Urbanizacion Jardines del Rey, Calle 2",
+                "Reparto Universitario, Calle Principal",
+                "Reparto Consuelo, Calle 5",
+                "Los Jardines Metropolitanos, Calle 8",
+                "Los Jardines Metropolitanos, Calle 4",
+                "Ensanche Libertad, Calle 2",
+                "Ensanche Bolivar, Calle 3");
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colTipoTransporte.setCellValueFactory(new PropertyValueFactory<>("tipoTransporte"));
-        colLatitud.setCellValueFactory(new PropertyValueFactory<>("posiciony"));
-        colLongitud.setCellValueFactory(new PropertyValueFactory<>("posicionx"));
-
-        spnLatitud.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 550, 0)
-        );
-
-        spnLongitud.setValueFactory(
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 900, 0)
-        );
+        colUbicacion.setCellValueFactory(cellData -> {
+            Parada parada = cellData.getValue();
+            Point2D punto = new Point2D(parada.getPosicionx(), parada.getPosiciony());
+            String nombreUbicacion = obtenerMensajeByCoordenada(punto);
+            return new javafx.beans.property.SimpleStringProperty(
+                    nombreUbicacion != null ? nombreUbicacion : "Ubicación no conocida"
+            );
+        });
 
         cargarTablas();
         tableParada.setOnMouseClicked(ActionEvent -> {
@@ -322,6 +356,12 @@ public class ListadoParada implements Initializable {
                 btnEliminar.setDisable(true);
             }
         });
+        if (!tableParada.getItems().isEmpty()) {
+            tableParada.getSelectionModel().selectFirst();
+            cargarCampos();
+            btnModificar.setDisable(false);
+            btnEliminar.setDisable(false);
+        }
     }
 
     private void cargarTablas() {
@@ -334,8 +374,8 @@ public class ListadoParada implements Initializable {
         Parada parada = tableParada.getSelectionModel().getSelectedItem();
         lbNombre.setText(" " + parada.getNombre());
         lbTipoTransporte.setText(" " + parada.getTipoTransporte());
-        lbLatitud.setText(" " + String.valueOf(parada.getPosiciony()));
-        lbLongitud.setText(" " + String.valueOf(parada.getPosicionx()));
+        Point2D posicion = new Point2D(parada.getPosicionx(), parada.getPosiciony());
+        lbUbicacion.setText(" " + obtenerMensajeByCoordenada(posicion));
         byte[] iconoBytes = parada.getIcono();
         if (iconoBytes != null && iconoBytes.length > 0) {
             Image img = new Image(new java.io.ByteArrayInputStream(iconoBytes));
@@ -344,5 +384,242 @@ public class ListadoParada implements Initializable {
             imgFondo.setImage(null);
         }
     }
+    public String obtenerMensajeByCoordenada(Point2D punto) {
+        String[] Rutas = {
+                "Avenida Estrella Sadhala, Esquina PUCMM",
+                "Avenida 27 de Febrero",
+                "Autopista Juan Pablo Duarte",
+                "Avenida Las Carreras",
+                "Avenida Francia",
+                "Avenida Salvador Estrella Sadhala",
+                "Avenida Hispanoamericana",
+                "Avenida Circunvalacion Norte",
+                "Avenida Circunvalacion Sur",
+                "Avenida Juan Pablo II",
+                "Avenida Fernando Valerio",
+                "Avenida Bartolome Colón",
+                "Avenida Joaquin Balaguer",
+                "Avenida Antonio Guzman",
+                "Avenida Presidente Antonio Guzmán Fernandez",
+                "Avenida Imbert",
+                "Calle El Sol",
+                "Calle Del Comercio",
+                "Calle Republica de Argentina",
+                "Calle Daniel Espinal",
+                "Calle Maimon",
+                "Calle Restauracion",
+                "Calle 30 de Marzo",
+                "Calle Fernando Bermudez",
+                "Calle Cuba",
+                "Calle Sabana Larga",
+                "Calle Del Sol, Esquina 30 de Marzo",
+                "Calle Del Sol, Esquina Restauracion",
+                "Calle Juan Goico Alix",
+                "Calle Pedro Francisco Bono",
+                "Calle Manuel de Jesús Peña y Reynoso",
+                "Calle Daniel Espinal, Esquina Francia",
+                "Calle Juan Pablo Duarte",
+                "Calle San Luis",
+                "Calle Benito Moncion",
+                "Calle Independencia",
+                "Calle Sanchez",
+                "Calle España",
+                "Carretera Luperon",
+                "Carretera Don Pedro",
+                "Carretera Jacagua",
+                "Carretera Santiago–Tamboril",
+                "Carretera Gurabo",
+                "Urbanizacion Villa Olga, Calle A",
+                "Urbanizacion Villa Olga, Calle B",
+                "Urbanizacion Jardines del Rey, Calle 1",
+                "Urbanizacion Jardines del Rey, Calle 2",
+                "Reparto Universitario, Calle Principal",
+                "Reparto Consuelo, Calle 5",
+                "Los Jardines Metropolitanos, Calle 8",
+                "Los Jardines Metropolitanos, Calle 4",
+                "Ensanche Libertad, Calle 2",
+                "Ensanche Bolivar, Calle 3"
+        };
 
+        double[][] coordenada = {
+                {120, 80},
+                {450, 200},
+                {300, 350},
+                {700, 120},
+                {850, 480},
+                {600, 250},
+                {90, 400},
+                {780, 60},
+                {500, 450},
+                {350, 150},
+                {820, 300},
+                {640, 220},
+                {100, 260},
+                {420, 480},
+                {760, 340},
+                {200, 120},
+                {880, 180},
+                {520, 320},
+                {250, 430},
+                {150, 210},
+                {330, 90},
+                {450, 380},
+                {720, 410},
+                {540, 100},
+                {290, 160},
+                {860, 240},
+                {400, 300},
+                {100, 500},
+                {500, 100},
+                {550, 500},
+                {100, 100},
+                {850, 500},
+                {875, 350},
+                {550, 350},
+                {90, 120},
+                {840, 450},
+                {140, 460},
+                {450, 270},
+                {20, 240},
+                {880, 60},
+                {300, 480},
+                {740, 310},
+                {580, 420},
+                {200, 300},
+                {460, 160},
+                {330, 460},
+                {810, 390},
+                {150, 50},
+                {690, 250},
+                {500, 50},
+                {400, 210}
+        };
+
+        // Buscar mensaje
+        for (int i = 0; i < coordenada.length; i++) {
+            if (punto.getX() == coordenada[i][0] && punto.getY() == coordenada[i][1]) {
+                return Rutas[i];
+            }
+        }
+
+        return null; // No encontrado
+    }
+    public Point2D colocarParadaByUbicacion(String mensaje){
+        String[] Rutas = {"Avenida Estrella Sadhala, Esquina PUCMM",
+                "Avenida 27 de Febrero",
+                "Autopista Juan Pablo Duarte",
+                "Avenida Las Carreras",
+                "Avenida Francia",
+                "Avenida Salvador Estrella Sadhala",
+                "Avenida Hispanoamericana",
+                "Avenida Circunvalacion Norte",
+                "Avenida Circunvalacion Sur",
+                "Avenida Juan Pablo II",
+                "Avenida Fernando Valerio",
+                "Avenida Bartolome Colón",
+                "Avenida Joaquin Balaguer",
+                "Avenida Antonio Guzman",
+                "Avenida Presidente Antonio Guzmán Fernandez",
+                "Avenida Imbert",
+                "Calle El Sol",
+                "Calle Del Comercio",
+                "Calle Republica de Argentina",
+                "Calle Daniel Espinal",
+                "Calle Maimon",
+                "Calle Restauracion",
+                "Calle 30 de Marzo",
+                "Calle Fernando Bermudez",
+                "Calle Cuba",
+                "Calle Sabana Larga",
+                "Calle Del Sol, Esquina 30 de Marzo",
+                "Calle Del Sol, Esquina Restauracion",
+                "Calle Juan Goico Alix",
+                "Calle Pedro Francisco Bono",
+                "Calle Manuel de Jesús Peña y Reynoso",
+                "Calle Daniel Espinal, Esquina Francia",
+                "Calle Juan Pablo Duarte",
+                "Calle San Luis",
+                "Calle Benito Moncion",
+                "Calle Independencia",
+                "Calle Sanchez",
+                "Calle España",
+                "Carretera Luperon",
+                "Carretera Don Pedro",
+                "Carretera Jacagua",
+                "Carretera Santiago–Tamboril",
+                "Carretera Gurabo",
+                "Urbanizacion Villa Olga, Calle A",
+                "Urbanizacion Villa Olga, Calle B",
+                "Urbanizacion Jardines del Rey, Calle 1",
+                "Urbanizacion Jardines del Rey, Calle 2",
+                "Reparto Universitario, Calle Principal",
+                "Reparto Consuelo, Calle 5",
+                "Los Jardines Metropolitanos, Calle 8",
+                "Los Jardines Metropolitanos, Calle 4",
+                "Ensanche Libertad, Calle 2",
+                "Ensanche Bolivar, Calle 3"
+        };
+        // (x, y)
+        double[][] coordenada = {
+                {120, 80},
+                {450, 200},
+                {300, 350},
+                {700, 120},
+                {850, 480},
+                {600, 250},
+                {90, 400},
+                {780, 60},
+                {500, 450},
+                {350, 150},
+                {820, 300},
+                {640, 220},
+                {100, 260},
+                {420, 480},
+                {760, 340},
+                {200, 120},
+                {880, 180},
+                {520, 320},
+                {250, 430},
+                {150, 210},
+                {330, 90},
+                {450, 380},
+                {720, 410},
+                {540, 100},
+                {290, 160},
+                {860, 240},
+                {400, 300},
+                {100, 500},
+                {500, 100},
+                {550, 500},
+                {100, 100},
+                {850, 500},
+                {875, 350},
+                {550, 350},
+                {90, 120},
+                {840, 450},
+                {140, 460},
+                {450, 270},
+                {20, 240},
+                {880, 60},
+                {300, 480},
+                {740, 310},
+                {580, 420},
+                {200, 300},
+                {460, 160},
+                {330, 460},
+                {810, 390},
+                {150, 50},
+                {690, 250},
+                {500, 50},
+                {400, 210}
+        };
+
+        // Buscar la ruta
+        for (int i = 0; i < Rutas.length; i++) {
+            if (Rutas[i].equalsIgnoreCase(mensaje.trim())) {
+                return new Point2D(coordenada[i][0], coordenada[i][1]);
+            }
+        }
+        return null;
+    }
 }

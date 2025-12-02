@@ -9,6 +9,7 @@ public class DataBaseConnection {
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
 
+    //Clase para realizar la connection con la Base de Datos
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }

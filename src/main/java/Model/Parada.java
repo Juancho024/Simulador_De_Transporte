@@ -6,7 +6,7 @@ public class Parada {
     private String tipoTransporte;
     private double posicionx;
     private double posiciony;
-    private byte[] icono; //cambiar  BYTE
+    private byte[] icono;
 
     public Parada(String nombre, String tipoTransporte, double posicionx, double posiciony, byte[] icono) {
         this.nombre = nombre;

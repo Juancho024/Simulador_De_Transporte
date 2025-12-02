@@ -11,7 +11,7 @@ public class RedParada {
     private HashMap<Long, Parada> lugar;
     private static RedParada instance = null;
 
-//    Variables para el Floyd-Warshall
+    // Variables para Floyd-Warshall
     private Float[][] distanciasFW;
     private Long[][] siguientesNodosFW;
     private List<Long> idsIndexados;
@@ -27,27 +27,13 @@ public class RedParada {
         }
         return instance;
     }
-//
+
     public HashMap<Long, LinkedList<Ruta>> getRutas() { return rutas; }
     public void setRutas(HashMap<Long, LinkedList<Ruta>> rutas) { this.rutas = rutas; }
     public HashMap<Long, Parada> getLugar() { return lugar; }
     public void setLugar(HashMap<Long, Parada> lugar) { this.lugar = lugar; }
-//
-//
-//    public void agregarRuta(Ruta ruta) {
-//        String origen = ruta.getOrigen().getNombre();
-//        rutas.computeIfAbsent(origen, k -> new LinkedList<>()).add(ruta);
-//    }
-//    public Parada buscarParadaPorNombre(String origen) {
-//        return lugar.get(origen);
-//    }
-//    public void agregarParada(Parada nuevaParada) {
-//        String nombre = nuevaParada.getNombre();
-//        lugar.put(nombre, nuevaParada);
-//        rutas.putIfAbsent(nombre, new LinkedList<>());
-//    }
-//    public boolean existeRutaIgual(Ruta nuevaRuta) { return false; }
 
+    //Precargar la informacion de la db en caso de que el controlador falle
     public void recargarGrafo() {
         this.rutas = RutaDAO.getInstancia().obtenerRutas();
         this.lugar = ParadaDAO.getInstance().obtenerParadas();
@@ -55,167 +41,106 @@ public class RedParada {
         this.siguientesNodosFW = null;
     }
 
+    // ==========================================
+    //       MÉTODOS DE CÁLCULO DE RUTAS
+    // ==========================================
+
     public ResultadoRuta calcularRutaMasEficiente(Long origen_id, Long destino_id) {
         return dijkstraGeneral(origen_id, destino_id, "eficiente");
     }
-
 
     public ResultadoRuta calcularRutaMenorDistancia(Long origen_id, Long destino_id) {
         return dijkstraGeneral(origen_id, destino_id, "distancia");
     }
 
-    static class DisjointSet {
-        private Map<Long, Long> parent = new HashMap<>();
-        public DisjointSet(Set<Long> nodos) {
-            for (Long nodo : nodos) {
-                parent.put(nodo, nodo);
-            }
-        }
-        public long find(Long i) {
-            if (parent.get(i) == i) return i;
-            long root = find(parent.get(i));
-            parent.put(i, root);
-            return root;
-        }
-        public void union(Long i, Long j) {
-            long rootI = find(i);
-            long rootJ = find(j);
-            if (rootI != rootJ) {
-                parent.put(rootI, rootJ);
-            }
-        }
+    public ResultadoRuta calcularRutaMenorTiempo(Long origen_id, Long destino_id) {
+        return dijkstraGeneral(origen_id, destino_id, "tiempo");
     }
-
-//    BellmanFord
 
     public ResultadoRuta calcularRutaMenorCosto(Long origen_id, Long destino_id) {
-        if (!lugar.containsKey(origen_id) || !lugar.containsKey(destino_id)) {
-            return new ResultadoRuta("El lugar de origen_id o destino_id no existe.");
+        return dijkstraGeneral(origen_id, destino_id, "costo");
+    }
+
+    // ==========================================
+    //       SEGUNDA MEJOR RUTA (NUEVO)
+    // ==========================================
+
+    public ResultadoRuta calcularSegundaMejorRuta(Long origenId, Long destinoId, String criterio) {
+        // 1. Obtener la mejor ruta actual
+        ResultadoRuta mejorRuta = dijkstraGeneral(origenId, destinoId, criterio);
+
+        if (!mejorRuta.esAlcanzable() || mejorRuta.getRuta().size() < 2) {
+            return new ResultadoRuta("No existe ruta alternativa.");
         }
 
-        int numNodos = lugar.size();
-        HashMap<Long, Float> costos = new HashMap<>();
-        HashMap<Long, Long> previo = new HashMap<>();
-        List<Ruta> allRutas = getAllRutas();
+        List<String> caminoOriginal = mejorRuta.getRuta();
+        ResultadoRuta segundaMejor = null;
+        double mejorValorAlternativo = Double.MAX_VALUE;
 
-        for (Long nodo : lugar.keySet()) {
-            costos.put(nodo, Float.MAX_VALUE);
-            previo.put(nodo, null); //pruebaa
-        }
-        costos.put(origen_id, 0.0f);
+        // 2. Iterar sobre cada arista de la mejor ruta, eliminarla temporalmente y buscar ruta
+        for (int i = 0; i < caminoOriginal.size() - 1; i++) {
+            String nombreU = caminoOriginal.get(i);
+            String nombreV = caminoOriginal.get(i+1);
 
-        for (int i = 0; i < numNodos - 1; i++) {
-            for (Ruta ruta : allRutas) {
-                Long origenRuta = ruta.getOrigen().getId();
-                Long destinoRuta = ruta.getDestino().getId();
-                if (costos.get(origenRuta) != Float.MAX_VALUE && costos.get(origenRuta) + ruta.getCosto() < costos.get(destinoRuta)) {
-                    costos.put(destinoRuta, costos.get(origenRuta) + ruta.getCosto());
-                    previo.put(destinoRuta, origenRuta);
+            Long uId = buscarIdPorNombre(nombreU);
+
+            // Guardar arista para restaurar
+            Ruta aristaRemovida = eliminarAristaTemporal(uId, nombreV);
+
+            // Calcular nueva ruta sin esa arista
+            ResultadoRuta candidata = dijkstraGeneral(origenId, destinoId, criterio);
+
+            // Restaurar arista
+            if (aristaRemovida != null) {
+                restaurarArista(uId, aristaRemovida);
+            }
+
+            // Evaluar si es la mejor alternativa encontrada hasta ahora
+            if (candidata.esAlcanzable()) {
+                double valorCandidata = obtenerValorPorCriterio(candidata, criterio);
+                if (valorCandidata < mejorValorAlternativo) {
+                    mejorValorAlternativo = valorCandidata;
+                    segundaMejor = candidata;
                 }
             }
         }
 
-        for (Ruta ruta : allRutas) {
-            if (costos.get(ruta.getOrigen().getId()) != Float.MAX_VALUE && costos.get(ruta.getOrigen().getId()) + ruta.getCosto() < costos.get(ruta.getDestino().getId())) {
-                return new ResultadoRuta("Error: Se detectó un ciclo de costo negativo.");
-            }
+        if (segundaMejor == null) {
+            return new ResultadoRuta("No se encontró una ruta alternativa viable.");
         }
-
-        if (costos.get(destino_id) == Float.MAX_VALUE) {
-            String inicioNombre = lugar.get(origen_id) != null ? lugar.get(origen_id).getNombre() : origen_id.toString();
-            String finNombre = lugar.get(destino_id) != null ? lugar.get(destino_id).getNombre() : destino_id.toString();
-            return new ResultadoRuta("No hay ruta disponible de " + inicioNombre + " a " + finNombre + ".");
-        }
-
-        LinkedList<String> rutaNodos = reconstruirRutaNombres(previo, destino_id);
-        return calcularDetallesRuta(rutaNodos);
+        return segundaMejor;
     }
 
-//    FloydWarshall
+    private Ruta eliminarAristaTemporal(Long origenId, String nombreDestino) {
+        if (origenId == null || !rutas.containsKey(origenId)) return null;
+        LinkedList<Ruta> adyacentes = rutas.get(origenId);
 
-    public void calcularTodasLasRutasMasCortas() {
-        if (distanciasFW != null) {
-            System.out.println("Floyd-Warshall: Usando resultados calculados previamente.");
-            return; // Ya fue calculado
-        }
-
-        System.out.println("Floyd-Warshall: Calculando todas las rutas...");
-        recargarGrafo();
-        int n = lugar.size();
-        idsIndexados = new ArrayList<>(lugar.keySet());
-        HashMap<Long, Integer> idToIndex = new HashMap<>();
-        for (int i = 0; i < n; i++) {
-            idToIndex.put(idsIndexados.get(i), i);
-        }
-
-        distanciasFW = new Float[n][n];
-        siguientesNodosFW = new Long[n][n];
-
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                distanciasFW[i][j] = (i == j) ? 0.0f : Float.MAX_VALUE;
-                siguientesNodosFW[i][j] = null;
+        for (int i = 0; i < adyacentes.size(); i++) {
+            if (adyacentes.get(i).getDestino().getNombre().equals(nombreDestino)) {
+                return adyacentes.remove(i);
             }
         }
-
-
-        for (Ruta ruta : getAllRutas()) {
-            Integer u = idToIndex.get(ruta.getOrigen().getId());
-            Integer v = idToIndex.get(ruta.getDestino().getId());
-            if (u != null && v != null && ruta.getDistancia() < distanciasFW[u][v]) {
-                distanciasFW[u][v] = ruta.getDistancia();
-                siguientesNodosFW[u][v] = ruta.getDestino().getId();
-            }
-        }
-
-        for (int k = 0; k < n; k++) {
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    if (distanciasFW[i][k] != Float.MAX_VALUE && distanciasFW[k][j] != Float.MAX_VALUE &&
-                            distanciasFW[i][k] + distanciasFW[k][j] < distanciasFW[i][j]) {
-                        distanciasFW[i][j] = distanciasFW[i][k] + distanciasFW[k][j];
-                        siguientesNodosFW[i][j] = siguientesNodosFW[i][k];
-                    }
-                }
-            }
-        }
-        System.out.println("Floyd-Warshall: Cálculo completado.");
+        return null;
     }
 
-    public ResultadoRuta obtenerRutaFloydWarshall(Long origenId, Long destinoId) {
-
-        if (distanciasFW == null) {
-            calcularTodasLasRutasMasCortas();
+    private void restaurarArista(Long origenId, Ruta ruta) {
+        if (origenId != null && ruta != null) {
+            rutas.computeIfAbsent(origenId, k -> new LinkedList<>()).add(ruta);
         }
-
-        HashMap<Long, Integer> idToIndex = new HashMap<>();
-        for (int i = 0; i < idsIndexados.size(); i++) {
-            idToIndex.put(idsIndexados.get(i), i);
-        }
-
-        Integer origenIdx = idToIndex.get(origenId);
-        Integer destinoIdx = idToIndex.get(destinoId);
-
-        if (origenIdx == null || destinoIdx == null || distanciasFW[origenIdx][destinoIdx] == Float.MAX_VALUE) {
-            return new ResultadoRuta("No hay ruta disponible (según Floyd-Warshall).");
-        }
-
-        LinkedList<String> rutaNodos = new LinkedList<>();
-        Long actualId = origenId;
-        while (actualId != null && !actualId.equals(destinoId)) {
-            rutaNodos.add(lugar.get(actualId).getNombre());
-            origenIdx = idToIndex.get(actualId);
-            actualId = siguientesNodosFW[origenIdx][destinoIdx];
-        }
-        if (actualId != null) {
-            rutaNodos.add(lugar.get(actualId).getNombre());
-        }
-
-        return calcularDetallesRuta(rutaNodos);
     }
 
-//    Kruskal
+    private double obtenerValorPorCriterio(ResultadoRuta res, String criterio) {
+        switch (criterio) {
+            case "distancia": return res.getDistanciaTotal();
+            case "tiempo": return res.getTiempoTotal();
+            case "costo": return res.getCostoTotal();
+            default: return res.getDistanciaTotal() + res.getCostoTotal() + res.getTiempoTotal();
+        }
+    }
+
+    // ==========================================
+    //           ALGORITMO DE KRUSKAL
+    // ==========================================
 
     public List<Ruta> calcularMstKruskal(boolean porCosto) {
         recargarGrafo();
@@ -234,6 +159,7 @@ public class RedParada {
             Long origen = ruta.getOrigen().getId();
             Long destino = ruta.getDestino().getId();
 
+            // Verificar si el origen y destino ya están en el mismo conjunto
             if (ds.find(origen) != ds.find(destino)) {
                 mst.add(ruta);
                 ds.union(origen, destino);
@@ -242,7 +168,36 @@ public class RedParada {
         return mst;
     }
 
-//    Prim
+    // Clase interna para Kruskal
+    static class DisjointSet {
+        private Map<Long, Long> parent = new HashMap<>();
+
+        public DisjointSet(Set<Long> nodos) {
+            for (Long nodo : nodos) {
+                parent.put(nodo, nodo);
+            }
+        }
+
+        public long find(Long i) {
+            if (!parent.containsKey(i)) return i; // Seguridad extra
+            if (parent.get(i) == i) return i;
+            long root = find(parent.get(i));
+            parent.put(i, root);
+            return root;
+        }
+
+        public void union(Long i, Long j) {
+            long rootI = find(i);
+            long rootJ = find(j);
+            if (rootI != rootJ) {
+                parent.put(rootI, rootJ);
+            }
+        }
+    }
+
+    // ==========================================
+    //             ALGORITMO DE PRIM
+    // ==========================================
 
     public List<Ruta> calcularMstPrim(Long inicioId) {
         if (!lugar.containsKey(inicioId)) {
@@ -281,19 +236,105 @@ public class RedParada {
         return mst;
     }
 
-    private ResultadoRuta dijkstraGeneral(Long origin_id, Long destino_id, String criterio) {
+    // ==========================================
+    //          FLOYD-WARSHALL (RESTITUIDO)
+    // ==========================================
+
+    public void calcularTodasLasRutasMasCortas() {
+        if (distanciasFW != null) {
+            System.out.println("Floyd-Warshall: Usando resultados calculados previamente.");
+            return;
+        }
+
+        System.out.println("Floyd-Warshall: Calculando todas las rutas...");
         recargarGrafo();
+        int n = lugar.size();
+        idsIndexados = new ArrayList<>(lugar.keySet());
+        HashMap<Long, Integer> idToIndex = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            idToIndex.put(idsIndexados.get(i), i);
+        }
+
+        distanciasFW = new Float[n][n];
+        siguientesNodosFW = new Long[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                distanciasFW[i][j] = (i == j) ? 0.0f : Float.MAX_VALUE;
+                siguientesNodosFW[i][j] = null;
+            }
+        }
+
+        for (Ruta ruta : getAllRutas()) {
+            Integer u = idToIndex.get(ruta.getOrigen().getId());
+            Integer v = idToIndex.get(ruta.getDestino().getId());
+            if (u != null && v != null && ruta.getDistancia() < distanciasFW[u][v]) {
+                distanciasFW[u][v] = ruta.getDistancia();
+                siguientesNodosFW[u][v] = ruta.getDestino().getId();
+            }
+        }
+
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (distanciasFW[i][k] != Float.MAX_VALUE && distanciasFW[k][j] != Float.MAX_VALUE &&
+                            distanciasFW[i][k] + distanciasFW[k][j] < distanciasFW[i][j]) {
+                        distanciasFW[i][j] = distanciasFW[i][k] + distanciasFW[k][j];
+                        siguientesNodosFW[i][j] = siguientesNodosFW[i][k];
+                    }
+                }
+            }
+        }
+        System.out.println("Floyd-Warshall: Cálculo completado.");
+    }
+
+    public ResultadoRuta obtenerRutaFloydWarshall(Long origenId, Long destinoId) {
+        if (distanciasFW == null) {
+            calcularTodasLasRutasMasCortas();
+        }
+
+        HashMap<Long, Integer> idToIndex = new HashMap<>();
+        for (int i = 0; i < idsIndexados.size(); i++) {
+            idToIndex.put(idsIndexados.get(i), i);
+        }
+
+        Integer origenIdx = idToIndex.get(origenId);
+        Integer destinoIdx = idToIndex.get(destinoId);
+
+        if (origenIdx == null || destinoIdx == null || distanciasFW[origenIdx][destinoIdx] == Float.MAX_VALUE) {
+            return new ResultadoRuta("No hay ruta disponible (según Floyd-Warshall).");
+        }
+
+        LinkedList<String> rutaNodos = new LinkedList<>();
+        Long actualId = origenId;
+        while (actualId != null && !actualId.equals(destinoId)) {
+            rutaNodos.add(lugar.get(actualId).getNombre());
+            origenIdx = idToIndex.get(actualId);
+            actualId = siguientesNodosFW[origenIdx][destinoIdx];
+        }
+        if (actualId != null) {
+            rutaNodos.add(lugar.get(actualId).getNombre());
+        }
+
+        return calcularDetallesRuta(rutaNodos);
+    }
+
+    // ==========================================
+    //           DIJKSTRA GENERAL (CORE)
+    // ==========================================
+
+    private ResultadoRuta dijkstraGeneral(Long origin_id, Long destino_id, String criterio) {
         if (!lugar.containsKey(origin_id) || !lugar.containsKey(destino_id)) {
             return new ResultadoRuta("El lugar de inicio o fin no existe.");
         }
 
         HashMap<Long, Float> pesos = new HashMap<>();
         HashMap<Long, Long> previo = new HashMap<>();
-        PriorityQueue<ColaPrioritaria> cola = new PriorityQueue<>(Comparator.comparingDouble(ColaPrioritaria::getKm));
+        PriorityQueue<ColaPrioritaria> cola = new PriorityQueue<>(Comparator.comparingDouble(ColaPrioritaria::getPeso));
 
         for (Long nodo : lugar.keySet()) {
             pesos.put(nodo, Float.MAX_VALUE);
-            previo.put(nodo, null); //prueba
+            previo.put(nodo, null);
         }
         pesos.put(origin_id, 0.0f);
         cola.add(new ColaPrioritaria(origin_id, 0.0f));
@@ -308,14 +349,11 @@ public class RedParada {
                 float pesoArista;
 
                 switch (criterio) {
-                    case "distancia":
-                        pesoArista = arista.getDistancia();
-                        break;
-                    case "tiempo":
-                        pesoArista = arista.getTiempoRecorrido();
-                        break;
+                    case "distancia": pesoArista = arista.getDistancia(); break;
+                    case "tiempo": pesoArista = arista.getTiempoRecorrido(); break;
+                    case "costo": pesoArista = arista.getCosto(); break;
                     default: // "eficiente"
-                        pesoArista = arista.getDistancia() + 1.0f * arista.getCosto() + 2.0f * arista.getTiempoRecorrido() + 1.0f * arista.getNumTransbordos();
+                        pesoArista = arista.getDistancia() + arista.getCosto() + arista.getTiempoRecorrido() + arista.getNumTransbordos();
                         break;
                 }
 
@@ -328,15 +366,16 @@ public class RedParada {
         }
 
         if (pesos.get(destino_id) == Float.MAX_VALUE) {
-            return new ResultadoRuta("No hay ruta disponible de " + origin_id + " a " + destino_id + ".");
+            return new ResultadoRuta("No hay ruta disponible.");
         }
 
         LinkedList<String> rutaNodos = reconstruirRutaNombres(previo, destino_id);
         return calcularDetallesRuta(rutaNodos);
     }
 
-
-//     Reconstruye el camino desde el nodo final hasta el inicio usando el mapa de predecesores.
+    // ==========================================
+    //              MÉTODOS AUXILIARES
+    // ==========================================
 
     private LinkedList<String> reconstruirRutaNombres(HashMap<Long, Long> previo, Long finId) {
         LinkedList<String> ruta = new LinkedList<>();
@@ -344,20 +383,15 @@ public class RedParada {
 
         while (actualId != null) {
             Parada parada = lugar.get(actualId);
-
             if (parada != null) {
                 ruta.addFirst(parada.getNombre());
             } else {
-                System.err.println("Error interno: ID de parada no encontrado en el mapa de lugares.");
                 break;
             }
             actualId = previo.get(actualId);
         }
         return ruta;
     }
-
-
-//     Dado un camino de nodos (nombres), calcula los totales de costo, distancia, etc.
 
     private ResultadoRuta calcularDetallesRuta(LinkedList<String> rutaNodos) {
         if (rutaNodos.size() < 2) {
@@ -377,31 +411,22 @@ public class RedParada {
                 costoTotal += rutaSegmento.getCosto();
                 distanciaTotal += rutaSegmento.getDistancia();
                 tiempoTotal += rutaSegmento.getTiempoRecorrido();
-
-            } else {
-
-                return new ResultadoRuta("Error interno: no se encontró segmento de ruta " + origen + " -> " + destino);
             }
         }
-
         return new ResultadoRuta(rutaNodos, costoTotal, distanciaTotal, tiempoTotal, transbordosTotales);
     }
 
-    //Para pasar a nombre los ids
     public Long buscarIdPorNombre(String nombreParada) {
         for (Map.Entry<Long, Parada> entry : lugar.entrySet()) {
             if (entry.getValue().getNombre().equals(nombreParada)) {
                 return entry.getKey();
             }
         }
-        return null; // No encontrado
+        return null;
     }
-
-//      Encuentra una arista directa entre dos nodos.
 
     private Ruta encontrarRutaDirecta(String nombreOrigen, String nombreDestino) {
         Long idOrigen = buscarIdPorNombre(nombreOrigen);
-
         if (idOrigen != null && rutas.containsKey(idOrigen)) {
             for (Ruta ruta : rutas.get(idOrigen)) {
                 if (ruta.getDestino().getNombre().equals(nombreDestino)) {
@@ -412,60 +437,23 @@ public class RedParada {
         return null;
     }
 
-
-//    private void dijkstra(String inicio, String fin) {  }
-//    public void bellmanFord(String inicio) {  }
-//    private void floydWarshall() {  }
-//
-//
-//    public void mostrarGrafo() { }
-//    public static void main(String[] args) {  }
-//    class DisjointSet {  }
-
-public List<Ruta> getAllRutas() {
+    public List<Ruta> getAllRutas() {
         List<Ruta> allRutas = new LinkedList<>();
         for (LinkedList<Ruta> listaRutas : rutas.values()) {
             allRutas.addAll(listaRutas);
         }
         return allRutas;
     }
-    public void mostrarArbolExpansionMinima() {  }
-    private void kruskal() {  }
-    private HashMap<String, LinkedList<Ruta>> getGrafoNoDirigido() {  return null; }
-    private void prim() { }
-
 
     static class ColaPrioritaria {
         private Long id;
-        private float km;
+        private float peso;
 
-        public ColaPrioritaria(Long id, float km) {
+        public ColaPrioritaria(Long id, float peso) {
             this.id = id;
-            this.km = km;
+            this.peso = peso;
         }
         public Long getId() { return id; }
-        public float getKm() { return km; }
-    }
-
-    public ResultadoRuta calcularRutaMenorTiempo(Long origen_id, Long destino_id) {
-        return dijkstraGeneral(origen_id, destino_id, "tiempo");
-    }
-    public void mostrarRutaSimplePorConsola(Long origen_id, Long destino_id) {
-        ResultadoRuta resultado = calcularRutaMenorDistancia(origen_id, destino_id);
-        System.out.println("============ RUTA MÁS RÁPIDA ============");
-        System.out.printf("   Distancia Total: %.2f km\n", resultado.getDistanciaTotal());
-
-        LinkedList<String> camino = (LinkedList<String>) resultado.getRuta();
-
-        if (camino != null && !camino.isEmpty()) {
-            System.out.println("   El camino pasa por: ");
-
-            String rutaFormateada = String.join(" -> ", camino);
-            System.out.println("   " + rutaFormateada);
-
-        } else {
-            System.out.println("   (El camino no pudo ser reconstruido.)");
-        }
-        System.out.println("=========================================");
+        public float getPeso() { return peso; }
     }
 }

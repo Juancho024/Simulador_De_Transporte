@@ -1,84 +1,191 @@
-/* Este CSS hace que el ContextMenu use todo el ancho asignado */
+/* ===================================================================
+   Base y Paleta de Colores (Nuevo)
+   =================================================================== */
 
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+
+    /* Paleta de colores principal */
+    -fx-primary-color: #007AFF;      /* Azul vibrante (usado en tu hover) */
+    -fx-accent-color: #e67e22;       /* Naranja para el botón de búsqueda */
+    -fx-header-color: #34495e;       /* Azul oscuro para la cabecera */
+    -fx-sidebar-color: #2c3e50;      /* Un tono ligeramente más oscuro para la barra lateral */
+    -fx-background-color: #F4F6F8;   /* Fondo general claro */
+
+    /* Colores de texto */
+    -fx-light-text-color: #ecf0f1;
+    -fx-dark-text-color: #2c3e50;
+}
+
+/* ===================================================================
+   Estilos para la Calculadora de Rutas (Nuevo y Adaptado)
+   =================================================================== */
+
+/* --- Cabecera --- */
+.header-box {
+    -fx-background-color: -fx-header-color;
+}
+
+.label-light {
+    -fx-text-fill: -fx-light-text-color;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* --- Panel Lateral (Sidebar) --- */
+.sidebar {
+    -fx-background-color: -fx-sidebar-color;
+}
+
+.sidebar-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-light-text-color;
+    -fx-padding: 5px 10px;
+}
+
+/* --- Botones de la Barra Lateral (Adaptado de tus estilos) --- */
+/*
+ * Se ha adaptado tu .sidebar-button para que funcione como ToggleButton.
+ * Hereda el color de texto blanco y la fuente, y se añade un estado :selected.
+ */
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 5px;
+    -fx-text-fill: -fx-light-text-color; /* Usamos variable CSS */
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-padding: 12px 20px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-font-weight: normal; /* Normal por defecto */
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #3e5166; /* Un hover más sutil */
+}
+
+.sidebar-button:selected {
+    -fx-background-color: -fx-primary-color; /* Tu color de hover se usa para selección */
+    -fx-text-fill: white;
+    -fx-font-weight: bold; /* Negrita cuando está seleccionado */
+}
+
+/* --- Botones Generales y de Acento --- */
+.button {
+    -fx-cursor: hand;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 8px 16px;
+}
+
+.button-accent {
+    -fx-background-color: -fx-accent-color;
+}
+.button-accent:hover {
+    -fx-background-color: derive(-fx-accent-color, -10%);
+}
+
+.button-secondary {
+    -fx-background-color: #bdc3c7;
+    -fx-text-fill: #2c3e50;
+}
+.button-secondary:hover {
+    -fx-background-color: derive(#bdc3c7, -10%);
+}
+
+/* --- Tarjeta de Resultado --- */
+.result-card {
+    -fx-background-color: white;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 4);
+}
+
+.result-card-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-dark-text-color;
+}
+
+.result-card-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.result-grid {
+    -fx-hgap: 20px;
+    -fx-vgap: 15px;
+    -fx-padding: 20px 0 0 0;
+}
+
+.result-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #555555;
+}
+
+.result-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: -fx-dark-text-color;
+}
+
+
+/* ===================================================================
+   Estilos Existentes para Tablas y Menús (Conservados)
+   =================================================================== */
+
+/* --- Estilos para ContextMenu --- */
 #menuRegistros .context-menu {
-    /* Elimina el padding horizontal que suele estrechar el menú */
-    -fx-padding: 0 0 0 0;
+    -fx-padding: 0;
 }
 
 #menuRegistros .menu-item {
-    /* Asegura que los ítems del menú utilicen todo el espacio disponible */
-    -fx-padding: 0.5em 0.833em 0.5em 0.833em; /* Ajusta el padding vertical si es necesario */
-    -fx-pref-width: -1; /* Permite que el ítem se estire */
+    -fx-padding: 0.5em 0.833em;
+    -fx-pref-width: -1;
 }
 
-/* pastel_tables.css */
-
-/* 1. Estilo para la Cabecera (Títulos de Columna) */
+/* --- Estilos para TableView (pastel_tables.css) --- */
 .table-view .column-header,
 .table-view .column-header-background,
 .table-view .filler {
-    /* Color Menta Suave */
     -fx-background-color: #687068;
     -fx-border-width: 0;
 }
 
-.table-view .column-header-background .table-column {
-    -fx-border-width: 0;
-    -fx-border-color: transparent;
-}
-
-/* Estilo para el texto de la cabecera */
 .table-view .column-header .label {
-    /* Texto Gris Oscuro */
     -fx-text-fill: #333333;
     -fx-font-weight: bold;
     -fx-border-width: 0;
 }
 
-/* 2. Estilo para el Cuerpo de las Filas */
-
-/* Fondo de filas impares (blanco roto) */
 .table-row-cell:odd {
     -fx-border-width: 0;
     -fx-background-color: #F0F0F0;
 }
 
-/* Fondo de filas pares (lavanda claro) */
 .table-row-cell:even {
     -fx-border-width: 0;
     -fx-background-color: #E8E8FF;
 }
 
-/* Color de texto para el contenido de la celda */
 .table-cell {
     -fx-border-width: 0;
     -fx-text-fill: #333333;
 }
 
-/* 3. Estilo para la Fila Seleccionada (Menta Brillante) */
 .table-row-cell:selected {
-    -fx-border-width: 0;
+    -fx-background-color: #687068; /* Color de selección consistente con la cabecera */
     -fx-text-fill: white;
 }
 
-/* 4. Estilo de Contenedor General (Opcional, si quieres bordes redondeados y un marco) */
-.my-custom-table { /* Usa este Style Class en Scene Builder */
-    -fx-background-color: transparent; /* Permite que el fondo de la app se vea */
-    -fx-background-radius: 0;
+.my-custom-table {
+    -fx-background-color: transparent;
     -fx-border-color: #687068;
     -fx-border-radius: 0;
     -fx-border-width: 0;
-}
-
-.sidebar-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-font-family: "Segoe UI";
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-padding: 0 0 0 20; /* Alinea el icono a la izquierda */
-}
-
-.sidebar-button:hover {
-    -fx-background-color: #007AFF; /* Un color de realce al pasar el ratón */
 }
