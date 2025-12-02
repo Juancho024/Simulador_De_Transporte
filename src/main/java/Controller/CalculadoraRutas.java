@@ -1,6 +1,7 @@
 package Controller;
 
 import DataBase.ParadaDAO;
+import DataBase.RutaDAO;
 import Model.Parada;
 import Model.RedParada;
 import Model.ResultadoRuta;
@@ -86,11 +87,16 @@ public class CalculadoraRutas {
 
     @FXML
     void buscarRutas() {
+        dibujarGrafoBase();
         String nombreOrigen = cbOrigen.getValue();
         String nombreDestino = cbDestino.getValue();
 
         if (nombreOrigen == null || nombreDestino == null || nombreOrigen.equals(nombreDestino)) {
             mostrarAlerta("Datos inválidos", "Seleccione un origen y un destino diferentes.");
+            return;
+        }
+        if(!RutaDAO.getInstancia().existeRutaPorNombres(nombreOrigen, nombreDestino)){
+            mostrarAlerta("Datos inválidos", "No existe ninguna ruta entre esas dos paradas.");
             return;
         }
 
@@ -102,16 +108,17 @@ public class CalculadoraRutas {
         volverAResultados();
 
         // 2. Calcular las 4 variantes
-        resEficiente = redParada.calcularRutaMasEficiente(origenId, destinoId);
+        Map<String, ResultadoRuta> resultados = redParada.calcularTodasLasRutasConEvento(origenId, destinoId);
+
+        // 3. Asignar resultados a las variables del controlador
+        resEficiente = resultados.get("eficiente");
+        resCosto = resultados.get("costo");
+        resDistancia = resultados.get("distancia");
+        resTiempo = resultados.get("tiempo");
+
         actualizarTarjetaResumen(resEficiente, lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1);
-
-        resCosto = redParada.calcularRutaMenorCosto(origenId, destinoId);
         actualizarTarjetaResumen(resCosto, lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2);
-
-        resDistancia = redParada.calcularRutaMenorDistancia(origenId, destinoId);
         actualizarTarjetaResumen(resDistancia, lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3);
-
-        resTiempo = redParada.calcularRutaMenorTiempo(origenId, destinoId);
         actualizarTarjetaResumen(resTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4);
 
         // 3. Dibujar Inmediatamente la mejor ruta (Eficiente) en Amarillo

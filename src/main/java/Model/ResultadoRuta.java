@@ -12,9 +12,11 @@ public class ResultadoRuta {
     private final int transbordosTotales;
     private final boolean esAlcanzable;
     private final String mensajeError;
+    private final String evento;
+    private final double factorEvento;
 
     // Constructor para una ruta exitosa
-    public ResultadoRuta(List<String> ruta, double costoTotal, double distanciaTotal, double tiempoTotal, int transbordosTotales) {
+    public ResultadoRuta(List<String> ruta, double factorEvento, double costoTotal, double distanciaTotal, double tiempoTotal, int transbordosTotales, String evento) {
         this.ruta = ruta;
         this.costoTotal = costoTotal;
         this.distanciaTotal = distanciaTotal;
@@ -22,6 +24,8 @@ public class ResultadoRuta {
         this.transbordosTotales = transbordosTotales;
         this.esAlcanzable = true;
         this.mensajeError = "";
+        this.evento = evento;
+        this.factorEvento = factorEvento;
     }
 
     // Constructor para un resultado no exitoso (ruta no encontrada o error)
@@ -33,6 +37,8 @@ public class ResultadoRuta {
         this.transbordosTotales = 0;
         this.esAlcanzable = false;
         this.mensajeError = mensajeError;
+        this.evento = "--";
+        this.factorEvento = 0.0;
     }
 
     // Getters
@@ -42,6 +48,8 @@ public class ResultadoRuta {
     public int getTransbordosTotales() { return transbordosTotales; }
     public boolean esAlcanzable() { return esAlcanzable; }
     public String getMensajeError() { return mensajeError; }
+    public String getEvento() {return evento;}
+    public double getFactorEvento() {return factorEvento;}
 
     @Override
     public String toString() {
@@ -52,7 +60,7 @@ public class ResultadoRuta {
                 ", Costo: " + String.format("%.2f", costoTotal) +
                 ", Distancia: " + String.format("%.2f", distanciaTotal) + " km" +
                 ", Tiempo: " + String.format("%.2f", tiempoTotal) + " min" +
-                ", Transbordos: " + transbordosTotales;
+                ", Transbordos: " + transbordosTotales + " Evento: " + evento;
     }
 
     public List<String> getRuta() {
