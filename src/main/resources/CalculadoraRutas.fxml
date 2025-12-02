@@ -15,10 +15,10 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CalculadoraRutas">
+<BorderPane prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.CalculadoraRutas">
 
     <center>
-        <AnchorPane fx:id="paneGrafo" style="-fx-background-color: #34495e;">
+        <AnchorPane fx:id="paneGrafo" style="-fx-background-color: #20252D;">
             <children>
                 <Label text="[ Mapa de Rutas ]" textFill="#95a5a6" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
             </children>
@@ -26,7 +26,7 @@
     </center>
 
     <right>
-        <VBox prefWidth="350.0" spacing="15" style="-fx-background-color: #3E536A;">
+        <VBox prefWidth="350.0" spacing="15" style="-fx-background-color: #2B333F;">
             <padding>
                 <Insets bottom="20" left="20" right="20" top="20" />
             </padding>

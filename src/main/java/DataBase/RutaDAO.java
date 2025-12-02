@@ -184,4 +184,31 @@ public class RutaDAO {
             e.printStackTrace();
         }
     }
+    public boolean existeRutaPorNombres(String nombreOrigen, String nombreDestino) {
+        Parada origen = buscarParadaPorNombre(nombreOrigen);
+        Parada destino = buscarParadaPorNombre(nombreDestino);
+
+        if (origen == null || destino == null) {
+            return false;
+        }
+
+        final String sql = "SELECT COUNT(*) AS count FROM ruta WHERE origen_id = ? AND destino_id = ?";
+        boolean existeRuta = false;
+
+        try (Connection connection = DataBaseConnection.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, origen.getId());
+            preparedStatement.setLong(2, destino.getId());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int count = resultSet.getInt("count");
+                existeRuta = count > 0; //> si existe
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return existeRuta;
+    }
 }
