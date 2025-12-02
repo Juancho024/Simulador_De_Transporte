@@ -331,14 +331,14 @@ public class RedParada {
             rutaNodos.add(lugar.get(actualId).getNombre());
         }
 
-        return calcularDetallesRuta(rutaNodos, 0.0);
+        return calcularDetallesRuta(rutaNodos, 0.0, "normal");
     }
 
     // ==========================================
     //           DIJKSTRA GENERAL (CORE)
     // ==========================================
 
-    private ResultadoRuta dijkstraGeneral(Long origin_id, Long destino_id, String criterio, double factorAumento) {
+    private ResultadoRuta dijkstraGeneral(Long origin_id, Long destino_id, String criterio, double factorAumento, String evento) {
         if (!lugar.containsKey(origin_id) || !lugar.containsKey(destino_id)) {
             return new ResultadoRuta("El lugar de inicio o fin no existe.");
         }
@@ -396,7 +396,7 @@ public class RedParada {
         }
 
         LinkedList<String> rutaNodos = reconstruirRutaNombres(previo, destino_id);
-        return calcularDetallesRuta(rutaNodos, factorAumento);
+        return calcularDetallesRuta(rutaNodos, factorAumento, evento);
     }
 
     // ==========================================
@@ -419,7 +419,7 @@ public class RedParada {
         return ruta;
     }
 
-    private ResultadoRuta calcularDetallesRuta(LinkedList<String> rutaNodos, double factorAumento) {
+    private ResultadoRuta calcularDetallesRuta(LinkedList<String> rutaNodos, double factorAumento, String tipoEvento) {
         if (rutaNodos.size() < 2) {
             return new ResultadoRuta("Ruta inválida.");
         }
@@ -443,7 +443,8 @@ public class RedParada {
                 tiempoTotal += tiempoSegmento;
             }
         }
-        return new ResultadoRuta(rutaNodos, factorAumento,costoTotal, distanciaTotal, tiempoTotal, transbordosTotales, "--");
+
+        return new ResultadoRuta(rutaNodos, factorAumento,costoTotal, distanciaTotal, tiempoTotal, transbordosTotales, tipoEvento);
     }
 
     public Long buscarIdPorNombre(String nombreParada) {
@@ -494,32 +495,52 @@ public class RedParada {
         }
     }
    //Logica de Posible evento
-    public String elegirEventoAleatorio() {
-        Random rand = new Random();
-        // 70% de probabilidad de que ocurra un evento (20% por evento)
-        int indice = rand.nextInt(10); // 0 a 9
+   private final Random rand = new Random();
 
-        if (indice < 2) return "lluvia";
-        if (indice < 4) return "choque";
-        if (indice < 6) return "huelga";
-        return "normal";
+    private enum Evento {
+        NORMAL(0.0, 0.0, 0.0, 0.0),
+        LLUVIA(0.05, 0.15, 0.0, 0.15),   //(distancia, tiempo, costo, eficiente)
+        CHOQUE(0.10, 0.50, 0.10, 0.40), // poco costo y distancia
+        HUELGA(0.02, 0.25, 0.35, 0.30);  //poca distancia en huelga
+
+        final double factorDistancia;
+        final double factorTiempo;
+        final double factorCosto;
+        final double factorEficiente;
+
+        Evento(double factorDistancia, double factorTiempo, double factorCosto, double factorEficiente) {
+            this.factorDistancia = factorDistancia;
+            this.factorTiempo = factorTiempo;
+            this.factorCosto = factorCosto;
+            this.factorEficiente = factorEficiente;
+        }
     }
+    public Evento elegirEventoAleatorio() {
+        //40% normal, 20% lluvia, 20% choque, 20% huelga
+        int r = rand.nextInt(100); //100%
+        if (r < 20) return Evento.LLUVIA;
+        if (r < 40) return Evento.CHOQUE;
+        if (r < 60) return Evento.HUELGA;
+        return Evento.NORMAL;
+    }
+
     public Map<String, ResultadoRuta> calcularTodasLasRutasConEvento(Long origen_id, Long destino_id) {
+        Map<String, ResultadoRuta> resultados = new HashMap<>();
+
         if (!lugar.containsKey(origen_id) || !lugar.containsKey(destino_id)) {
-            Map<String, ResultadoRuta> errorMap = new HashMap<>();
-            ResultadoRuta errorRuta = new ResultadoRuta("El lugar de inicio o fin no existe.");
-            errorMap.put("error", errorRuta);
-            return errorMap;
+            resultados.put("error", new ResultadoRuta("El lugar de inicio o fin no existe."));
+            return resultados;
         }
 
-        String evento = elegirEventoAleatorio();
+        // 0) Primero verificar existencia de ruta base SIN evento (evita mostrar evento si no hay ruta)
+        ResultadoRuta base = dijkstraGeneral(origen_id, destino_id, "eficiente", 0.0);
+        if (!base.esAlcanzable()) {
+            resultados.put("error", new ResultadoRuta("No hay ruta disponible."));
+            return resultados;
+        }
 
-        double factorAumentoEficiente = 0.0;
-        double factorAumentoDistancia = 0.0;
-        double factorAumentoTiempo = 0.0;
-        double factorAumentoCosto = 0.0;
-
-        if (!evento.equals("normal")) {
+        Evento evento = elegirEventoAleatorio();
+        if(!evento.equals(Evento.NORMAL)){
             String nombreOrigen = lugar.get(origen_id).getNombre();
             String nombreDestino = lugar.get(destino_id).getNombre();
 
@@ -528,37 +549,23 @@ public class RedParada {
             alert.setTitle("Ocurrió un evento");
             String mensaje = String.format(
                     "La red de transporte fue afectada por: %s.\nEsto puede alterar las rutas de %s a %s.\n",
-                    evento.toUpperCase(), nombreOrigen, nombreDestino
+                    evento, nombreOrigen, nombreDestino
             );
             alert.setContentText(mensaje);
             alert.showAndWait();
-
-
-            if (evento.equals("lluvia")) {
-                //Lluvia: Afecta tiempo y un poco la distancia
-                factorAumentoDistancia = 0.05;
-                factorAumentoTiempo = 0.15;
-                factorAumentoEficiente = 0.15; //Un promedio
-            } else if (evento.equals("choque")) {
-                //Choque: Alto impacto en tiempo, afecta distancia y costo
-                factorAumentoDistancia = 0.10;
-                factorAumentoTiempo = 0.50; //impacto en tiempo
-                factorAumentoCosto = 0.10;
-                factorAumentoEficiente = 0.40;
-            } else if (evento.equals("huelga")) {
-                //Huelga: Alto impacto en costo y tiempo, poca distancia
-                factorAumentoTiempo = 0.25;
-                factorAumentoCosto = 0.35; //impacto en costo
-                factorAumentoEficiente = 0.30;
-            }
         }
-        Map<String, ResultadoRuta> resultados = new HashMap<>();
 
-        //organizar los eventos
-        resultados.put("eficiente", dijkstraGeneral(origen_id, destino_id, "eficiente", factorAumentoEficiente));
-        resultados.put("distancia", dijkstraGeneral(origen_id, destino_id, "distancia", factorAumentoDistancia));
-        resultados.put("tiempo", dijkstraGeneral(origen_id, destino_id, "tiempo", factorAumentoTiempo));
-        resultados.put("costo", dijkstraGeneral(origen_id, destino_id, "costo", factorAumentoCosto));
+
+        double factorEficiente = evento.factorEficiente;
+        double factorDistancia = evento.factorDistancia;
+        double factorTiempo = evento.factorTiempo;
+        double factorCosto = evento.factorCosto;
+
+        resultados.put("evento", new ResultadoRuta(evento.name()));
+        resultados.put("eficiente", dijkstraGeneral(origen_id, destino_id, "eficiente", factorEficiente));
+        resultados.put("distancia", dijkstraGeneral(origen_id, destino_id, "distancia", factorDistancia));
+        resultados.put("tiempo", dijkstraGeneral(origen_id, destino_id, "tiempo", factorTiempo));
+        resultados.put("costo", dijkstraGeneral(origen_id, destino_id, "costo", factorCosto));
 
         return resultados;
     }

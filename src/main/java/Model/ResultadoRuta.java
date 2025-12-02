@@ -12,7 +12,7 @@ public class ResultadoRuta {
     private final int transbordosTotales;
     private final boolean esAlcanzable;
     private final String mensajeError;
-    private final String evento;
+    private String evento;
     private final double factorEvento;
 
     // Constructor para una ruta exitosa
@@ -49,6 +49,7 @@ public class ResultadoRuta {
     public boolean esAlcanzable() { return esAlcanzable; }
     public String getMensajeError() { return mensajeError; }
     public String getEvento() {return evento;}
+    public void setEvento(String evento) {this.evento = evento; }
     public double getFactorEvento() {return factorEvento;}
 
     @Override

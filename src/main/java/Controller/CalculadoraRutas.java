@@ -37,10 +37,10 @@ public class CalculadoraRutas {
     @FXML private VBox panelDetalles;   // Panel comparativo (izq/der)
 
     // --- FXML: Etiquetas Tarjetas (Resumen) ---
-    @FXML private Label lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1;
-    @FXML private Label lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2;
-    @FXML private Label lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3;
-    @FXML private Label lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4;
+    @FXML private Label lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1, lbEvento1;
+    @FXML private Label lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2, lbEvento2;
+    @FXML private Label lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3, lbEvento3;
+    @FXML private Label lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4, lbEvento4;
 
     // --- FXML: Panel Detalles (Columna Izquierda - Principal) ---
     @FXML private Label lblEstadoPrincipal;
@@ -95,10 +95,6 @@ public class CalculadoraRutas {
             mostrarAlerta("Datos inválidos", "Seleccione un origen y un destino diferentes.");
             return;
         }
-//        if(!RutaDAO.getInstancia().existeRutaPorNombres(nombreOrigen, nombreDestino)){
-//            mostrarAlerta("Datos inválidos", "No existe ninguna ruta entre esas dos paradas.");
-//            return;
-//        } //Mal hecho
 
         Long origenId = buscarParadaIdPorNombre(nombreOrigen);
         Long destinoId = buscarParadaIdPorNombre(nombreDestino);
@@ -116,23 +112,32 @@ public class CalculadoraRutas {
         resDistancia = resultados.get("distancia");
         resTiempo = resultados.get("tiempo");
 
-        actualizarTarjetaResumen(resEficiente, lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1);
-        actualizarTarjetaResumen(resCosto, lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2);
-        actualizarTarjetaResumen(resDistancia, lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3);
-        actualizarTarjetaResumen(resTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4);
+        actualizarTarjetaResumen(resEficiente, lblCosto1, lblDistancia1, lblTiempo1, lblTransbordos1, lbEvento1);
+        actualizarTarjetaResumen(resCosto, lblCosto2, lblDistancia2, lblTiempo2, lblTransbordos2, lbEvento2);
+        actualizarTarjetaResumen(resDistancia, lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3, lbEvento3);
+        actualizarTarjetaResumen(resTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4, lbEvento4);
 
         // 3. Dibujar Inmediatamente la mejor ruta (Eficiente) en Amarillo
         dibujarRutaEnMapa(resEficiente, COLOR_RUTA_MEJOR, 4.0);
     }
 
-    private void actualizarTarjetaResumen(ResultadoRuta res, Label c, Label d, Label t, Label tr) {
+    private void actualizarTarjetaResumen(ResultadoRuta res, Label c, Label d, Label t, Label tr, Label e) {
         if (res != null && res.esAlcanzable()) {
             c.setText(String.format("$%.2f", res.getCostoTotal()));
             d.setText(String.format("%.2f km", res.getDistanciaTotal()));
             t.setText(String.format("%.0f min", res.getTiempoTotal()));
             tr.setText(String.valueOf(res.getTransbordosTotales()));
+            String evento  = res.getEvento();
+            System.out.println(evento);
+            if(evento != null && !evento.equals("")){
+                e.setText(" "+evento);
+            } else {
+                e.setText(" normal");
+            }
         } else {
-            c.setText("--"); d.setText("--"); t.setText("--"); tr.setText("--");
+            String mensajeError = (res != null) ? res.getMensajeError() : "No calculada";
+            c.setText(mensajeError);
+            d.setText("--"); t.setText("--"); tr.setText("--"); e.setText("--");
         }
     }
 
