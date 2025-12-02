@@ -87,6 +87,7 @@ public class CalculadoraRutas {
 
     @FXML
     void buscarRutas() {
+        //Falta refrescar los grafos bien hecho
         dibujarGrafoBase();
         String nombreOrigen = cbOrigen.getValue();
         String nombreDestino = cbDestino.getValue();
@@ -128,14 +129,13 @@ public class CalculadoraRutas {
             t.setText(String.format("%.0f min", res.getTiempoTotal()));
             tr.setText(String.valueOf(res.getTransbordosTotales()));
             String evento  = res.getEvento();
-            System.out.println(evento);
             if(evento != null && !evento.equals("")){
                 e.setText(" "+evento);
             } else {
                 e.setText(" normal");
             }
         } else {
-            String mensajeError = (res != null) ? res.getMensajeError() : "No calculada";
+            String mensajeError = (res != null) ? res.getMensajeError() : "No hay Ruta disponible.";
             c.setText(mensajeError);
             d.setText("--"); t.setText("--"); tr.setText("--"); e.setText("--");
         }

@@ -493,6 +493,7 @@ public class RedParada {
             //Muestra la alerta
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Ocurrió un evento");
+            alert.setHeaderText("Sucedió un evento");
             String mensaje = String.format(
                     "La red de transporte fue afectada por: %s.\nEsto puede alterar las rutas de %s a %s.\n",
                     evento.name(), nombreOrigen, nombreDestino
