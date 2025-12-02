@@ -95,10 +95,10 @@ public class CalculadoraRutas {
             mostrarAlerta("Datos inválidos", "Seleccione un origen y un destino diferentes.");
             return;
         }
-        if(!RutaDAO.getInstancia().existeRutaPorNombres(nombreOrigen, nombreDestino)){
-            mostrarAlerta("Datos inválidos", "No existe ninguna ruta entre esas dos paradas.");
-            return;
-        }
+//        if(!RutaDAO.getInstancia().existeRutaPorNombres(nombreOrigen, nombreDestino)){
+//            mostrarAlerta("Datos inválidos", "No existe ninguna ruta entre esas dos paradas.");
+//            return;
+//        } //Mal hecho
 
         Long origenId = buscarParadaIdPorNombre(nombreOrigen);
         Long destinoId = buscarParadaIdPorNombre(nombreDestino);

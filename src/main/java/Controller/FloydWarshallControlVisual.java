@@ -43,10 +43,6 @@ public class FloydWarshallControlVisual {
     private static final Color COLOR_DESTINO = Color.TOMATO;
     private static final Color COLOR_RUTA = Color.YELLOW;
 
-    private static final double PROBABILIDAD_EVENTO = 0.20; // 20% de probabilidad
-    private static final double FACTOR_AUMENTO_COSTO = 1.30; // 30% + caro
-    private static final double FACTOR_AUMENTO_DISTANCIA = 1.10; // 10% + distancia
-
     @FXML
     void initialize() {
         redParada = RedParada.getInstance();
@@ -137,13 +133,6 @@ public class FloydWarshallControlVisual {
         if (resultado.esAlcanzable()) {
             float costo = (float) resultado.getCostoTotal();
             float distancia = (float) resultado.getDistanciaTotal();
-            String evento = simularEventoAleatorio();
-            if (evento != null && !evento.equalsIgnoreCase("normal")) {
-                // Aplicar penalización
-                costo *= FACTOR_AUMENTO_COSTO;
-                distancia *= FACTOR_AUMENTO_DISTANCIA;
-                mostrarAlerta("¡Alerta de Evento!", evento + "\nLos Costos de las Rutas serán penalizados.");
-            }
             lblDestino.setText(resultado.getRuta().get(resultado.getRuta().size() - 1));
             lblDistancia.setText(String.format("%.2f km", distancia));
             lblCosto.setText(String.format("$%.2f", costo));
@@ -156,24 +145,6 @@ public class FloydWarshallControlVisual {
             lvCamino.getItems().clear();
             lvCamino.getItems().add(resultado.getMensajeError());
         }
-    }
-
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
-    private String simularEventoAleatorio() {
-        if (Math.random() < PROBABILIDAD_EVENTO) {
-            // Tipos de eventos posibles
-            String[] eventos = {"Hubo un choque en la Ruta", "Se encuentra una Huelga", "Se estan realizando Obras"};
-            int indice = (int) (Math.random() * eventos.length);
-            return eventos[indice] + " (Ruta con Retraso)";
-        }
-        return null;
     }
 
     private void resaltarCaminoEnGrafo(ResultadoRuta resultado) {
