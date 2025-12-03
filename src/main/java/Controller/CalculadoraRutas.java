@@ -87,7 +87,9 @@ public class CalculadoraRutas {
 
     @FXML
     void buscarRutas() {
-        //Falta refrescar los grafos bien hecho
+
+        redParada.recargarGrafo();
+
         dibujarGrafoBase();
         String nombreOrigen = cbOrigen.getValue();
         String nombreDestino = cbDestino.getValue();
