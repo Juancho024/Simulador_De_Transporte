@@ -48,6 +48,11 @@ public class ResultadoRuta {
     public String getEvento() {return evento;}
     public void setEvento(String evento) {this.evento = evento; }
 
+    /**
+     * Devuelve una representación en cadena del resultado de la ruta.
+     * Si la ruta no es alcanzable, devuelve el mensaje de error.
+     * Si la ruta es alcanzable, devuelve los detalles de la ruta.
+     */
     @Override
     public String toString() {
         if (!esAlcanzable) {

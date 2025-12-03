@@ -98,6 +98,9 @@ public class Principal implements Initializable {
         });
     }
 
+
+    /** Configura la animación de expansión y colapso de la barra lateral
+     */
     private void setupSidebarAnimation() {
         sidebarButtons.addAll(List.of(btnCrearParada, btnCrearRuta, btnListadoParada, btnListadoRuta, btnCalcularRutas, btnAnalisisInteractivo, btnPlanificadorRed));;
 
@@ -226,6 +229,9 @@ public class Principal implements Initializable {
         }
     }
 
+
+    /** Abre la ventana del Análisis Interactivo de Rutas (Floyd-Warshall)
+     */
     @FXML
     void abrirAnalisisInteractivo(ActionEvent event) {
         try {
@@ -247,6 +253,9 @@ public class Principal implements Initializable {
         }
     }
 
+
+    /** Abre la ventana del Planificador de Red Óptima (Kruscal)
+     */
     @FXML
     void abrirPlanificadorRed(ActionEvent event) {
         try {
@@ -268,6 +277,8 @@ public class Principal implements Initializable {
         }
     }
 
+    /** Abre la ventana de la Calculadora de Rutas (Vista Múltiple)
+     */
     @FXML
     void abrirCalculadora(ActionEvent event) {
         try {

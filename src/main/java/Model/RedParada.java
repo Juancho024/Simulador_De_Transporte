@@ -57,6 +57,13 @@ public class RedParada {
     //       SEGUNDA MEJOR RUTA (NUEVO)
     // ==========================================
 
+    /**
+     * Calcula la segunda mejor ruta eliminando temporalmente tramos de la ruta óptima para encontrar alternativas.
+     * * @param origenId ID de la parada de inicio.
+     * @param destinoId ID de la parada de destino.
+     * @param criterio El factor a optimizar (ej. "costo", "distancia").
+     * @return La mejor ruta alternativa encontrada.
+     */
     public ResultadoRuta calcularSegundaMejorRuta(Long origenId, Long destinoId, String criterio) {
         // 1. Obtener la mejor ruta actual
         ResultadoRuta mejorRuta = dijkstraGeneral(origenId, destinoId, criterio, Evento.NORMAL, "normal");
@@ -103,6 +110,12 @@ public class RedParada {
         return segundaMejor;
     }
 
+    /**
+     * Elimina temporalmente una arista del grafo.
+     * @param origenId
+     * @param nombreDestino
+     * @return
+     */
     private Ruta eliminarAristaTemporal(Long origenId, String nombreDestino) {
         if (origenId == null || !rutas.containsKey(origenId)) return null;
         LinkedList<Ruta> adyacentes = rutas.get(origenId);
@@ -115,6 +128,11 @@ public class RedParada {
         return null;
     }
 
+    /**
+     * Restaura una arista previamente eliminada del grafo.
+     * @param origenId
+     * @param ruta
+     */
     private void restaurarArista(Long origenId, Ruta ruta) {
         if (origenId != null && ruta != null) {
             rutas.computeIfAbsent(origenId, k -> new LinkedList<>()).add(ruta);
@@ -138,6 +156,11 @@ public class RedParada {
     //           ALGORITMO DE KRUSKAL
     // ==========================================
 
+    /**
+     * Calcula el Árbol de Expansión Mínima (MST) utilizando el algoritmo de Kruskal.
+     * @param porCosto Si es true, se optimiza por costo; si es false, por distancia.
+     * @return Lista de rutas que conforman el MST.
+     */
     public List<Ruta> calcularMstKruskal(boolean porCosto) {
         recargarGrafo();
         List<Ruta> mst = new ArrayList<>();
@@ -194,6 +217,9 @@ public class RedParada {
     //          FLOYD-WARSHALL (RESTITUIDO)
     // ==========================================
 
+    /**
+     * Calcula todas las rutas más cortas entre todos los pares de nodos utilizando el algoritmo de Floyd-Warshall.
+     */
     public void calcularTodasLasRutasMasCortas() {
         if (distanciasFW != null) {
             System.out.println("Floyd-Warshall: Usando resultados calculados previamente.");
@@ -241,6 +267,12 @@ public class RedParada {
         System.out.println("Floyd-Warshall: Cálculo completado.");
     }
 
+    /**
+     * Obtiene la ruta más corta entre dos nodos utilizando los resultados del algoritmo de Floyd-Warshall.
+     * @param origenId ID de la parada de inicio.
+     * @param destinoId ID de la parada de destino.
+     * @return La ruta más corta encontrada.
+     */
     public ResultadoRuta obtenerRutaFloydWarshall(Long origenId, Long destinoId) {
         if (distanciasFW == null) {
             calcularTodasLasRutasMasCortas();
@@ -273,8 +305,18 @@ public class RedParada {
     }
 
     // ==========================================
-    //           DIJKSTRA GENERAL (CORE)
+    //           DIJKSTRA GENERAL
     // ==========================================
+
+    /**
+     * Implementa el algoritmo de Dijkstra para encontrar la ruta óptima entre dos nodos según un criterio específico.
+     * @param origin_id ID de la parada de inicio.
+     * @param destino_id ID de la parada de destino.
+     * @param criterio El factor a optimizar (ej. "costo", "distancia", "tiempo", "eficiente").
+     * @param evento El evento que afecta los pesos de las aristas.
+     * @param tipoEvento Nombre del evento para el resultado.
+     * @return La mejor ruta encontrada según el criterio.
+     */
     private ResultadoRuta dijkstraGeneral(Long origin_id, Long destino_id, String criterio, Evento evento, String tipoEvento) {
         if (!lugar.containsKey(origin_id) || !lugar.containsKey(destino_id)) {
             return new ResultadoRuta("El lugar de inicio o fin no existe.");
@@ -316,7 +358,7 @@ public class RedParada {
                         break;
                 }
 
-                // Aplicar factor según el evento y según el criterio solicitado (SOLO AQUÍ)
+                // Aplicar factor según el evento y según el criterio solicitado
                 if (evento != null && evento != Evento.NORMAL) {
                     switch (criterio) {
                         case "distancia":
@@ -426,6 +468,12 @@ public class RedParada {
         return null;
     }
 
+    /**
+     * Encuentra una ruta directa entre dos paradas dadas sus nombres.
+     * @param nombreOrigen Nombre de la parada de origen.
+     * @param nombreDestino Nombre de la parada de destino.
+     * @return La ruta directa si existe; null en caso contrario.
+     */
     private Ruta encontrarRutaDirecta(String nombreOrigen, String nombreDestino) {
         Long idOrigen = buscarIdPorNombre(nombreOrigen);
         if (idOrigen != null && rutas.containsKey(idOrigen)) {
@@ -540,6 +588,11 @@ public class RedParada {
     //             ALGORITMO DE PRIM
     // ==========================================
 
+    /**
+     * Calcula el Árbol de Expansión Mínima (MST) utilizando el algoritmo de Prim.
+     * @param inicioId ID de la parada de inicio.
+     * @return Lista de rutas que conforman el MST.
+     */
     public List<Ruta> calcularMstPrim(Long inicioId) {
         if (!lugar.containsKey(inicioId)) {
             System.err.println("Error en Prim: La parada de inicio no existe.");

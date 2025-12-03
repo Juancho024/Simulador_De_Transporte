@@ -32,6 +32,8 @@ public class KruscalControlVisual {
 
     private RedParada redParada;
 
+    /** Inicializa el controlador y configura los elementos de la interfaz gráfica.
+     */
     @FXML
     void initialize() {
         redParada = RedParada.getInstance();
@@ -42,6 +44,8 @@ public class KruscalControlVisual {
         dibujarGrafoBase();
     }
 
+    /** Calcula el árbol de expansión mínima utilizando el algoritmo de Kruskal y actualiza la interfaz gráfica con los resultados.
+     */
     @FXML
     void calcularKruscal() {
         limpiarResultados();
@@ -74,6 +78,8 @@ public class KruscalControlVisual {
         resaltarRutasMst(mst);
     }
 
+    /** Dibuja el grafo base con todas las rutas posibles y las paradas en el panel gráfico.
+     */
     private void dibujarGrafoBase() {
         graphPane.getChildren().clear();
 
@@ -99,6 +105,8 @@ public class KruscalControlVisual {
         }
     }
 
+    /** Resalta las rutas que forman parte del árbol de expansión mínima en el panel gráfico.
+     */
     private void resaltarRutasMst(List<Ruta> mst) {
         for (Ruta ruta : mst) {
             Parada origen = ruta.getOrigen();

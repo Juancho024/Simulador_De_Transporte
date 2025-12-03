@@ -43,6 +43,8 @@ public class FloydWarshallControlVisual {
     private static final Color COLOR_DESTINO = Color.TOMATO;
     private static final Color COLOR_RUTA = Color.YELLOW;
 
+    /** Inicializa el controlador y configura la visualización del grafo.
+     */
     @FXML
     void initialize() {
         redParada = RedParada.getInstance();
@@ -70,6 +72,8 @@ public class FloydWarshallControlVisual {
         new Thread(calcularTask).start();
     }
 
+    /** Dibuja el grafo completo de paradas y rutas en el panel gráfico.
+     */
     private void dibujarGrafoCompleto() {
         graphPane.getChildren().clear();
 
@@ -94,6 +98,8 @@ public class FloydWarshallControlVisual {
         }
     }
 
+    /** Maneja el evento de clic en un nodo (parada) del grafo.
+     */
     private void handleNodeClick(Long paradaId) {
         if (origenSeleccionado == null) {
 
@@ -129,6 +135,8 @@ public class FloydWarshallControlVisual {
         }
     }
 
+    /** Actualiza la interfaz de usuario con el resultado de la ruta calculada.
+     */
     private void actualizarUIConResultado(ResultadoRuta resultado) {
         if (resultado.esAlcanzable()) {
             float costo = (float) resultado.getCostoTotal();
@@ -147,6 +155,8 @@ public class FloydWarshallControlVisual {
         }
     }
 
+    /** Resalta la ruta calculada en el grafo visual.
+     */
     private void resaltarCaminoEnGrafo(ResultadoRuta resultado) {
 
         if (resultado.esAlcanzable() && !resultado.getRuta().isEmpty()) {

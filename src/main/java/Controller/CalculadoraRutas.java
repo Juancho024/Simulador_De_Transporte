@@ -24,6 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// Elementos de animacion GPS
+
+import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.LineTo;
+import javafx.util.Duration;
+
 public class CalculadoraRutas {
 
     // --- FXML: Controles Principales ---
@@ -66,6 +75,10 @@ public class CalculadoraRutas {
     private static final Color COLOR_RUTA_MEJOR = Color.GOLD;      // Amarilla
     private static final Color COLOR_RUTA_SEGUNDA = Color.RED;     // Roja
 
+
+    /** Método de inicialización del controlador. Se ejecuta automáticamente al cargar la vista FXML.
+     * Configura la red de paradas, carga los ComboBoxes, limpia los paneles y dibuja el grafo base en el mapa.
+     */
     @FXML
     void initialize() {
         this.redParada = RedParada.getInstance();
@@ -86,12 +99,20 @@ public class CalculadoraRutas {
     // MÉTODOS DE BÚSQUEDA (Lógica Principal)
     // --------------------------------------------------------
 
+
+    /**     * Método que se ejecuta al presionar el botón "Buscar Rutas".
+     * Realiza la búsqueda de rutas entre el origen y destino seleccionados,
+     * actualiza las tarjetas de resumen y dibuja la mejor ruta en el mapa.
+     */
     @FXML
     void buscarRutas() {
+
+        grupoRutas.getChildren().clear();
 
         redParada.recargarGrafo();
 
         dibujarGrafoBase();
+
         String nombreOrigen = cbOrigen.getValue();
         String nombreDestino = cbDestino.getValue();
 
@@ -103,8 +124,7 @@ public class CalculadoraRutas {
         Long origenId = buscarParadaIdPorNombre(nombreOrigen);
         Long destinoId = buscarParadaIdPorNombre(nombreDestino);
 
-        // 1. Limpiar estado anterior
-        grupoRutas.getChildren().clear();
+        // 1. Limpiar estado visual de paneles
         volverAResultados();
 
         // 2. Calcular las 4 variantes
@@ -121,8 +141,10 @@ public class CalculadoraRutas {
         actualizarTarjetaResumen(resDistancia, lblCosto3, lblDistancia3, lblTiempo3, lblTransbordos3, lbEvento3);
         actualizarTarjetaResumen(resTiempo, lblCosto4, lblDistancia4, lblTiempo4, lblTransbordos4, lbEvento4);
 
-        // 3. Dibujar Inmediatamente la mejor ruta (Eficiente) en Amarillo
+        // 4. Dibujar Inmediatamente la mejor ruta (Eficiente) en Amarillo
         dibujarRutaEnMapa(resEficiente, COLOR_RUTA_MEJOR, 4.0);
+
+        animarRecorrido(resEficiente);
     }
 
     private void actualizarTarjetaResumen(ResultadoRuta res, Label c, Label d, Label t, Label tr, Label e) {
@@ -153,6 +175,10 @@ public class CalculadoraRutas {
     @FXML void verDetallesDistancia() { cargarVistaComparativa(resDistancia, "distancia"); }
     @FXML void verDetallesTiempo() { cargarVistaComparativa(resTiempo, "tiempo"); }
 
+    /** Método para cargar la vista comparativa entre la mejor ruta y una alternativa.
+     * @param mejorRuta La mejor ruta seleccionada.
+     * @param criterio El criterio utilizado para calcular la segunda mejor ruta.
+     */
     private void cargarVistaComparativa(ResultadoRuta mejorRuta, String criterio) {
         if (mejorRuta == null || !mejorRuta.esAlcanzable()) return;
 
@@ -193,6 +219,14 @@ public class CalculadoraRutas {
         dibujarRutaEnMapa(mejorRuta, COLOR_RUTA_MEJOR, 4.0);
     }
 
+
+    /** Método auxiliar para llenar una columna de detalles en la vista comparativa.
+     * @param res El resultado de la ruta a mostrar.
+     * @param costo Etiqueta para el costo total.
+     * @param tiempo Etiqueta para el tiempo total.
+     * @param transb Etiqueta para los transbordos totales.
+     * @param lista ListView para mostrar la secuencia de paradas.
+     */
     private void llenarColumnaDetalle(ResultadoRuta res, Label costo, Label tiempo, Label transb, ListView<String> lista) {
         if (res != null && res.esAlcanzable()) {
             costo.setText(String.format("$%.2f", res.getCostoTotal()));
@@ -205,6 +239,9 @@ public class CalculadoraRutas {
         }
     }
 
+    /** Método que se ejecuta al presionar el botón "Volver" en la vista de detalles.
+     * Regresa a la vista de resultados y limpia las rutas dibujadas en el mapa
+     */
     @FXML
     void volverAResultados() {
         panelDetalles.setVisible(false);
@@ -221,7 +258,12 @@ public class CalculadoraRutas {
 
     // --------------------------------------------------------
 
+    /** Método para dibujar el grafo base de la red de paradas en el mapa.
+     * Dibuja las líneas de las rutas en gris y los nodos de las par
+     */
     private void dibujarGrafoBase() {
+
+        detenerAnimacion();
         paneGrafo.getChildren().clear();
         uiNodes.clear();
 
@@ -247,6 +289,11 @@ public class CalculadoraRutas {
         grupoRutas.toBack();
     }
 
+    /** Método para dibujar una ruta específica en el mapa con un color y grosor dados.
+     * @param res El resultado de la ruta a dibujar.
+     * @param color El color de la línea de la ruta.
+     * @param grosor El grosor de la línea de la ruta.
+     */
     private void dibujarRutaEnMapa(ResultadoRuta res, Color color, double grosor) {
         if (res == null || !res.esAlcanzable()) return;
 
@@ -268,6 +315,9 @@ public class CalculadoraRutas {
         }
     }
 
+    /** Método para actualizar los colores de los nodos en el mapa según el origen y destino seleccionados.
+     * Resalta el nodo de origen y destino con un color diferente.
+     */
     private void actualizarColoresNodos() {
 
         grupoRutas.getChildren().clear();
@@ -285,6 +335,23 @@ public class CalculadoraRutas {
         Long idD = buscarParadaIdPorNombre(cbDestino.getValue());
         if (idD != null && uiNodes.containsKey(idD)) uiNodes.get(idD).setColor(COLOR_NODO_SELECCIONADO);
     }
+  // -------------------------------------------------------
+      //  Metodo alternativo opcional
+
+//    private void actualizarColoresNodos() {
+//
+//        grupoRutas.getChildren().clear();
+//        limpiarTodosLosPaneles();
+//        // -----------------------------------------------------------
+//
+//        uiNodes.values().forEach(n -> n.setColor(COLOR_NODO_NORMAL));
+//
+//        Long idO = buscarParadaIdPorNombre(cbOrigen.getValue());
+//        if (idO != null && uiNodes.containsKey(idO)) uiNodes.get(idO).setColor(COLOR_NODO_SELECCIONADO);
+//
+//        Long idD = buscarParadaIdPorNombre(cbDestino.getValue());
+//        if (idD != null && uiNodes.containsKey(idD)) uiNodes.get(idD).setColor(COLOR_NODO_SELECCIONADO);
+//    }
 
   //-------------------------------------------------------
 
@@ -340,5 +407,66 @@ public class CalculadoraRutas {
         public Circle getCircle() { return circle; }
         public Text getLabel() { return label; }
         public void setColor(Color c) { this.circle.setFill(c); }
+    }
+
+    // --- VARIABLES PARA ANIMACION ---
+    private PathTransition animacionActual;
+    private Circle vehiculoAnimado;
+
+    private void animarRecorrido(ResultadoRuta resultado) {
+        // 1. Limpiar animacion previa si existe
+        detenerAnimacion();
+
+        if (resultado == null || !resultado.esAlcanzable() || resultado.getRuta().size() < 2) return;
+
+        // 2. Crear el "Vehiculo" (Un punto naranja brillante)
+        vehiculoAnimado = new Circle(6, Color.ORANGE);
+        vehiculoAnimado.setStroke(Color.WHITE);
+        vehiculoAnimado.setStrokeWidth(2);
+        vehiculoAnimado.setEffect(new javafx.scene.effect.DropShadow(5, Color.BLACK));
+
+        // Lo agregamos al panel del grafo
+        paneGrafo.getChildren().add(vehiculoAnimado);
+        vehiculoAnimado.toFront(); // Asegurar que se vea encima de todo
+
+        // 3. Crear el Camino (Path) que seguira el vehículo
+        Path camino = new Path();
+        List<String> nodos = resultado.getRuta();
+
+        // Punto de inicio
+        Long idInicio = buscarParadaIdPorNombre(nodos.get(0));
+        NodeUI nodoInicio = uiNodes.get(idInicio);
+        camino.getElements().add(new MoveTo(nodoInicio.x, nodoInicio.y));
+
+        // Puntos intermedios y final
+        for (int i = 1; i < nodos.size(); i++) {
+            Long idSiguiente = buscarParadaIdPorNombre(nodos.get(i));
+            NodeUI nodoSiguiente = uiNodes.get(idSiguiente);
+            if (nodoSiguiente != null) {
+                camino.getElements().add(new LineTo(nodoSiguiente.x, nodoSiguiente.y));
+            }
+        }
+
+        // 4. Configurar la Animacion
+        animacionActual = new PathTransition();
+        animacionActual.setDuration(Duration.seconds(3)); // Tarda 3 segundos en llegar
+        animacionActual.setPath(camino);
+        animacionActual.setNode(vehiculoAnimado);
+        animacionActual.setCycleCount(Timeline.INDEFINITE); // Se repite infinitamente
+        animacionActual.setAutoReverse(false); // Al llegar al final, vuelve a aparecer en el inicio
+
+        // 5. ¡Accion!
+        animacionActual.play();
+    }
+
+    private void detenerAnimacion() {
+        if (animacionActual != null) {
+            animacionActual.stop();
+            animacionActual = null;
+        }
+        if (vehiculoAnimado != null) {
+            paneGrafo.getChildren().remove(vehiculoAnimado);
+            vehiculoAnimado = null;
+        }
     }
 }
