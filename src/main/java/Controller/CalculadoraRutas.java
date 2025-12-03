@@ -266,6 +266,14 @@ public class CalculadoraRutas {
     }
 
     private void actualizarColoresNodos() {
+
+        grupoRutas.getChildren().clear();
+
+        limpiarTodosLosPaneles();
+
+        volverAResultados();
+        // ---------------------------
+
         uiNodes.values().forEach(n -> n.setColor(COLOR_NODO_NORMAL));
 
         Long idO = buscarParadaIdPorNombre(cbOrigen.getValue());

@@ -384,12 +384,14 @@ public class RedParada {
         double costoTotal = 0;
         double distanciaTotal = 0;
         double tiempoTotal = 0;
-        int transbordosTotales = Math.max(0, rutaNodos.size() - 2);
+
+        int transbordosTotales = 0;
 
         for (int i = 0; i < rutaNodos.size() - 1; i++) {
             String origen = rutaNodos.get(i);
             String destino = rutaNodos.get(i + 1);
             Ruta rutaSegmento = encontrarRutaDirecta(origen, destino);
+
             if (rutaSegmento != null) {
                 double costoSegmento = rutaSegmento.getCosto() * (1.0 + factorAumentoCosto);
                 double distanciaSegmento = rutaSegmento.getDistancia() * (1.0 + factorAumentoDistancia);
@@ -398,6 +400,9 @@ public class RedParada {
                 costoTotal += costoSegmento;
                 distanciaTotal += distanciaSegmento;
                 tiempoTotal += tiempoSegmento;
+
+                // CORRECCIÓN: Sumar el atributo de la ruta guardado en BD
+                transbordosTotales += rutaSegmento.getNumTransbordos();
             }
         }
 
