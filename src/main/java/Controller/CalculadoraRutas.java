@@ -69,6 +69,7 @@ public class CalculadoraRutas {
     @FXML
     void initialize() {
         this.redParada = RedParada.getInstance();
+        this.redParada.recargarGrafo();
         cargarComboBoxes();
         limpiarTodosLosPaneles();
 
