@@ -629,5 +629,91 @@ public class RedParada {
         }
         return mst;
     }
+//        /**
+//         * Implementación del algoritmo de Bellman-Ford.
+//         * Encuentra la ruta de MENOR COSTO desde un nodo de inicio a todos los demás,
+//         * permitiendo costos negativos y detectando ciclos negativos.
+//         */
+//        public void bellmanFord(String inicio) {
+//            if (!lugar.containsKey(inicio)) {
+//                System.out.println("El lugar de inicio '" + inicio + "' no existe.");
+//                return;
+//            }
+//
+//            int numNodos = lugar.size();
+//            HashMap<String, Float> costos = new HashMap<>();
+//            HashMap<String, String> previo = new HashMap<>();
+//            List<Ruta> allRutas = getAllRutas(); // Obtenemos todas las aristas
+//
+//            // 1. Inicialización
+//            for (String nodo : lugar.keySet()) {
+//                costos.put(nodo, Float.MAX_VALUE);
+//                previo.put(nodo, null);
+//            }
+//            costos.put(inicio, 0.0f);
+//
+//            // 2. Relajación de aristas (V-1 iteraciones)
+//            // Repetir V-1 veces (V = numNodos)
+//            for (int i = 0; i < numNodos - 1; i++) {
+//                boolean algoCambio = false;
+//                // Iterar por todas las aristas en el grafo
+//                for (Ruta ruta : allRutas) {
+//                    String origen = ruta.getOrigen().getNombre();
+//                    String destino = ruta.getDestino().getNombre();
+//                    float costoRuta = ruta.getCosto();
+//
+//                    // Si encontramos un camino más barato
+//                    if (costos.get(origen) != Float.MAX_VALUE && costos.get(origen) + costoRuta < costos.get(destino)) {
+//                        costos.put(destino, costos.get(origen) + costoRuta);
+//                        previo.put(destino, origen);
+//                        algoCambio = true;
+//                    }
+//                }
+//                // Optimización: si en una pasada entera no cambió nada, ya terminamos
+//                if (!algoCambio) break;
+//            }
+//
+//            // 3. Detección de ciclos negativos
+//            // Hacemos una pasada MÁS (la V-ésima iteración)
+//            boolean hayCicloNegativo = false;
+//            for (Ruta ruta : allRutas) {
+//                String origen = ruta.getOrigen().getNombre();
+//                String destino = ruta.getDestino().getNombre();
+//                float costoRuta = ruta.getCosto();
+//
+//                // Si AÚN podemos encontrar un camino más barato, es por un ciclo negativo
+//                if (costos.get(origen) != Float.MAX_VALUE && costos.get(origen) + costoRuta < costos.get(destino)) {
+//                    hayCicloNegativo = true;
+//                    break; // Encontramos uno, no es necesario seguir
+//                }
+//            }
+//
+//            // 4. Mostrar resultados
+//            System.out.println("Bellman-Ford - Rutas de menor COSTO desde '" + inicio + "':");
+//            if (hayCicloNegativo) {
+//                System.out.println("  ¡ERROR! Se detectó un ciclo de costo negativo.");
+//                System.out.println("  Los costos de las rutas no son fiables.");
+//            } else {
+//                // Imprimir todas las rutas más baratas
+//                for (String destino : lugar.keySet()) {
+//                    if (destino.equals(inicio)) continue;
+//
+//                    if (costos.get(destino) == Float.MAX_VALUE) {
+//                        System.out.printf("  Ruta a %-5s: No alcanzable\n", destino);
+//                    } else {
+//                        // Reconstruir la ruta
+//                        LinkedList<String> ruta = new LinkedList<>();
+//                        String actual = destino;
+//                        while (actual != null) {
+//                            ruta.addFirst(actual);
+//                            actual = previo.get(actual);
+//                        }
+//                        System.out.printf("  Ruta a %-5s: %-25s (Costo total: $%.2f)\n",
+//                                destino, ruta.toString(), costos.get(destino));
+//                    }
+//                }
+//            }
+//        }
+//        }
 
 }
